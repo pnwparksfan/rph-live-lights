@@ -21,6 +21,8 @@ namespace LiveLights
     // [XmlType(TypeName="Item")]
     public class SirenSetting : IList<SirenEntry>
     {
+
+
         [XmlArray("sirens")]
         [XmlArrayItem("Item")]
         public SirenEntry[] Sirens
@@ -35,9 +37,7 @@ namespace LiveLights
                 }
             }
         }
-        // public List<SirenEntry> Sirens = new List<SirenEntry>();
-        // new SirenEntry[20]
-        // public SirenEntry[] Sirens = Enumerable.Repeat<SirenEntry>(new SirenEntry(), 20).ToArray();
+
         private List<SirenEntry> sirenList = new List<SirenEntry>();
 
         public int Count => sirenList.Count;
@@ -97,6 +97,15 @@ namespace LiveLights
             set => SirenIdCommentText = value.InnerText;
         }
 
+        [XmlElement("rotation")]
+        public LightDetailEntry Rotation { get; set; } = new LightDetailEntry();
+
+        [XmlElement("flashiness")]
+        public LightDetailEntry Flashiness { get; set; } = new LightDetailEntry();
+
+        [XmlElement("corona")]
+        public CoronaEntry Corona { get; set; } = new CoronaEntry();
+
         [XmlIgnore]
         public Color LightColor { get; set; } = Color.White;
 
@@ -138,6 +147,98 @@ namespace LiveLights
         public ValueItem<bool> CastShadows { get; set; } = false;
     }
 
+    public class CoronaEntry
+    {
+        [XmlElement("intensity")]
+        public ValueItem<float> CoronaIntensity { get; set; } = 50f;
+
+        [XmlElement("size")]
+        public ValueItem<float> CoronaSize { get; set; } = 0f;
+
+        [XmlElement("pull")]
+        public ValueItem<float> CoronaPull { get; set; } = 0.10f;
+
+        [XmlElement("faceCamera")]
+        public ValueItem<bool> CoronaFaceCamera { get; set; } = false;
+    }
+
+    public class LightDetailEntry
+    {
+        [XmlElement("delta")]
+        public ValueItem<float> DeltaRad { get; set; } = 0;
+
+        [XmlIgnore]
+        public float DeltaDeg
+        {
+            get => Rage.MathHelper.ConvertRadiansToDegrees(DeltaRad);
+            set => DeltaRad = Rage.MathHelper.ConvertDegreesToRadians(value);
+        }
+
+        [XmlElement("start")]
+        public ValueItem<float> StartRad { get; set; } = 0;
+
+        [XmlIgnore]
+        public float StartDeg
+        {
+            get => Rage.MathHelper.ConvertRadiansToDegrees(StartRad);
+            set => StartRad = Rage.MathHelper.ConvertDegreesToRadians(value);
+        }
+
+        [XmlElement("speed")]
+        public ValueItem<float> Speed { get; set; } = 1.0f;
+
+        /*
+        [XmlElement("sequencer")]
+        public ValueItem<uint> SequenceRaw { get; set; } = 0;
+
+        [XmlIgnore]
+        public string Sequence
+        {
+            get => Convert.ToString(SequenceRaw, 2);
+            set => SequenceRaw = Convert.ToUInt32(value, 2);
+        }*/
+
+        [XmlElement("sequencer")]
+        public Sequencer Sequence { get; set; } = 0;
+
+        [XmlElement("multiples")]
+        public ValueItem<byte> Multiples { get; set; } = 1;
+
+        [XmlElement("direction")]
+        public ValueItem<bool> Direction { get; set; } = true;
+
+        [XmlElement("syncToBpm")]
+        public ValueItem<bool> SyncToBPM { get; set; } = true;
+
+    }
+
+    public class Sequencer : ValueItem<uint>
+    {
+        public static implicit operator Sequencer(uint value) => new Sequencer(value);
+        public static implicit operator Sequencer(string value) => new Sequencer(value);
+        public static implicit operator uint(Sequencer item) => item.Value;
+        public static implicit operator string(Sequencer item) => Convert.ToString(item.Value, 2);
+
+        public Sequencer(uint value) : base(value) { }
+        public Sequencer(string value) : base(Convert.ToUInt32(value, 2)) { }
+
+        public Sequencer() : base() { }
+
+        [XmlIgnore]
+        public uint SequenceRaw 
+        {
+            get => Value;
+            set => Value = value;
+        }
+                
+        [XmlIgnore]
+        public string Sequence
+        {
+            get => Convert.ToString(Value, 2);
+            set => Value = Convert.ToUInt32(value, 2);
+        }
+    }
+
     public class ValueItem<T>
     {
         public static implicit operator ValueItem<T>(T value) => new ValueItem<T>(value);
@@ -151,6 +252,6 @@ namespace LiveLights
         }
 
         [XmlAttribute("value")]
-        public T Value { get; set; }
+        public virtual T Value { get; set; }
     }
 }
