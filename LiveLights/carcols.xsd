@@ -1,0 +1,296 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Sirens">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" minOccurs="0" name="Item">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="id">
+                <xs:complexType>
+                  <xs:attribute name="value" type="xs:unsignedInt" use="required" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="name" type="xs:string" />
+              <xs:element name="timeMultiplier">
+                <xs:complexType>
+                  <xs:attribute name="value" type="xs:decimal" default="1.0"  />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="lightFalloffMax">
+                <xs:complexType>
+                  <xs:attribute name="value" type="xs:decimal" default="10.0" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="lightFalloffExponent">
+                <xs:complexType>
+                  <xs:attribute name="value" type="xs:decimal" default="10.0" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="lightInnerConeAngle">
+                <xs:complexType>
+                  <xs:attribute name="value" type="xs:decimal" default="3.0" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="lightOuterConeAngle">
+                <xs:complexType>
+                  <xs:attribute name="value" type="xs:decimal" default="70.0" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="lightOffset">
+                <xs:complexType>
+                  <xs:attribute name="value" type="xs:decimal" default="0.0" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="textureName" type="xs:string" default="VehicleLight_sirenlight" />
+              <xs:element name="sequencerBpm">
+                <xs:complexType>
+                  <xs:attribute name="value" type="xs:unsignedInt" default="200" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="leftHeadLight">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="sequencer">
+                      <xs:complexType>
+                        <xs:attribute name="value" type="xs:unsignedInt" default="0" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="rightHeadLight">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="sequencer">
+                      <xs:complexType>
+                        <xs:attribute name="value" type="xs:unsignedInt" default="0" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="leftTailLight">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="sequencer">
+                      <xs:complexType>
+                        <xs:attribute name="value" type="xs:unsignedInt" default="0" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="rightTailLight">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="sequencer">
+                      <xs:complexType>
+                        <xs:attribute name="value" type="xs:unsignedInt" default="0" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="leftHeadLightMultiples">
+                <xs:complexType>
+                  <xs:attribute name="value" type="xs:unsignedByte" default="1" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="rightHeadLightMultiples">
+                <xs:complexType>
+                  <xs:attribute name="value" type="xs:unsignedByte" default="1" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="leftTailLightMultiples">
+                <xs:complexType>
+                  <xs:attribute name="value" type="xs:unsignedByte" default="2" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="rightTailLightMultiples">
+                <xs:complexType>
+                  <xs:attribute name="value" type="xs:unsignedByte" default="2" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="useRealLights">
+                <xs:complexType>
+                  <xs:attribute name="value" type="xs:boolean" default="true" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="sirens">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="20" minOccurs="20" name="Item">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="rotation">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="delta">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:decimal" default="0.0" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="start">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:decimal" default="0.0" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="speed">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:decimal" default="0.0" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="sequencer">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:unsignedInt" default="0" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="multiples">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:unsignedByte" default="1" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="direction">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:boolean" default="false" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="syncToBpm">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:boolean" default="true" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="flashiness">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="delta">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:decimal" default="0.0" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="start">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:decimal" default="0.0" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="speed">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:decimal" default="0.0" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="sequencer">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:unsignedInt" default="0" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="multiples">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:unsignedByte" default="1" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="direction">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:boolean" default="true" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="syncToBpm">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:boolean" default="true" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="corona">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="intensity">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:decimal" default="10.0" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="size">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:decimal" default="1.0" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="pull">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:decimal" default="0.2" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="faceCamera">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:boolean" default="false" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="color">
+                            <xs:complexType>
+                              <xs:attribute name="value" type="xs:string" default="0xFFFFFF00" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="intensity">
+                            <xs:complexType>
+                              <xs:attribute name="value" type="xs:decimal" default="1.0" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="lightGroup">
+                            <xs:complexType>
+                              <xs:attribute name="value" type="xs:unsignedByte" default="0" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="rotate">
+                            <xs:complexType>
+                              <xs:attribute name="value" type="xs:boolean" default="false" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="scale">
+                            <xs:complexType>
+                              <xs:attribute name="value" type="xs:boolean" default="true" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="scaleFactor">
+                            <xs:complexType>
+                              <xs:attribute name="value" type="xs:unsignedByte" default="2" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="flash">
+                            <xs:complexType>
+                              <xs:attribute name="value" type="xs:boolean" default="true" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="light">
+                            <xs:complexType>
+                              <xs:attribute name="value" type="xs:boolean" default="true" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="spotLight">
+                            <xs:complexType>
+                              <xs:attribute name="value" type="xs:boolean" default="true" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="castShadows">
+                            <xs:complexType>
+                              <xs:attribute name="value" type="xs:boolean" default="false" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
