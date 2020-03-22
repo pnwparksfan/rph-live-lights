@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 using System.Drawing;
 using System.Collections;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace LiveLights
 {
@@ -287,6 +288,7 @@ namespace LiveLights
 
     }
 
+    [DebuggerDisplay("{Sequence} = {SequenceRaw}")]
     public class Sequencer : ValueItem<uint>
     {
         public static implicit operator Sequencer(uint value) => new Sequencer(value);
@@ -314,6 +316,7 @@ namespace LiveLights
         }
     }
 
+    [DebuggerDisplay("{Sequencer.Sequence} = {Sequencer.SequenceRaw}")]
     public class SequencerWrapper
     {
         public static implicit operator SequencerWrapper(uint value) => new SequencerWrapper(value);
@@ -340,6 +343,7 @@ namespace LiveLights
         public Sequencer Sequencer { get; set; }
     }
 
+    [DebuggerDisplay("{Value}")]
     public class ValueItem<T>
     {
         public static implicit operator ValueItem<T>(T value) => new ValueItem<T>(value);
