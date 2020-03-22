@@ -7,6 +7,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Drawing;
 using System.Collections;
+using System.Reflection;
 
 namespace LiveLights
 {
@@ -19,11 +20,68 @@ namespace LiveLights
     }
 
     // [XmlType(TypeName="Item")]
-    public class SirenSetting : IList<SirenEntry>
+    public class SirenSetting // : IList<SirenEntry>
     {
+        [XmlElement("id")]
+        public ValueItem<uint> ID { get; set; } = 0;
+
+        [XmlElement("name")]
+        public string Name { get; set; } = "";
+
+        [XmlElement("timeMultiplier")]
+        public ValueItem<float> TimeMultiplier { get; set; } = 1.0f;
+
+        [XmlElement("lightFalloffMax")]
+        public ValueItem<float> LightFalloffMax { get; set; } = 50f;
+
+        [XmlElement("lightFalloffExponent")]
+        public ValueItem<float> LightFalloffExponent { get; set; } = 10f;
+
+        [XmlElement("lightInnerConeAngle")]
+        public ValueItem<float> LightInnerConeAngle { get; set; } = 30f;
+
+        [XmlElement("lightOuterConeAngle")]
+        public ValueItem<float> LightOuterConeAngle { get; set; } = 60f;
+
+        [XmlElement("lightOffset")]
+        public ValueItem<float> LightOffset { get; set; } = 0f;
+
+        [XmlElement("textureName")]
+        public string TextureName { get; set; } = "VehicleLight_sirenlight";
+
+        [XmlElement("sequencerBpm")]
+        public ValueItem<uint> SequencerBPM { get; set; } = 100;
+
+        [XmlElement("leftHeadLight")]
+        public SequencerWrapper LeftHeadLightSequencer { get; set; } = 0;
+
+        [XmlElement("rightHeadLight")]
+        public SequencerWrapper RightHeadLightSequencer { get; set; } = 0;
+
+        [XmlElement("leftTailLight")]
+        public SequencerWrapper LeftTailLightSequencer { get; set; } = 0;
+
+        [XmlElement("rightTailLight")]
+        public SequencerWrapper RightTailLightSequencer { get; set; } = 0;
+
+        [XmlElement("leftHeadLightMultiples")]
+        public ValueItem<byte> LeftHeadLightMultiples { get; set; } = 1;
+
+        [XmlElement("rightHeadLightMultiples")]
+        public ValueItem<byte> RightHeadLightMultiples { get; set; } = 1;
+
+        [XmlElement("leftTailLightMultiples")]
+        public ValueItem<byte> LeftTailLightMultiples { get; set; } = 1;
+
+        [XmlElement("rightTailLightMultiples")]
+        public ValueItem<byte> RightTailLightMultiples { get; set; } = 1;
+
+        [XmlElement("useRealLights")]
+        public ValueItem<bool> UseRealLights { get; set; } = true;
 
 
         [XmlArray("sirens")]
+        // [XmlElement("sirens")]
         [XmlArrayItem("Item")]
         public SirenEntry[] Sirens
         {
@@ -31,19 +89,37 @@ namespace LiveLights
             set
             {
                 sirenList = value.ToList();
-                for (int i = 1; i <= sirenList.Count; i++)
+                for (int i = 0; i < sirenList.Count; i++)
                 {
-                    sirenList[i].SirenIdCommentText = "Siren " + i;
+                    sirenList[i].SirenIdCommentText = "Siren " + (i+1);
                 }
             }
         }
 
+        [XmlIgnore]
         private List<SirenEntry> sirenList = new List<SirenEntry>();
 
+        public void AddSiren(SirenEntry item)
+        {
+            if (sirenList.Count < 20)
+            {
+                item.SirenIdCommentText = "Siren " + (sirenList.Count + 1);
+                sirenList.Add(item);
+            }
+            else
+            {
+                throw new IndexOutOfRangeException("A SirenSetting cannot contain more than 20 sirens");
+            }
+        }
+
+        /*
+        [XmlIgnore]
         public int Count => sirenList.Count;
 
+        [XmlIgnore]
         public bool IsReadOnly => false;
 
+        [XmlIgnore]
         public SirenEntry this[int index] 
         { 
             get => sirenList[index]; 
@@ -79,9 +155,8 @@ namespace LiveLights
         public void Insert(int index, SirenEntry item) => sirenList.Insert(index, item);
 
         public void RemoveAt(int index) => sirenList.RemoveAt(index);
+        */
 
-
-        // public SirenEntry[] Sirens { get; set; }
     }
 
     // [XmlType(TypeName="Item")]
@@ -115,7 +190,7 @@ namespace LiveLights
             get => string.Format("0x{0:X8}", LightColor.ToArgb());
             set
             {
-                LightColor = Color.FromArgb(int.Parse(value, System.Globalization.NumberStyles.HexNumber));
+                LightColor = Color.FromArgb(Convert.ToInt32(value, 16));
             }
         }
 
@@ -239,6 +314,32 @@ namespace LiveLights
         }
     }
 
+    public class SequencerWrapper
+    {
+        public static implicit operator SequencerWrapper(uint value) => new SequencerWrapper(value);
+        public static implicit operator SequencerWrapper(string value) => new SequencerWrapper(value);
+        public static implicit operator uint(SequencerWrapper item) => item.Sequencer.SequenceRaw;
+        public static implicit operator string(SequencerWrapper item) => item.Sequencer.Sequence;
+
+        public SequencerWrapper(uint value)
+        {
+            Sequencer = value;
+        }
+
+        public SequencerWrapper(string value)
+        {
+            Sequencer = value;
+        }
+
+        public SequencerWrapper()
+        {
+            Sequencer = new Sequencer();
+        }
+
+        [XmlElement("sequencer")]
+        public Sequencer Sequencer { get; set; }
+    }
+
     public class ValueItem<T>
     {
         public static implicit operator ValueItem<T>(T value) => new ValueItem<T>(value);
@@ -250,6 +351,7 @@ namespace LiveLights
         {
             this.Value = value;
         }
+
 
         [XmlAttribute("value")]
         public virtual T Value { get; set; }

@@ -44,11 +44,22 @@ namespace LiveLights
             {
                 SirenEntry e = new SirenEntry();
                 e.Intensity = i * 0.5f;
-                s.Add(e);
+                s.AddSiren(e);
             }
 
             f.SirenSettings.Add(s);
             Serializer.SaveItemToXML(f, @"Plugins\LiveLights\text.xml");
+        }
+
+        [ConsoleCommand]
+        private static void ImportTestXML(string path)
+        {
+            CarcolsFile c = Serializer.LoadItemFromXML<CarcolsFile>(path); // Serializer.LoadFromXML<CarcolsFile>(path);
+            Game.LogTrivial("Loaded " + c.SirenSettings.Count + " siren settings");
+            foreach (SirenSetting siren in c.SirenSettings)
+            {
+                Game.LogTrivial("  " + siren.Name);
+            }
         }
     }
 }
