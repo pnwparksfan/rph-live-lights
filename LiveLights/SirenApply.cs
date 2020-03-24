@@ -58,12 +58,6 @@ namespace LiveLights
 
     internal static class SirenApply
     {
-        public static PropertyInfo GetPropertyInfo<T>(Expression<Func<T, object>> lambda)
-        {
-            var member = lambda.Body as MemberExpression;
-            return member.Member as PropertyInfo;
-        }
-
         public static void ApplySirenSettingsToEmergencyLighting(this SirenSetting setting, EmergencyLighting els)
         {
             els.Name = setting.Name;
@@ -125,43 +119,7 @@ namespace LiveLights
                 light.FlashinessDirection = entry.Flashiness.Direction;
                 light.FlashinessSynchronizeToBpm = entry.Flashiness.SyncToBPM;
             }
-
-            /*
-            var sirenSettingProperties = typeof(SirenSetting).GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            // var emergencyLightingProperties = typeof(EmergencyLighting).GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            foreach (var settingProp in sirenSettingProperties)
-            {
-                Game.LogTrivial($"{settingProp.Name}<{settingProp.PropertyType.Name}>");
-                PropertyInfo elpProp = typeof(EmergencyLighting).GetProperty(settingProp.Name);
-                if (elpProp == null)
-                {
-                    Game.LogTrivial("  No matching property");
-                }
-                else if (elpProp.PropertyType.IsAssignableFrom(settingProp.PropertyType))
-                {
-                    Game.LogTrivial($"  Matching assignable property: {elpProp.Name}<{elpProp.PropertyType.Name}>");
-                } else
-                {
-                    object x = settingProp.GetValue(settings);
-
-                    Type t = settingProp.PropertyType;
-                    // var q = x as ValueItem<typeof(t) >;
-                    Type t2 = typeof(ValueItem<>).MakeGenericType(t);
-                    var q = x as typeof(t2);
-
-                    Game.LogTrivial($"  Non-assignable property: {elpProp.Name}<{elpProp.PropertyType.Name}>");
-                    elpProp.SetValue(els, settingProp.GetValue(settings));
-                }  
-            }
-            */
         }
-
-        public static void DoThingToStuff<T>(Action<T> foo)
-        {
-
-        }
-
-        
 
         public static EmergencyLighting GetELSForVehicle(this Vehicle v)
         {
@@ -177,53 +135,5 @@ namespace LiveLights
 
             return els;
         }
-
-        [Rage.Attributes.ConsoleCommand]
-        public static void TestPropertyAccess(string newName)
-        {
-            var info = GetPropertyInfo<EmergencyLighting>(l => l.LightFalloffExponent);
-
-            Vehicle v = Game.LocalPlayer.Character.LastVehicle;
-            /*
-            if (!v) return;
-
-            EmergencyLighting els = v.EmergencyLightingOverride;
-            if(!els.Exists())
-            {
-                v.EmergencyLightingOverride = v.DefaultEmergencyLighting.Clone();
-                els = v.EmergencyLightingOverride;
-                Game.LogTrivial("Cloned default ELS");
-            }
-            */
-
-            EmergencyLighting els = v.GetELSForVehicle();
-            if (!v.Exists()) return;
-
-            Game.LogTrivial("Got ELS: " + els.Name);
-
-            typeof(EmergencyLighting).GetProperty("Name").SetValue(els, newName);
-
-            Game.LogTrivial("ELS updated name: " + els.Name);
-        }
-    }
-
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class SirenPropertyAttribute : Attribute
-    {
-        public string PropertyName { get; }
-        public bool PrefixOnly { get; }
-
-        public SirenPropertyAttribute(Type T, string propertyName)
-        {
-            this.PropertyName = propertyName;
-            this.PrefixOnly = false;
-        }
-
-        public SirenPropertyAttribute(Type T, string propertyName, bool prefix)
-        {
-            this.PropertyName = propertyName;
-            this.PrefixOnly = prefix;
-        }
-
     }
 }
