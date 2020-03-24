@@ -10,52 +10,6 @@ namespace LiveLights
 {
     using Rage;
 
-#if false
-    internal class PropertyMapping<Ta, Tb>
-    {
-        // public Func<T, T> AtoB;
-        // public Func<T, T> BtoA;
-        private Action<Ta, object> a2b;
-        private Action<Tb, object> b2a;
-
-        public void AtoB(Ta A, Tb B)
-        {
-
-        }
-
-        /*
-        public PropertyMapping(Func<Ta, object> lambdaA, Func<Tb, object> lambdaB) 
-        {
-            this.lambdaA = lambdaA;
-            this.lambdaB = lambdaB;
-        }
-        */
-
-        public PropertyMapping(Action<Ta, Tb> a2b, Action<Tb, Ta> b2a)
-        {
-            this.a2b = a2b;
-            this.b2a = b2a;
-        }
-
-        private static void test()
-        {
-            PropertyMapping<EmergencyLighting, SirenSetting> foo = 
-                new PropertyMapping<EmergencyLighting, SirenSetting>((A, B) => { A.Name = B.Name; }, (B, A) => { B.Name = A.Name; });
-
-            List<PropertyMapping<EmergencyLighting, SirenSetting>> stuff = new List<PropertyMapping<EmergencyLighting, SirenSetting>>()
-            {
-                new PropertyMapping<EmergencyLighting, SirenSetting>(x => x.Name, y => y.Name),
-                new PropertyMapping<EmergencyLighting, SirenSetting>(x => x.SequencerBpm, y => y.SequencerBPM)
-            };
-
-            SirenSetting s = new SirenSetting();
-            EmergencyLighting e = Game.LocalPlayer.Character.CurrentVehicle.GetELSForVehicle();
-            foo.a2b(e, s);
-
-        }
-    }
-#endif 
-
     internal static class SirenApply
     {
         public static void ApplySirenSettingsToEmergencyLighting(this SirenSetting setting, EmergencyLighting els)
@@ -118,6 +72,71 @@ namespace LiveLights
                 light.FlashinessMultiples = entry.Flashiness.Multiples;
                 light.FlashinessDirection = entry.Flashiness.Direction;
                 light.FlashinessSynchronizeToBpm = entry.Flashiness.SyncToBPM;
+            }
+        }
+
+        public static void ExportEmergencyLightingToSirenSettings(this EmergencyLighting els, SirenSetting setting)
+        {
+            setting.Name = els.Name;
+            setting.TimeMultiplier = els.TimeMultiplier;
+            setting.LightFalloffMax = els.LightFalloffMax;
+            setting.LightFalloffExponent = els.LightFalloffExponent;
+            setting.LightInnerConeAngle = els.LightInnerConeAngle;
+            setting.LightOuterConeAngle = els.LightOuterConeAngle;
+            setting.LightOffset = els.LightOffset;
+            setting.TextureHash = els.TextureHash;
+            setting.SequencerBPM = els.SequencerBpm;
+            setting.UseRealLights = els.UseRealLights;
+            setting.LeftHeadLightSequencer = els.LeftHeadLightSequence;
+            setting.LeftHeadLightMultiples = els.LeftHeadLightMultiples;
+            setting.RightHeadLightSequencer = els.RightHeadLightSequence;
+            setting.RightHeadLightMultiples = els.RightHeadLightMultiples;
+            setting.LeftTailLightSequencer = els.LeftTailLightSequence;
+            setting.LeftTailLightMultiples = els.LeftTailLightMultiples;
+            setting.RightTailLightSequencer = els.RightTailLightSequence;
+            setting.RightTailLightMultiples = els.RightTailLightMultiples;
+
+            for (int i = 0; i < els.Lights.Length; i++)
+            {
+                SirenEntry entry = new SirenEntry();
+                EmergencyLight light = els.Lights[i];
+
+                // Main light settings
+                entry.LightColor = light.Color;
+                entry.Intensity = light.Intensity;
+                entry.LightGroup = light.LightGroup;
+                entry.Rotate = light.Rotate;
+                entry.Scale = light.Scale;
+                entry.ScaleFactor = light.ScaleFactor;
+                entry.Flash = light.Flash;
+                entry.SpotLight = light.SpotLight;
+                entry.CastShadows = light.CastShadows;
+
+                // Corona settings
+                entry.Corona.CoronaIntensity = light.CoronaIntensity;
+                entry.Corona.CoronaSize = light.CoronaSize;
+                entry.Corona.CoronaPull = light.CoronaPull;
+                entry.Corona.CoronaFaceCamera = light.CoronaFaceCamera;
+
+                // Rotation settings
+                entry.Rotation.DeltaDeg = light.RotationDelta;
+                entry.Rotation.StartDeg = light.RotationStart;
+                entry.Rotation.Speed = light.RotationSpeed;
+                entry.Rotation.Sequence = light.RotationSequence;
+                entry.Rotation.Multiples = light.RotationMultiples;
+                entry.Rotation.Direction = light.RotationDirection;
+                entry.Rotation.SyncToBPM = light.RotationSynchronizeToBpm;
+
+                // Flash settings
+                entry.Flashiness.DeltaDeg = light.FlashinessDelta;
+                entry.Flashiness.StartDeg = light.FlashinessStart;
+                entry.Flashiness.Speed = light.FlashinessSpeed;
+                entry.Flashiness.Sequence = light.FlashinessSequence;
+                entry.Flashiness.Multiples = light.FlashinessMultiples;
+                entry.Flashiness.Direction = light.FlashinessDirection;
+                entry.Flashiness.SyncToBPM = light.FlashinessSynchronizeToBpm;
+
+                setting.AddSiren(entry);
             }
         }
 
