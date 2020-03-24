@@ -56,8 +56,8 @@ namespace LiveLights
                 light.CoronaFaceCamera = entry.Corona.CoronaFaceCamera;
 
                 // Rotation settings
-                light.RotationDelta = entry.Rotation.DeltaDeg;
-                light.RotationStart = entry.Rotation.StartDeg;
+                light.RotationDelta = entry.Rotation.DeltaRad;
+                light.RotationStart = entry.Rotation.DeltaRad;
                 light.RotationSpeed = entry.Rotation.Speed;
                 light.RotationSequence = entry.Rotation.Sequence;
                 light.RotationMultiples = entry.Rotation.Multiples;
@@ -75,7 +75,7 @@ namespace LiveLights
             }
         }
 
-        public static void ExportEmergencyLightingToSirenSettings(this EmergencyLighting els, SirenSetting setting)
+        public static void ExportEmergencyLightingToSirenSettings(this EmergencyLighting els, ref SirenSetting setting)
         {
             setting.Name = els.Name;
             setting.TimeMultiplier = els.TimeMultiplier;
@@ -119,8 +119,8 @@ namespace LiveLights
                 entry.Corona.CoronaFaceCamera = light.CoronaFaceCamera;
 
                 // Rotation settings
-                entry.Rotation.DeltaDeg = light.RotationDelta;
-                entry.Rotation.StartDeg = light.RotationStart;
+                entry.Rotation.DeltaRad = light.RotationDelta;
+                entry.Rotation.DeltaRad = light.RotationStart;
                 entry.Rotation.Speed = light.RotationSpeed;
                 entry.Rotation.Sequence = light.RotationSequence;
                 entry.Rotation.Multiples = light.RotationMultiples;
@@ -138,6 +138,13 @@ namespace LiveLights
 
                 setting.AddSiren(entry);
             }
+        }
+
+        public static SirenSetting ExportEmergencyLightingToSirenSettings(this EmergencyLighting els)
+        {
+            SirenSetting s = new SirenSetting();
+            els.ExportEmergencyLightingToSirenSettings(ref s);
+            return s;
         }
 
         public static EmergencyLighting GetELSForVehicle(this Vehicle v)

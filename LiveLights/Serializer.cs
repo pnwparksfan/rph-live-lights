@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Text;
 
 namespace LiveLights
 {
@@ -84,7 +85,8 @@ namespace LiveLights
 
         public static void SaveItemToXML<T>(T item, string path, XmlAttributeOverrides overrides)
         {
-            using (TextWriter writer = new StreamWriter(path))
+            Encoding utf8NoBom = new UTF8Encoding(false);
+            using (TextWriter writer = new StreamWriter(path, false, utf8NoBom))
             {
                 XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
                 ns.Add("", "");

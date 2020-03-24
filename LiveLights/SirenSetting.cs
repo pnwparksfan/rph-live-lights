@@ -79,14 +79,6 @@ namespace LiveLights
                     TextureName = string.Format("0x{0:X8}", value);
                 }
             }
-
-            /*
-            get => string.Format("0x{0:X8}", LightColor.ToArgb());
-            set
-            {
-                Convert.ToInt32(value, 16);
-            }
-            */
         }
 
         [XmlElement("sequencerBpm")]
@@ -121,7 +113,6 @@ namespace LiveLights
 
 
         [XmlArray("sirens")]
-        // [XmlElement("sirens")]
         [XmlArrayItem("Item")]
         public SirenEntry[] Sirens
         {
@@ -151,55 +142,8 @@ namespace LiveLights
                 throw new IndexOutOfRangeException("A SirenSetting cannot contain more than 20 sirens");
             }
         }
-
-        /*
-        [XmlIgnore]
-        public int Count => sirenList.Count;
-
-        [XmlIgnore]
-        public bool IsReadOnly => false;
-
-        [XmlIgnore]
-        public SirenEntry this[int index] 
-        { 
-            get => sirenList[index]; 
-            set => sirenList[index] = value; 
-        }
-
-        public void Add(SirenEntry item)
-        {
-            if(sirenList.Count < 20)
-            {
-                item.SirenIdCommentText = "Siren " + (sirenList.Count + 1);
-                sirenList.Add(item);
-            } else
-            {
-                throw new IndexOutOfRangeException("A SirenSetting cannot contain more than 20 sirens");
-            }
-        }
-
-        public void Clear() => sirenList.Clear();
-
-        public bool Contains(SirenEntry item) => sirenList.Contains(item);
-
-        public void CopyTo(SirenEntry[] array, int arrayIndex) => sirenList.CopyTo(array, arrayIndex);
-
-        public IEnumerator<SirenEntry> GetEnumerator() => sirenList.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => sirenList.GetEnumerator();
-
-        public bool Remove(SirenEntry item) => sirenList.Remove(item);
-
-        public int IndexOf(SirenEntry item) => sirenList.IndexOf(item);
-
-        public void Insert(int index, SirenEntry item) => sirenList.Insert(index, item);
-
-        public void RemoveAt(int index) => sirenList.RemoveAt(index);
-        */
-
     }
 
-    // [XmlType(TypeName="Item")]
     public class SirenEntry
     {
         [XmlIgnore]
@@ -387,33 +331,4 @@ namespace LiveLights
         [XmlAttribute("value")]
         public virtual T Value { get; set; }
     }
-
-    /*
-    [DebuggerDisplay("{Value}")]
-    public class ValueItem2<T1, T2> : IAutoProperty<T2>
-    {
-        public static implicit operator ValueItem2<T1, T2>(T1 value) => new ValueItem2<T1, T2>(value);
-        public static implicit operator T1(ValueItem2<T1, T2> item) => item.Value;
-
-        public ValueItem2() { }
-
-        public ValueItem2(T1 value)
-        {
-            this.Value = value;
-        }
-
-        [XmlAttribute("value")]
-        public virtual T1 Value { get; set; }
-
-        public void Apply<T2>(T2 obj)
-        {
-            typeof(T2).GetProperty("foo").SetValue(obj, Value);
-        }
-    }
-
-    public interface IAutoProperty<T>
-    {
-        void Apply<T>(T obj);
-    }
-    */
 }
