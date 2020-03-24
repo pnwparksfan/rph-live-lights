@@ -14,7 +14,16 @@ namespace LiveLights
     {
         public static void ApplySirenSettingsToEmergencyLighting(this SirenSetting setting, EmergencyLighting els)
         {
-            els.Name = setting.Name;
+            int iName = 1;
+            string name = setting.Name;
+            do
+            {
+                name = $"{setting.Name} ({iName})";
+                iName++;
+            } while (EmergencyLighting.GetByName(name).Exists());
+            
+
+            els.Name = name;
             els.TimeMultiplier = setting.TimeMultiplier;
             els.LightFalloffMax = setting.LightFalloffMax;
             els.LightFalloffExponent = setting.LightFalloffExponent;
