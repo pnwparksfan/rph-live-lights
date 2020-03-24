@@ -9,6 +9,8 @@ using System.Drawing;
 using System.Collections;
 using System.Reflection;
 using System.Diagnostics;
+using System.ComponentModel;
+using Rage;
 
 namespace LiveLights
 {
@@ -26,6 +28,7 @@ namespace LiveLights
         [XmlElement("id")]
         public ValueItem<uint> ID { get; set; } = 0;
 
+        // [SirenProperty(typeof(EmergencyLighting), "Name")]
         [XmlElement("name")]
         public string Name { get; set; } = "";
 
@@ -47,8 +50,44 @@ namespace LiveLights
         [XmlElement("lightOffset")]
         public ValueItem<float> LightOffset { get; set; } = 0f;
 
+        private const string defaultLightTexture = "VehicleLight_sirenlight";
+
         [XmlElement("textureName")]
-        public string TextureName { get; set; } = "VehicleLight_sirenlight";
+        public string TextureName { get; set; } = defaultLightTexture;
+
+        [XmlIgnore]
+        public uint TextureHash
+        {
+            get
+            {
+                try
+                {
+                    return Convert.ToUInt32(TextureName, 16);
+                } catch(FormatException)
+                {
+                    return Game.GetHashKey(TextureName);
+                }
+            }
+
+            set 
+            {
+                if(value == Game.GetHashKey(defaultLightTexture))
+                {
+                    TextureName = defaultLightTexture;
+                } else
+                {
+                    TextureName = string.Format("0x{0:X8}", value);
+                }
+            }
+
+            /*
+            get => string.Format("0x{0:X8}", LightColor.ToArgb());
+            set
+            {
+                Convert.ToInt32(value, 16);
+            }
+            */
+        }
 
         [XmlElement("sequencerBpm")]
         public ValueItem<uint> SequencerBPM { get; set; } = 100;
@@ -263,17 +302,6 @@ namespace LiveLights
         [XmlElement("speed")]
         public ValueItem<float> Speed { get; set; } = 1.0f;
 
-        /*
-        [XmlElement("sequencer")]
-        public ValueItem<uint> SequenceRaw { get; set; } = 0;
-
-        [XmlIgnore]
-        public string Sequence
-        {
-            get => Convert.ToString(SequenceRaw, 2);
-            set => SequenceRaw = Convert.ToUInt32(value, 2);
-        }*/
-
         [XmlElement("sequencer")]
         public Sequencer Sequence { get; set; } = 0;
 
@@ -356,8 +384,36 @@ namespace LiveLights
             this.Value = value;
         }
 
-
         [XmlAttribute("value")]
         public virtual T Value { get; set; }
     }
+
+    /*
+    [DebuggerDisplay("{Value}")]
+    public class ValueItem2<T1, T2> : IAutoProperty<T2>
+    {
+        public static implicit operator ValueItem2<T1, T2>(T1 value) => new ValueItem2<T1, T2>(value);
+        public static implicit operator T1(ValueItem2<T1, T2> item) => item.Value;
+
+        public ValueItem2() { }
+
+        public ValueItem2(T1 value)
+        {
+            this.Value = value;
+        }
+
+        [XmlAttribute("value")]
+        public virtual T1 Value { get; set; }
+
+        public void Apply<T2>(T2 obj)
+        {
+            typeof(T2).GetProperty("foo").SetValue(obj, Value);
+        }
+    }
+
+    public interface IAutoProperty<T>
+    {
+        void Apply<T>(T obj);
+    }
+    */
 }

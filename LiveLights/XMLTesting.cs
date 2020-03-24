@@ -61,5 +61,24 @@ namespace LiveLights
                 Game.LogTrivial("  " + siren.Name);
             }
         }
+
+        [ConsoleCommand]
+        private static void ImportAndApplyXML(string path)
+        {
+            CarcolsFile c = Serializer.LoadItemFromXML<CarcolsFile>(path); // Serializer.LoadFromXML<CarcolsFile>(path);
+            Game.LogTrivial("Loaded " + c.SirenSettings.Count + " siren settings");
+            foreach (SirenSetting siren in c.SirenSettings)
+            {
+                Game.LogTrivial("  " + siren.Name);
+            }
+
+            SirenSetting setting = c.SirenSettings[0];
+            EmergencyLighting els = Game.LocalPlayer.Character.LastVehicle.GetELSForVehicle();
+            if (!els.Exists()) return;
+
+            Game.LogTrivial("Got ELS instance: " + els.Name);
+
+            setting.ApplySirenSettingsToEmergencyLighting(els);
+        }
     }
 }

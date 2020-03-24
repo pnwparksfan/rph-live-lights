@@ -61,6 +61,7 @@
     <Compile Include="EntryPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer.cs" />
+    <Compile Include="SirenApply.cs" />
     <Compile Include="SirenSetting.cs" />
     <Compile Include="XMLTesting.cs" />
   </ItemGroup>
