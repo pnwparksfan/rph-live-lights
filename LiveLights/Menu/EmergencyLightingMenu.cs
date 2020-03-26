@@ -34,13 +34,13 @@ namespace LiveLights.Menu
             TextureHashItem = new UIMenuStringSelector("Texture Hash", Utils.TextureHash.HashToString(ELS.TextureHash));
             Menu.AddItem(TextureHashItem);
 
-            // UIMenuValueEntrySelector<byte, UIMenuListItem> foo = new UIMenuValueEntrySelector<byte, UIMenuListItem>(new UIMenuListItem("blah", "falala"), 1);
-            // AddMenuDataBinding(foo, (x) => ELS.LeftHeadLightMultiples = x, () => ELS.LeftHeadLightMultiples);
+            MultiplesItem = new UIMenuValueEntrySelector<byte>(new UIMenuListItem("Multiples", "Left headlight multiples", Enumerable.Range(byte.MinValue, byte.MaxValue).Select(x => (object)x).ToArray()), 1);
+            AddMenuDataBinding(MultiplesItem, (x) => ELS.LeftHeadLightMultiples = x, () => ELS.LeftHeadLightMultiples);
 
             MenuController.Pool.Add(Menu);
         }
 
-        private void AddMenuDataBinding<TMenuItem, TData>(TMenuItem menuItem, Action<TData> menuBinding, Func<TData> dataBinding) where TMenuItem : UIMenuValueEntrySelector<TData, UIMenuItem>, IRefreshableItemWrapper where TData : IEquatable<TData>
+        private void AddMenuDataBinding<TMenuItem, TData>(TMenuItem menuItem, Action<TData> menuBinding, Func<TData> dataBinding) where TMenuItem : UIMenuValueEntrySelector<TData>, IRefreshableItemWrapper where TData : IEquatable<TData>
         {
             menuItem.SetBindings(menuBinding, dataBinding);
             Menu.AddItem(menuItem.MenuItem);
@@ -55,6 +55,8 @@ namespace LiveLights.Menu
         public UIMenuStringSelector NameItem { get; } 
         public UIMenuUIntSelector BpmItem { get; }
         public UIMenuStringSelector TextureHashItem { get; }
+
+        public UIMenuValueEntrySelector<byte> MultiplesItem { get; }
 
     }
 }

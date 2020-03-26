@@ -18,9 +18,9 @@ namespace RAGENativeUI.Elements
         UIMenuItem MenuItem { get; }
     }
 
-    internal class UIMenuValueEntrySelector<T, TMenuItem> : IRefreshableItemWrapper where TMenuItem : UIMenuItem where T : IEquatable<T>
+    internal class UIMenuValueEntrySelector<T> : IRefreshableItemWrapper where T : IEquatable<T>
     {
-        public static implicit operator UIMenuItem(UIMenuValueEntrySelector<T, TMenuItem> i) => i.MenuItem;
+        public static implicit operator UIMenuItem(UIMenuValueEntrySelector<T> i) => i.MenuItem;
 
         public UIMenuValueEntrySelector(UIMenuItem menuItem, T value)
         {
@@ -31,7 +31,7 @@ namespace RAGENativeUI.Elements
             this.MenuItem.Activated += ActivatedHandler;
         }
 
-        public UIMenuItem MenuItem { get; }
+        public virtual UIMenuItem MenuItem { get; }
 
         public Action<T> MenuUpdateBinding { get; set; }
         public Func<T> DataUpdateBinding { get; set; }
@@ -70,13 +70,19 @@ namespace RAGENativeUI.Elements
             }
         }
 
-        public delegate void ValueEntryChangedEvent(UIMenu sender, UIMenuItem menuItem, UIMenuValueEntrySelector<T, TMenuItem> selector, T value);
+        public delegate void ValueEntryChangedEvent(UIMenu sender, UIMenuItem menuItem, UIMenuValueEntrySelector<T> selector, T value);
         public event ValueEntryChangedEvent OnValueEntryChanged;
 
         public delegate void ValueChangedEvent(T value);
         public event ValueChangedEvent OnValueChanged;
 
-        protected virtual void UpdateMenuDisplay() => this.MenuItem.SetRightLabel(DisplayMenu);
+        protected virtual void UpdateMenuDisplay()
+        {
+            try
+            {
+                this.MenuItem.SetRightLabel(DisplayMenu);
+            } catch (Exception) { }
+        }
 
         protected virtual int MaxInputLength { get; } = 1000;
         protected virtual string DisplayMenu => ItemValue?.ToString() ?? "(empty)";
@@ -130,7 +136,7 @@ namespace RAGENativeUI.Elements
     }
 
     // STRING
-    internal class UIMenuStringSelector : UIMenuValueEntrySelector<string, UIMenuItem>
+    internal class UIMenuStringSelector : UIMenuValueEntrySelector<string>
     {
         public UIMenuStringSelector(UIMenuItem menuItem, string value) : base(menuItem, value) { }
         public UIMenuStringSelector(string text, string value) : base(new UIMenuItem(text), value) { }
@@ -144,7 +150,7 @@ namespace RAGENativeUI.Elements
     }
 
     // UINT 
-    internal class UIMenuUIntSelector : UIMenuValueEntrySelector<uint, UIMenuItem>
+    internal class UIMenuUIntSelector : UIMenuValueEntrySelector<uint>
     {
         public UIMenuUIntSelector(UIMenuItem menuItem, uint value) : base(menuItem, value) { }
         public UIMenuUIntSelector(string text, uint value) : base(new UIMenuItem(text), value) { }
@@ -156,7 +162,7 @@ namespace RAGENativeUI.Elements
     }
 
     // INT
-    internal class UIMenuIntSelector : UIMenuValueEntrySelector<int, UIMenuItem>
+    internal class UIMenuIntSelector : UIMenuValueEntrySelector<int>
     {
         public UIMenuIntSelector(UIMenuItem menuItem, int value) : base(menuItem, value) { }
         public UIMenuIntSelector(string text, int value) : base(new UIMenuItem(text), value) { }
@@ -168,7 +174,7 @@ namespace RAGENativeUI.Elements
     }
 
     // FLOAT
-    internal class UIMenuFloatSelector : UIMenuValueEntrySelector<float, UIMenuItem>
+    internal class UIMenuFloatSelector : UIMenuValueEntrySelector<float>
     {
         public UIMenuFloatSelector(UIMenuItem menuItem, float value) : base(menuItem, value) { }
         public UIMenuFloatSelector(string text, float value) : base(new UIMenuItem(text), value) { }
@@ -177,8 +183,25 @@ namespace RAGENativeUI.Elements
         protected override bool ValidateInput(string input, out float value) => float.TryParse(input, out value);
     }
 
+    internal class UIMenuListItemSelector<T> : UIMenuValueEntrySelector<T> where T : IEquatable<T>
+    {
+        public UIMenuListItem ListMenuItem => MenuItem as UIMenuListItem;
+        // public override UIMenuItem MenuItem => ListMenuItem;
+
+        public UIMenuListItemSelector(UIMenuListItem menuItem, T value) : base(menuItem, value) { }
+
+        protected override void UpdateMenuDisplay()
+        {
+            if(ListMenuItem.SelectedItem.DisplayText != DisplayMenu)
+            {
+                // find if any match
+                // if none match, add one
+            }
+        }
+    }
+
     // VECTOR3
-    internal class UIMenuVector3Selector : UIMenuValueEntrySelector<Vector3, UIMenuItem>
+    internal class UIMenuVector3Selector : UIMenuValueEntrySelector<Vector3>
     {
         public UIMenuVector3Selector(UIMenuItem menuItem, Vector3 value) : base(menuItem, value) { }
         public UIMenuVector3Selector(string text, Vector3 value) : base(new UIMenuItem(text), value) { }
