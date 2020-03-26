@@ -113,23 +113,19 @@ namespace RAGENativeUI.Elements
         }
     }
 
-    // UINT (generic)
-    internal class UIMenuUIntSelector<TMenuItem> : UIMenuValueEntrySelector<uint, TMenuItem> where TMenuItem : UIMenuItem
-    {
-        public UIMenuUIntSelector(TMenuItem menuItem, uint value) : base(menuItem, value) { }
-        protected override bool ValidateInput(string input, out uint value) => uint.TryParse(input, out value);
-        protected override int MaxInputLength => uint.MaxValue.ToString().Length;
-    }
-
-    // UINT (MenuItem)
-    internal class UIMenuUIntSelector : UIMenuUIntSelector<UIMenuItem>
+    // UINT 
+    internal class UIMenuUIntSelector : UIMenuValueEntrySelector<uint, UIMenuItem>
     {
         public UIMenuUIntSelector(UIMenuItem menuItem, uint value) : base(menuItem, value) { }
         public UIMenuUIntSelector(string text, uint value) : base(new UIMenuItem(text), value) { }
         public UIMenuUIntSelector(string text, uint value, string description) : base(new UIMenuItem(text, description), value) { }
+
+        protected override bool ValidateInput(string input, out uint value) => uint.TryParse(input, out value);
+
+        protected override int MaxInputLength => uint.MaxValue.ToString().Length;
     }
 
-    // INT (generic)
+    // INT
     internal class UIMenuIntSelector : UIMenuValueEntrySelector<int, UIMenuItem>
     {
         public UIMenuIntSelector(UIMenuItem menuItem, int value) : base(menuItem, value) { }
@@ -141,6 +137,7 @@ namespace RAGENativeUI.Elements
         protected override int MaxInputLength => Math.Max(int.MaxValue.ToString().Length, int.MinValue.ToString().Length);
     }
 
+    // FLOAT
     internal class UIMenuFloatSelector : UIMenuValueEntrySelector<float, UIMenuItem>
     {
         public UIMenuFloatSelector(UIMenuItem menuItem, float value) : base(menuItem, value) { }
@@ -150,6 +147,7 @@ namespace RAGENativeUI.Elements
         protected override bool ValidateInput(string input, out float value) => float.TryParse(input, out value);
     }
 
+    // VECTOR3
     internal class UIMenuVector3Selector : UIMenuValueEntrySelector<Vector3, UIMenuItem>
     {
         public UIMenuVector3Selector(UIMenuItem menuItem, Vector3 value) : base(menuItem, value) { }

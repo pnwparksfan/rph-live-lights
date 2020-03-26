@@ -16,6 +16,7 @@ namespace LiveLights.Menu
         public EmergencyLightingMenu(EmergencyLighting els)
         {
             Menu = new UIMenu("Emergency Lighting Settings", "");
+            Menu.SetMenuWidthOffset(150);
             
             NameItem = new UIMenuStringSelector("Name", els.Name, "Siren setting name as shown in carcols.meta");
             Menu.AddItem(NameItem);
