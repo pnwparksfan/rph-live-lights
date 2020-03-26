@@ -12,26 +12,20 @@ namespace RAGENativeUI.Elements
     using RAGENativeUI;
 
 
-    internal class UIMenuValueEntrySelector<T, TMenuItem> /* : IMenuValueItem<T> */ where TMenuItem : UIMenuItem
+    internal class UIMenuValueEntrySelector<T, TMenuItem> where TMenuItem : UIMenuItem
     {
         public static implicit operator UIMenuItem(UIMenuValueEntrySelector<T, TMenuItem> i) => i.MenuItem;
 
-        public UIMenuItem MenuItem { get; }
-
-        public UIMenuValueEntrySelector(UIMenuItem menuItem, T value) // : base(text)
+        public UIMenuValueEntrySelector(UIMenuItem menuItem, T value)
         {
+            // Must set MenuItem before setting ItemValue, 
+            // because ItemValue setter uses MenuItem getter
             this.MenuItem = menuItem;
             this.ItemValue = value;
             this.MenuItem.Activated += ActivatedHandler;
         }
 
-        /*
-        public UIMenuValueEntrySelector(string text, T value, string description) // : base(text, description)
-        {
-            this.ItemValue = value;
-            this.Activated += ActivatedHandler;
-        }
-        */
+        public UIMenuItem MenuItem { get; }
 
         private T itemValue;
         public T ItemValue
@@ -42,15 +36,22 @@ namespace RAGENativeUI.Elements
             {
                 itemValue = value;
                 UpdateMenuDisplay();
+                OnValueEntryChanged?.Invoke(this.MenuItem.Parent, this.MenuItem, this, value);
+                OnValueChanged?.Invoke(value);
             }
         }
+
+        public delegate void ValueEntryChangedEvent(UIMenu sender, UIMenuItem menuItem, UIMenuValueEntrySelector<T, TMenuItem> selector, T value);
+        public event ValueEntryChangedEvent OnValueEntryChanged;
+
+        public delegate void ValueChangedEvent(T value);
+        public event ValueChangedEvent OnValueChanged;
 
         protected virtual void UpdateMenuDisplay() => this.MenuItem.SetRightLabel(DisplayMenu);
 
         protected virtual int MaxInputLength { get; } = 1000;
         protected virtual string DisplayMenu => ItemValue?.ToString() ?? "(empty)";
         protected virtual string DisplayInputBox => ItemValue.ToString();
-        // public override string RightLabel => DisplayMenu;
 
         protected virtual void ActivatedHandler(UIMenu sender, UIMenuItem selectedItem)
         {

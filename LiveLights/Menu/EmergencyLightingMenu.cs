@@ -15,20 +15,34 @@ namespace LiveLights.Menu
     {
         public EmergencyLightingMenu(EmergencyLighting els)
         {
+            this.ELS = els;
+
             Menu = new UIMenu("Emergency Lighting Settings", "");
             Menu.SetMenuWidthOffset(150);
-            
-            NameItem = new UIMenuStringSelector("Name", els.Name, "Siren setting name as shown in carcols.meta");
-            Menu.AddItem(NameItem);
-            
-            BpmItem = new UIMenuUIntSelector("BPM", els.SequencerBpm, "Beats per minute");
-            Menu.AddItem(BpmItem);
+            Menu.ControlDisablingEnabled = false;
+            Menu.MouseControlsEnabled = false;
+            Menu.AllowCameraMovement = true;
 
-            TextureHashItem = new UIMenuStringSelector("Texture Hash", Utils.TextureHash.HashToString(els.TextureHash));
+            NameItem = new UIMenuStringSelector("Name", ELS.Name, "Siren setting name as shown in carcols.meta");
+            Menu.AddItem(NameItem);
+            NameItem.OnValueChanged += (string name) => ELS.Name = name;
+            
+            BpmItem = new UIMenuUIntSelector("BPM", ELS.SequencerBpm, "Beats per minute");
+            Menu.AddItem(BpmItem);
+            BpmItem.OnValueChanged += (uint bpm) => ELS.SequencerBpm = bpm;
+
+            TextureHashItem = new UIMenuStringSelector("Texture Hash", Utils.TextureHash.HashToString(ELS.TextureHash));
             Menu.AddItem(TextureHashItem);
 
             MenuController.Pool.Add(Menu);
         }
+
+        private void OnNameChanged(UIMenu sender, UIMenuItem menuItem, UIMenuValueEntrySelector<string, UIMenuItem> selector, string value)
+        {
+            ELS.Name = value;
+        }
+
+        public EmergencyLighting ELS { get; }
 
         public UIMenu Menu { get; } 
         public UIMenuStringSelector NameItem { get; } 
