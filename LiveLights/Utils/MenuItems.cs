@@ -12,8 +12,13 @@ namespace RAGENativeUI.Elements
     using Rage.Native;
     using RAGENativeUI;
 
+    internal interface IRefreshableItemWrapper
+    {
+        void RefreshFromData();
+        UIMenuItem MenuItem { get; }
+    }
 
-    internal class UIMenuValueEntrySelector<T, TMenuItem> where TMenuItem : UIMenuItem where T : IEquatable<T>
+    internal class UIMenuValueEntrySelector<T, TMenuItem> : IRefreshableItemWrapper where TMenuItem : UIMenuItem where T : IEquatable<T>
     {
         public static implicit operator UIMenuItem(UIMenuValueEntrySelector<T, TMenuItem> i) => i.MenuItem;
 

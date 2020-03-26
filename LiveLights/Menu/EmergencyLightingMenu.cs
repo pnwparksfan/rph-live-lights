@@ -29,19 +29,27 @@ namespace LiveLights.Menu
             NameItem.OnValueChanged += (string name) => ELS.Name = name;
             
             BpmItem = new UIMenuUIntSelector("BPM", ELS.SequencerBpm, "Beats per minute");
-            Menu.AddItem(BpmItem);
-            // BpmItem.OnValueChanged += (uint bpm) => ELS.SequencerBpm = bpm;
-            BpmItem.SetBindings((x) => ELS.SequencerBpm = x, () => ELS.SequencerBpm);
+            AddMenuDataBinding(BpmItem, (x) => ELS.SequencerBpm = x, () => ELS.SequencerBpm);
 
             TextureHashItem = new UIMenuStringSelector("Texture Hash", Utils.TextureHash.HashToString(ELS.TextureHash));
             Menu.AddItem(TextureHashItem);
 
+            // UIMenuValueEntrySelector<byte, UIMenuListItem> foo = new UIMenuValueEntrySelector<byte, UIMenuListItem>(new UIMenuListItem("blah", "falala"), 1);
+            // AddMenuDataBinding(foo, (x) => ELS.LeftHeadLightMultiples = x, () => ELS.LeftHeadLightMultiples);
+
             MenuController.Pool.Add(Menu);
+        }
+
+        private void AddMenuDataBinding<TMenuItem, TData>(TMenuItem menuItem, Action<TData> menuBinding, Func<TData> dataBinding) where TMenuItem : UIMenuValueEntrySelector<TData, UIMenuItem>, IRefreshableItemWrapper where TData : IEquatable<TData>
+        {
+            menuItem.SetBindings(menuBinding, dataBinding);
+            Menu.AddItem(menuItem.MenuItem);
+            bindings.Add(menuItem);
         }
 
         public EmergencyLighting ELS { get; }
 
-        // private List<UIMenuValueEntrySelector> selectors = new List<RAGENativeUI.Elements.UIMenuValueEntrySelector>();
+        private List<IRefreshableItemWrapper> bindings = new List<IRefreshableItemWrapper>();
 
         public UIMenu Menu { get; } 
         public UIMenuStringSelector NameItem { get; } 
