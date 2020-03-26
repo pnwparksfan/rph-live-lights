@@ -25,9 +25,10 @@ namespace LiveLights.Menu
             Menu.AllowCameraMovement = true;
 
             NameItem = new UIMenuStringSelector("Name", ELS.Name, "Siren setting name as shown in carcols.meta");
-            Menu.AddItem(NameItem);
-            NameItem.OnValueChanged += (string name) => ELS.Name = name;
-            
+            // Menu.AddItem(NameItem);
+            // NameItem.OnValueChanged += (string name) => ELS.Name = name;
+            AddMenuDataBinding(NameItem, (x) => ELS.Name = x, () => ELS.Name);
+
             BpmItem = new UIMenuUIntSelector("BPM", ELS.SequencerBpm, "Beats per minute");
             AddMenuDataBinding(BpmItem, (x) => ELS.SequencerBpm = x, () => ELS.SequencerBpm);
 

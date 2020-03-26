@@ -49,11 +49,19 @@ namespace RAGENativeUI.Elements
 
             set
             {
-                itemValue = value;
+                try
+                {
+                    MenuUpdateBinding?.Invoke(value);
+                    itemValue = value;
+                } catch (Exception e)
+                {
+                    Game.DisplaySubtitle($"Unable to set ~b~{this.MenuItem.Text}~w~ to \"{value}\":~n~~r~{e.Message}", 20000);
+                    return;
+                }
+
                 UpdateMenuDisplay();
                 OnValueEntryChanged?.Invoke(this.MenuItem.Parent, this.MenuItem, this, value);
                 OnValueChanged?.Invoke(value);
-                MenuUpdateBinding?.Invoke(value);
             }
         }
 
