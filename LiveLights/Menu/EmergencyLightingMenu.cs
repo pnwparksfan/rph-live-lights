@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace LiveLights.Menu
 {
     using Rage;
@@ -29,7 +30,8 @@ namespace LiveLights.Menu
             
             BpmItem = new UIMenuUIntSelector("BPM", ELS.SequencerBpm, "Beats per minute");
             Menu.AddItem(BpmItem);
-            BpmItem.OnValueChanged += (uint bpm) => ELS.SequencerBpm = bpm;
+            // BpmItem.OnValueChanged += (uint bpm) => ELS.SequencerBpm = bpm;
+            BpmItem.SetBindings((x) => ELS.SequencerBpm = x, () => ELS.SequencerBpm);
 
             TextureHashItem = new UIMenuStringSelector("Texture Hash", Utils.TextureHash.HashToString(ELS.TextureHash));
             Menu.AddItem(TextureHashItem);
@@ -37,12 +39,9 @@ namespace LiveLights.Menu
             MenuController.Pool.Add(Menu);
         }
 
-        private void OnNameChanged(UIMenu sender, UIMenuItem menuItem, UIMenuValueEntrySelector<string, UIMenuItem> selector, string value)
-        {
-            ELS.Name = value;
-        }
-
         public EmergencyLighting ELS { get; }
+
+        // private List<UIMenuValueEntrySelector> selectors = new List<RAGENativeUI.Elements.UIMenuValueEntrySelector>();
 
         public UIMenu Menu { get; } 
         public UIMenuStringSelector NameItem { get; } 

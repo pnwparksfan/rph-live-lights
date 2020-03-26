@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Linq.Expressions;
 
 namespace RAGENativeUI.Elements
 {
@@ -12,7 +13,7 @@ namespace RAGENativeUI.Elements
     using RAGENativeUI;
 
 
-    internal class UIMenuValueEntrySelector<T, TMenuItem> where TMenuItem : UIMenuItem
+    internal class UIMenuValueEntrySelector<T, TMenuItem> where TMenuItem : UIMenuItem where T : IEquatable<T>
     {
         public static implicit operator UIMenuItem(UIMenuValueEntrySelector<T, TMenuItem> i) => i.MenuItem;
 
@@ -27,6 +28,15 @@ namespace RAGENativeUI.Elements
 
         public UIMenuItem MenuItem { get; }
 
+        public Action<T> MenuUpdateBinding { get; set; }
+        public Func<T> DataUpdateBinding { get; set; }
+
+        public void SetBindings(Action<T> menuBinding, Func<T> dataBinding)
+        {
+            this.MenuUpdateBinding = menuBinding;
+            this.DataUpdateBinding = dataBinding;
+        }
+
         private T itemValue;
         public T ItemValue
         {
@@ -38,6 +48,20 @@ namespace RAGENativeUI.Elements
                 UpdateMenuDisplay();
                 OnValueEntryChanged?.Invoke(this.MenuItem.Parent, this.MenuItem, this, value);
                 OnValueChanged?.Invoke(value);
+                MenuUpdateBinding?.Invoke(value);
+            }
+        }
+
+        public void RefreshFromData()
+        {
+            // Use the itemValue FIELD not the PROPERTY here, because we don't want to 
+            // trigger the data update binding or property changed handlers if the 
+            // value was changed externally rather than through the UI
+            T value = DataUpdateBinding();
+            if(!EqualityComparer<T>.Default.Equals(value, itemValue))
+            {
+                itemValue = value;
+                UpdateMenuDisplay();
             }
         }
 
