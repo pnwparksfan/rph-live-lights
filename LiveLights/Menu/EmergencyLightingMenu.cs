@@ -16,13 +16,23 @@ namespace LiveLights.Menu
         public EmergencyLightingMenu(EmergencyLighting els)
         {
             Menu = new UIMenu("Emergency Lighting Settings", "");
+            
             NameItem = new UIMenuStringSelector("Name", els.Name, "Siren setting name as shown in carcols.meta");
+            Menu.AddItem(NameItem);
+            
             BpmItem = new UIMenuUIntSelector("BPM", els.SequencerBpm, "Beats per minute");
+            Menu.AddItem(BpmItem);
+
+            TextureHashItem = new UIMenuStringSelector("Texture Hash", Utils.TextureHash.HashToString(els.TextureHash));
+            Menu.AddItem(TextureHashItem);
+
+            MenuController.Pool.Add(Menu);
         }
 
         public UIMenu Menu { get; } 
         public UIMenuStringSelector NameItem { get; } 
         public UIMenuUIntSelector BpmItem { get; }
+        public UIMenuStringSelector TextureHashItem { get; }
 
     }
 }

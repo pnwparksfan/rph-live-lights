@@ -59,10 +59,14 @@
     </Compile>
     <Compile Include="CarcolSerializer.cs" />
     <Compile Include="EntryPoint.cs" />
+    <Compile Include="Menu\EmergencyLightingMenu.cs" />
+    <Compile Include="Menu\MenuController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="SirenApply.cs" />
     <Compile Include="SirenSetting.cs" />
+    <Compile Include="Utils\MenuItems.cs" />
+    <Compile Include="Utils\TextureHash.cs" />
     <Compile Include="XMLTesting.cs" />
   </ItemGroup>
   <ItemGroup>

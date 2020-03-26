@@ -11,43 +11,56 @@ namespace RAGENativeUI.Elements
     using Rage.Native;
     using RAGENativeUI;
 
-    internal interface IMenuValueItem<T>
-    {
-        T ItemValue { get; }
-    }
 
-    internal class UIMenuValueEntrySelector<T> : UIMenuItem, IMenuValueItem<T>
+    internal class UIMenuValueEntrySelector<T, TMenuItem> /* : IMenuValueItem<T> */ where TMenuItem : UIMenuItem
     {
-        public UIMenuValueEntrySelector(string text, T value) : base(text)
+        public static implicit operator UIMenuItem(UIMenuValueEntrySelector<T, TMenuItem> i) => i.MenuItem;
+
+        public UIMenuItem MenuItem { get; }
+
+        public UIMenuValueEntrySelector(UIMenuItem menuItem, T value) // : base(text)
+        {
+            this.MenuItem = menuItem;
+            this.ItemValue = value;
+            this.MenuItem.Activated += ActivatedHandler;
+        }
+
+        /*
+        public UIMenuValueEntrySelector(string text, T value, string description) // : base(text, description)
         {
             this.ItemValue = value;
             this.Activated += ActivatedHandler;
         }
+        */
 
-        public UIMenuValueEntrySelector(string text, T value, string description) : base(text, description)
+        private T itemValue;
+        public T ItemValue
         {
-            this.ItemValue = value;
-            this.Activated += ActivatedHandler;
+            get => itemValue;
+
+            set
+            {
+                itemValue = value;
+                UpdateMenuDisplay();
+            }
         }
 
-        public T ItemValue { get; set; }
-        
-        // public object ItemValue => Value;
+        protected virtual void UpdateMenuDisplay() => this.MenuItem.SetRightLabel(DisplayMenu);
+
         protected virtual int MaxInputLength { get; } = 1000;
-        // protected abstract bool ValidateInput(string input, out T value);
-        protected virtual string DisplayMenu => ItemValue.ToString();
+        protected virtual string DisplayMenu => ItemValue?.ToString() ?? "(empty)";
         protected virtual string DisplayInputBox => ItemValue.ToString();
-        public override string RightLabel => DisplayMenu;
+        // public override string RightLabel => DisplayMenu;
 
         protected virtual void ActivatedHandler(UIMenu sender, UIMenuItem selectedItem)
         {
-            string input = GetUserInput(this.Text, DisplayInputBox, this.MaxInputLength);
+            string input = GetUserInput(this.MenuItem.Text, DisplayInputBox, this.MaxInputLength);
             if(input != null && ValidateInput(input, out T parsedValue))
             {
                 ItemValue = parsedValue;
             } else
             {
-                Game.DisplaySubtitle($"The value ~b~{input}~w~ is ~r~invalid~w~ for property ~b~{Text}", 6000);
+                Game.DisplaySubtitle($"The value ~b~{input}~w~ is ~r~invalid~w~ for property ~b~{MenuItem.Text}", 6000);
             }
         }
 
@@ -86,36 +99,12 @@ namespace RAGENativeUI.Elements
         }
     }
 
-    /*
-    internal class UIMenuGenericSelector<T> : UIMenuValueEntrySelector<T>
+    // STRING
+    internal class UIMenuStringSelector : UIMenuValueEntrySelector<string, UIMenuItem>
     {
-      
-        public UIMenuGenericSelector(string text, T value) : base(text, value) { }
-        public UIMenuGenericSelector(string text, T value, string description) : base(text, value, description) { }
-
-        private TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
-
-        protected override bool ValidateInput(string input, out T value)
-        {
-            try
-            {
-                if (converter != null)
-                {
-                    value = (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(input);
-                    return true;
-                }
-            } catch(NotSupportedException) { }
-
-            value = default(T);
-            return false;
-        }
-    }
-    */
-
-    internal class UIMenuStringSelector : UIMenuValueEntrySelector<string>
-    {
-        public UIMenuStringSelector(string text, string value) : base(text, value) { }
-        public UIMenuStringSelector(string text, string value, string description) : base(text, value, description) { }
+        public UIMenuStringSelector(UIMenuItem menuItem, string value) : base(menuItem, value) { }
+        public UIMenuStringSelector(string text, string value) : base(new UIMenuItem(text), value) { }
+        public UIMenuStringSelector(string text, string value, string description) : base(new UIMenuItem(text, description), value) { }
 
         protected override bool ValidateInput(string input, out string value)
         {
@@ -124,34 +113,48 @@ namespace RAGENativeUI.Elements
         }
     }
 
-    internal class UIMenuUIntSelector : UIMenuValueEntrySelector<uint>
+    // UINT (generic)
+    internal class UIMenuUIntSelector<TMenuItem> : UIMenuValueEntrySelector<uint, TMenuItem> where TMenuItem : UIMenuItem
     {
-        public UIMenuUIntSelector(string text, uint value) : base(text, value) { }
-        public UIMenuUIntSelector(string text, uint value, string description) : base(text, value, description) { }
-
+        public UIMenuUIntSelector(TMenuItem menuItem, uint value) : base(menuItem, value) { }
         protected override bool ValidateInput(string input, out uint value) => uint.TryParse(input, out value);
+        protected override int MaxInputLength => uint.MaxValue.ToString().Length;
     }
 
-    internal class UIMenuIntSelector : UIMenuValueEntrySelector<int>
+    // UINT (MenuItem)
+    internal class UIMenuUIntSelector : UIMenuUIntSelector<UIMenuItem>
     {
-        public UIMenuIntSelector(string text, int value) : base(text, value) { }
-        public UIMenuIntSelector(string text, int value, string description) : base(text, value, description) { }
+        public UIMenuUIntSelector(UIMenuItem menuItem, uint value) : base(menuItem, value) { }
+        public UIMenuUIntSelector(string text, uint value) : base(new UIMenuItem(text), value) { }
+        public UIMenuUIntSelector(string text, uint value, string description) : base(new UIMenuItem(text, description), value) { }
+    }
+
+    // INT (generic)
+    internal class UIMenuIntSelector : UIMenuValueEntrySelector<int, UIMenuItem>
+    {
+        public UIMenuIntSelector(UIMenuItem menuItem, int value) : base(menuItem, value) { }
+        public UIMenuIntSelector(string text, int value) : base(new UIMenuItem(text), value) { }
+        public UIMenuIntSelector(string text, int value, string description) : base(new UIMenuItem(text, description), value) { }
 
         protected override bool ValidateInput(string input, out int value) => int.TryParse(input, out value);
+
+        protected override int MaxInputLength => Math.Max(int.MaxValue.ToString().Length, int.MinValue.ToString().Length);
     }
 
-    internal class UIMenuFloatSelector : UIMenuValueEntrySelector<float>
+    internal class UIMenuFloatSelector : UIMenuValueEntrySelector<float, UIMenuItem>
     {
-        public UIMenuFloatSelector(string text, float value) : base(text, value) { }
-        public UIMenuFloatSelector(string text, float value, string description) : base(text, value, description) { }
+        public UIMenuFloatSelector(UIMenuItem menuItem, float value) : base(menuItem, value) { }
+        public UIMenuFloatSelector(string text, float value) : base(new UIMenuItem(text), value) { }
+        public UIMenuFloatSelector(string text, float value, string description) : base(new UIMenuItem(text, description), value) { }
 
         protected override bool ValidateInput(string input, out float value) => float.TryParse(input, out value);
     }
 
-    internal class UIMenuVector3Selector : UIMenuValueEntrySelector<Vector3>
+    internal class UIMenuVector3Selector : UIMenuValueEntrySelector<Vector3, UIMenuItem>
     {
-        public UIMenuVector3Selector(string text, Vector3 value) : base(text, value) { }
-        public UIMenuVector3Selector(string text, Vector3 value, string description) : base(text, value, description) { }
+        public UIMenuVector3Selector(UIMenuItem menuItem, Vector3 value) : base(menuItem, value) { }
+        public UIMenuVector3Selector(string text, Vector3 value) : base(new UIMenuItem(text), value) { }
+        public UIMenuVector3Selector(string text, Vector3 value, string description) : base(new UIMenuItem(text, description), value) { }
 
         protected override string DisplayInputBox => string.Format("{0},{1},{2}", ItemValue.X, ItemValue.Y, ItemValue.Z);
 
@@ -175,15 +178,5 @@ namespace RAGENativeUI.Elements
 
             return success;
         }
-
-        
-    }
-
-    internal class UIMenuCheckBoxValueItem : UIMenuCheckboxItem, IMenuValueItem<bool>
-    {
-        public bool ItemValue => this.Checked;
-
-        public UIMenuCheckBoxValueItem(string text, bool check) : base(text, check) {}
-        public UIMenuCheckBoxValueItem(string text, bool check, string description) : base(text, check, description) { }
     }
 }
