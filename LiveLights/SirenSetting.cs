@@ -50,35 +50,15 @@ namespace LiveLights
         [XmlElement("lightOffset")]
         public ValueItem<float> LightOffset { get; set; } = 0f;
 
-        private const string defaultLightTexture = "VehicleLight_sirenlight";
-
         [XmlElement("textureName")]
-        public string TextureName { get; set; } = defaultLightTexture;
+        public string TextureName { get; set; } = Utils.TextureHash.defaultLightTexture;
 
         [XmlIgnore]
         public uint TextureHash
         {
-            get
-            {
-                try
-                {
-                    return Convert.ToUInt32(TextureName, 16);
-                } catch(FormatException)
-                {
-                    return Game.GetHashKey(TextureName);
-                }
-            }
+            get => Utils.TextureHash.StringToHash(TextureName);
 
-            set 
-            {
-                if(value == Game.GetHashKey(defaultLightTexture))
-                {
-                    TextureName = defaultLightTexture;
-                } else
-                {
-                    TextureName = string.Format("0x{0:X8}", value);
-                }
-            }
+            set => TextureName = Utils.TextureHash.HashToString(value);
         }
 
         [XmlElement("sequencerBpm")]
