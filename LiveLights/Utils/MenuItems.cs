@@ -112,7 +112,7 @@ namespace RAGENativeUI.Elements
         {
             NativeFunction.Natives.DISABLE_ALL_CONTROL_ACTIONS(2);
 
-            NativeFunction.Natives.DISPLAY_ONSCREEN_KEYBOARD(true, windowTitle, 0, defaultText, 0, 0, 0, maxLength + 1);
+            NativeFunction.Natives.DISPLAY_ONSCREEN_KEYBOARD(true, windowTitle, 0, defaultText, 0, 0, 0, maxLength);
 
             while (NativeFunction.Natives.UPDATE_ONSCREEN_KEYBOARD<int>() == 0)
             {
@@ -155,6 +155,10 @@ namespace RAGENativeUI.Elements
             value = input;
             return true;
         }
+
+        protected override int MaxInputLength => MaxLength;
+        
+        public int MaxLength { get; set; }
     }
 
     // UINT 
@@ -197,7 +201,15 @@ namespace RAGENativeUI.Elements
         // public override UIMenuItem MenuItem => ListMenuItem;
         public UIMenuCustomListItem<T> ListMenuItem => MenuItem as UIMenuCustomListItem<T>;
 
-        public UIMenuListItemSelector(UIMenuCustomListItem<T> menuItem, T value) : base(menuItem, value) { }
+        public UIMenuListItemSelector(UIMenuCustomListItem<T> menuItem, T value) : base(menuItem, value) 
+        {
+            ListMenuItem.OnListChanged += OnSelectionChanged;
+        }
+
+        private void OnSelectionChanged(UIMenuItem sender, int newIndex)
+        {
+            this.ItemValue = ListMenuItem.Value;
+        }
 
         /*
         protected override void UpdateMenuDisplay()

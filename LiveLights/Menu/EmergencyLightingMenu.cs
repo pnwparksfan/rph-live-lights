@@ -19,7 +19,7 @@ namespace LiveLights.Menu
             this.ELS = els;
 
             Menu = new UIMenu("Emergency Lighting Settings", "");
-            Menu.SetMenuWidthOffset(150);
+            Menu.SetMenuWidthOffset(250);
             Menu.ControlDisablingEnabled = true;
             Menu.MouseControlsEnabled = false;
             Menu.AllowCameraMovement = true;
@@ -37,6 +37,16 @@ namespace LiveLights.Menu
 
             LeftHeadlightMultiplesItem = new UIMenuListItemSelector<byte>(new UIMenuCustomListItem<byte>("Front Left Multiples", "Left headlight multiples per flash", Enumerable.Range(1, 4).Select(x => (byte)x).ToArray()), els.LeftHeadLightMultiples);
             AddMenuDataBinding(LeftHeadlightMultiplesItem, (x) => ELS.LeftHeadLightMultiples = x, () => ELS.LeftHeadLightMultiples);
+
+            LeftHeadlightSequenceItem = new UIMenuStringSelector("Front Left Sequence", ELS.LeftHeadLightSequence, "Left headlight flash pattern sequence") { MaxLength = 32 };
+            AddMenuDataBinding(LeftHeadlightSequenceItem, (x) => ELS.LeftHeadLightSequence = x, () => ELS.LeftHeadLightSequence);
+
+            RightHeadlightMultiplesItem = new UIMenuListItemSelector<byte>(new UIMenuCustomListItem<byte>("Front Right Multiples", "Right headlight multiples per flash", Enumerable.Range(1, 4).Select(x => (byte)x).ToArray()), els.RightHeadLightMultiples);
+            AddMenuDataBinding(RightHeadlightMultiplesItem, (x) => ELS.RightHeadLightMultiples = x, () => ELS.RightHeadLightMultiples);
+
+            RightHeadlightSequenceItem = new UIMenuStringSelector("Front Right Sequence", ELS.RightHeadLightSequence, "Right headlight flash pattern sequence") { MaxLength = 32 };
+            AddMenuDataBinding(RightHeadlightSequenceItem, (x) => ELS.RightHeadLightSequence = x, () => ELS.RightHeadLightSequence);
+
 
             MenuController.Pool.Add(Menu);
         }
@@ -58,6 +68,10 @@ namespace LiveLights.Menu
         public UIMenuStringSelector TextureHashItem { get; }
 
         public UIMenuListItemSelector<byte> LeftHeadlightMultiplesItem { get; }
+        public UIMenuStringSelector LeftHeadlightSequenceItem { get; }
+
+        public UIMenuListItemSelector<byte> RightHeadlightMultiplesItem { get; }
+        public UIMenuStringSelector RightHeadlightSequenceItem { get; }
 
     }
 }
