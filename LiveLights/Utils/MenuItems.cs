@@ -136,7 +136,7 @@ namespace RAGENativeUI.Elements
                     return true;
                 }
             }
-            catch (NotSupportedException) { }
+            catch (Exception) { }
 
             value = default(T);
             return false;
@@ -193,17 +193,17 @@ namespace RAGENativeUI.Elements
 
     internal class UIMenuListItemSelector<T> : UIMenuValueEntrySelector<T> where T : IEquatable<T>
     {
-        public UIMenuListItem ListMenuItem => MenuItem as UIMenuListItem;
+        // public UIMenuListItem ListMenuItem => MenuItem as UIMenuListItem;
         // public override UIMenuItem MenuItem => ListMenuItem;
+        public UIMenuCustomListItem<T> ListMenuItem => MenuItem as UIMenuCustomListItem<T>;
 
-        public UIMenuListItemSelector(UIMenuListItem menuItem, T value) : base(menuItem, value) { }
+        public UIMenuListItemSelector(UIMenuCustomListItem<T> menuItem, T value) : base(menuItem, value) { }
 
         protected override void UpdateMenuDisplay()
         {
-            if(ListMenuItem.SelectedItem.DisplayText != DisplayMenu)
+            if (!EqualityComparer<T>.Default.Equals(ListMenuItem.Value, ItemValue))
             {
-                // find if any match
-                // if none match, add one
+                ListMenuItem.Value = ItemValue;
             }
         }
     }
@@ -236,6 +236,79 @@ namespace RAGENativeUI.Elements
             }
 
             return success;
+        }
+    }
+
+    internal class UIMenuCustomListItem<T> : UIMenuListItem // where T : class
+    {
+        public T Value
+        {
+            get => (T)SelectedItem.Value;
+            set
+            {
+                IDisplayItem existingItem = this.Collection.FirstOrDefault(x => x.Value.Equals(value));
+                if(existingItem != null)
+                {
+                    this.Index = this.Collection.IndexOf(existingItem);
+                    if(this.Collection.Contains(customItem))
+                    {
+                        this.Collection.Remove(customItem);
+                    }
+                } else if(AddNewItems)
+                {
+                    this.Collection.Add(NewItemGenerator(value));
+                    this.Index = this.Collection.Count;
+                } else
+                {
+                    if(!this.Collection.Contains(customItem))
+                    {
+                        this.Collection.Add(customItem);
+                    }
+                    customItem.ItemValue = value;
+                    this.Index = this.Collection.IndexOf(customItem);
+                }
+            }
+        }
+
+        /*
+        public bool SelectItem(IDisplayItem item)
+        {
+            if (this.Collection.Contains(item))
+            {
+                this.Index = this.Collection.IndexOf(item);
+                return true;
+            }
+            return false;
+        }
+        */
+
+        public bool AddNewItems => (NewItemGenerator != null); // { get; } = false;
+
+        public Func<T, IDisplayItem> NewItemGenerator { get; private set; } = null;
+
+        public void SetAddNewItems(Func<T, IDisplayItem> generator)
+        {
+            this.NewItemGenerator = generator;
+        }
+
+        private CustomDisplayItem customItem = new CustomDisplayItem();
+
+        private class CustomDisplayItem : IDisplayItem
+        {
+            public T ItemValue { get; set; }
+
+            public object Value => (T)ItemValue;
+
+            public string DisplayText => $"Custom: {ItemValue}";
+
+            public bool Equals(IDisplayItem other) => other.GetHashCode().Equals(this.GetHashCode());
+        }
+
+        public UIMenuCustomListItem(string text, string description) : base(text, description) { }
+        public UIMenuCustomListItem(string text, string description, IEnumerable<IDisplayItem> items) : base(text, description, items) { }
+        public UIMenuCustomListItem(string text, string description, IEnumerable<T> items) : base(text, description, items.Select(x => (object)x).ToArray()) 
+        {
+            Game.LogTrivialDebug(this.Collection.Count + " items in collection");
         }
     }
 }

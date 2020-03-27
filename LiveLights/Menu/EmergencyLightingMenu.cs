@@ -20,7 +20,7 @@ namespace LiveLights.Menu
 
             Menu = new UIMenu("Emergency Lighting Settings", "");
             Menu.SetMenuWidthOffset(150);
-            Menu.ControlDisablingEnabled = false;
+            Menu.ControlDisablingEnabled = true;
             Menu.MouseControlsEnabled = false;
             Menu.AllowCameraMovement = true;
 
@@ -35,8 +35,10 @@ namespace LiveLights.Menu
             TextureHashItem = new UIMenuStringSelector("Texture Hash", Utils.TextureHash.HashToString(ELS.TextureHash));
             Menu.AddItem(TextureHashItem);
 
-            MultiplesItem = new UIMenuValueEntrySelector<byte>(new UIMenuListItem("Multiples", "Left headlight multiples", Enumerable.Range(byte.MinValue, byte.MaxValue).Select(x => (object)x).ToArray()), 1);
-            AddMenuDataBinding(MultiplesItem, (x) => ELS.LeftHeadLightMultiples = x, () => ELS.LeftHeadLightMultiples);
+            // MultiplesItem = new UIMenuValueEntrySelector<byte>(new UIMenuListItem("Multiples", "Left headlight multiples", Enumerable.Range(byte.MinValue, byte.MaxValue).Select(x => (object)x).ToArray()), 1);
+            // AddMenuDataBinding(MultiplesItem, (x) => ELS.LeftHeadLightMultiples = x, () => ELS.LeftHeadLightMultiples);
+            UIMenuListItemSelector<byte> byteMultiplesSelector = new UIMenuListItemSelector<byte>(new UIMenuCustomListItem<byte>("Front Left Multiples", "Left headlight multiples per flash", Enumerable.Range(1, 8).Select(x => (byte)x).ToArray()), 69);
+            AddMenuDataBinding(byteMultiplesSelector, (x) => ELS.LeftHeadLightMultiples = x, () => ELS.LeftHeadLightMultiples);
 
             MenuController.Pool.Add(Menu);
         }
