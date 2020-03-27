@@ -35,10 +35,8 @@ namespace LiveLights.Menu
             TextureHashItem = new UIMenuStringSelector("Texture Hash", Utils.TextureHash.HashToString(ELS.TextureHash));
             Menu.AddItem(TextureHashItem);
 
-            // MultiplesItem = new UIMenuValueEntrySelector<byte>(new UIMenuListItem("Multiples", "Left headlight multiples", Enumerable.Range(byte.MinValue, byte.MaxValue).Select(x => (object)x).ToArray()), 1);
-            // AddMenuDataBinding(MultiplesItem, (x) => ELS.LeftHeadLightMultiples = x, () => ELS.LeftHeadLightMultiples);
-            UIMenuListItemSelector<byte> byteMultiplesSelector = new UIMenuListItemSelector<byte>(new UIMenuCustomListItem<byte>("Front Left Multiples", "Left headlight multiples per flash", Enumerable.Range(1, 8).Select(x => (byte)x).ToArray()), 69);
-            AddMenuDataBinding(byteMultiplesSelector, (x) => ELS.LeftHeadLightMultiples = x, () => ELS.LeftHeadLightMultiples);
+            LeftHeadlightMultiplesItem = new UIMenuListItemSelector<byte>(new UIMenuCustomListItem<byte>("Front Left Multiples", "Left headlight multiples per flash", Enumerable.Range(1, 4).Select(x => (byte)x).ToArray()), els.LeftHeadLightMultiples);
+            AddMenuDataBinding(LeftHeadlightMultiplesItem, (x) => ELS.LeftHeadLightMultiples = x, () => ELS.LeftHeadLightMultiples);
 
             MenuController.Pool.Add(Menu);
         }
@@ -59,7 +57,7 @@ namespace LiveLights.Menu
         public UIMenuUIntSelector BpmItem { get; }
         public UIMenuStringSelector TextureHashItem { get; }
 
-        public UIMenuValueEntrySelector<byte> MultiplesItem { get; }
+        public UIMenuListItemSelector<byte> LeftHeadlightMultiplesItem { get; }
 
     }
 }

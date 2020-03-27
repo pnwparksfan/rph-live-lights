@@ -42,7 +42,7 @@ namespace RAGENativeUI.Elements
             this.DataUpdateBinding = dataBinding;
         }
 
-        private T itemValue;
+        protected virtual T itemValue { get; set; }
         public T ItemValue
         {
             get => itemValue;
@@ -199,12 +199,21 @@ namespace RAGENativeUI.Elements
 
         public UIMenuListItemSelector(UIMenuCustomListItem<T> menuItem, T value) : base(menuItem, value) { }
 
+        /*
         protected override void UpdateMenuDisplay()
         {
             if (!EqualityComparer<T>.Default.Equals(ListMenuItem.Value, ItemValue))
             {
                 ListMenuItem.Value = ItemValue;
             }
+        }
+        */
+        protected override void UpdateMenuDisplay() { }
+
+        protected override T itemValue 
+        { 
+            get => ListMenuItem.Value; 
+            set => ListMenuItem.Value = value; 
         }
     }
 
@@ -246,69 +255,42 @@ namespace RAGENativeUI.Elements
             get => (T)SelectedItem.Value;
             set
             {
-                IDisplayItem existingItem = this.Collection.FirstOrDefault(x => x.Value.Equals(value));
-                if(existingItem != null)
+                // Only remove custom item if it's not the default value, in case default value was in the original items list
+                if(!EqualityComparer<T>.Default.Equals(customItemValue, default(T)) && this.Collection.Contains(customItemValue))
                 {
-                    this.Index = this.Collection.IndexOf(existingItem);
-                    if(this.Collection.Contains(customItem))
-                    {
-                        this.Collection.Remove(customItem);
-                    }
+                    this.Collection.Remove(customItemValue);
+                }
+
+                if (Collection.Contains(value))
+                {
+                    this.Index = this.Collection.IndexOf(value);
+                    
                 } else if(AddNewItems)
                 {
-                    this.Collection.Add(NewItemGenerator(value));
-                    this.Index = this.Collection.Count;
+                    this.Collection.Add(value, NewItemGenerator(value));
+                    this.Index = (this.Collection.Count - 1);
                 } else
                 {
-                    if(!this.Collection.Contains(customItem))
-                    {
-                        this.Collection.Add(customItem);
-                    }
-                    customItem.ItemValue = value;
-                    this.Index = this.Collection.IndexOf(customItem);
+                    customItemValue = value;
+                    this.Collection.Add(value, $"Custom: {value}");
+                    this.Index = (this.Collection.Count - 1);
                 }
             }
         }
 
-        /*
-        public bool SelectItem(IDisplayItem item)
-        {
-            if (this.Collection.Contains(item))
-            {
-                this.Index = this.Collection.IndexOf(item);
-                return true;
-            }
-            return false;
-        }
-        */
-
         public bool AddNewItems => (NewItemGenerator != null); // { get; } = false;
 
-        public Func<T, IDisplayItem> NewItemGenerator { get; private set; } = null;
+        public Func<T, string> NewItemGenerator { get; private set; } = null;
 
-        public void SetAddNewItems(Func<T, IDisplayItem> generator)
+        public void SetAddNewItems(Func<T, string> generator)
         {
             this.NewItemGenerator = generator;
         }
 
-        private CustomDisplayItem customItem = new CustomDisplayItem();
-
-        private class CustomDisplayItem : IDisplayItem
-        {
-            public T ItemValue { get; set; }
-
-            public object Value => (T)ItemValue;
-
-            public string DisplayText => $"Custom: {ItemValue}";
-
-            public bool Equals(IDisplayItem other) => other.GetHashCode().Equals(this.GetHashCode());
-        }
+        private T customItemValue;
 
         public UIMenuCustomListItem(string text, string description) : base(text, description) { }
         public UIMenuCustomListItem(string text, string description, IEnumerable<IDisplayItem> items) : base(text, description, items) { }
-        public UIMenuCustomListItem(string text, string description, IEnumerable<T> items) : base(text, description, items.Select(x => (object)x).ToArray()) 
-        {
-            Game.LogTrivialDebug(this.Collection.Count + " items in collection");
-        }
+        public UIMenuCustomListItem(string text, string description, IEnumerable<T> items) : base(text, description, items.Select(x => (object)x).ToArray())  { }
     }
 }
