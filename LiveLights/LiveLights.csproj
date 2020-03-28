@@ -60,6 +60,7 @@
     </Compile>
     <Compile Include="CarcolSerializer.cs" />
     <Compile Include="EntryPoint.cs" />
+    <Compile Include="Menu\CommonSelectionItems.cs" />
     <Compile Include="Menu\EmergencyLightingMenu.cs" />
     <Compile Include="Menu\EmergencyLightMenu.cs" />
     <Compile Include="Menu\MenuController.cs" />
