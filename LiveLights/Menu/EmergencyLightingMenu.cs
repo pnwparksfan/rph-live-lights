@@ -102,7 +102,7 @@ namespace LiveLights.Menu
             Menu.AddItem(SirensMenuItem, 3);
             SirensMenuItem.Activated += onSirenSubmenuActivated;
             SirenMenus = new List<EmergencyLightMenu>();
-            
+
             // Create each siren menu
             for (int i = 0; i < 20; i++)
             {
@@ -116,13 +116,13 @@ namespace LiveLights.Menu
 
             // Create switcher and add to menus
             // This has to be after the for loop above because all the menus need to be created before the switcher can be created
-            SirenSwitcherItem = new UIMenuSwitchMenusItem("Siren", "Select the siren to edit", SirenMenus);
+            SirenSwitcherItem = new UIMenuSwitchSelectable("Siren", "Select the siren to edit", SirenMenus);
             foreach (var sirenMenu in SirenMenus)
             {
                 sirenMenu.Menu.AddItem(SirenSwitcherItem, 0);
                 sirenMenu.Menu.RefreshIndex();
             }
-            
+
             // Final stuff
 
             RefreshItem = new UIMenuItem("Refresh Siren Setting Data", "Refreshes the menu with the siren setting data for the current vehicle. Use this if the data may have been changed outside the menu.");
@@ -140,14 +140,14 @@ namespace LiveLights.Menu
             sender.Visible = false;
             // UIMenu selectedSubMenu = (UIMenu)(SirenSwitcherItem.SelectedValue);
             // SirenSwitcherItem.Index = SirenSwitcherItem.Index;
-            SirenSwitcherItem.CurrentMenu.Visible = true;
+            SirenSwitcherItem.SwitchMenuItem.CurrentMenu.Visible = true;
         }
 
         public EmergencyLighting ELS { get; }
 
         // Core lighting settings
-        public UIMenuRefreshable Menu { get; } 
-        public UIMenuStringSelector NameItem { get; } 
+        public UIMenuRefreshable Menu { get; }
+        public UIMenuStringSelector NameItem { get; }
         public UIMenuUIntSelector BpmItem { get; }
         public UIMenuListItemSelector<string> TextureHashItem { get; }
         public UIMenuListItemSelector<float> TimeMultiplierItem { get; }
@@ -177,7 +177,9 @@ namespace LiveLights.Menu
 
         // Sirens menu
         public UIMenuItem SirensMenuItem { get; }
-        public UIMenuSwitchMenusItem SirenSwitcherItem { get; }
+        // public UIMenuSwitchMenusItem SirenSwitcherItem { get; }
+
+        public UIMenuSwitchSelectable SirenSwitcherItem { get; }
 
         private List<EmergencyLightMenu> SirenMenus { get; }
 

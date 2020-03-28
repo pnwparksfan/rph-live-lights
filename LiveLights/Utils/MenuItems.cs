@@ -44,8 +44,8 @@ namespace RAGENativeUI.Elements
 
         public virtual UIMenuItem MenuItem { get; }
 
-        public Action<T> MenuUpdateBinding { get; set; }
-        public Func<T> DataUpdateBinding { get; set; }
+        public Action<T> MenuUpdateBinding { get; set; } = null;
+        public Func<T> DataUpdateBinding { get; set; } = null;
 
         public void SetBindings(Action<T> menuBinding, Func<T> dataBinding)
         {
@@ -113,7 +113,7 @@ namespace RAGENativeUI.Elements
             if(input != null && ValidateInput(input, out T parsedValue))
             {
                 ItemValue = parsedValue;
-            } else
+            } else if(input != null)
             {
                 Game.DisplaySubtitle($"The value ~b~{input}~w~ is ~r~invalid~w~ for property ~b~{MenuItem.Text}", 6000);
             }
@@ -273,6 +273,28 @@ namespace RAGENativeUI.Elements
         {
             get => ListMenuItem.Value;
             set => ListMenuItem.Value = value;
+        }
+    }
+
+    internal class UIMenuSwitchSelectable : UIMenuValueEntrySelector<int>
+    {
+        public UIMenuSwitchSelectable(string text, string description, IEnumerable<UIMenu> menus) : base(new UIMenuSwitchMenusItem(text, description, menus), 1) { }
+
+        public UIMenuSwitchSelectable(string text, string description, IEnumerable<IDisplayItem> menus) : base(new UIMenuSwitchMenusItem(text, description, menus), 1) { }
+
+        public UIMenuSwitchMenusItem SwitchMenuItem => (UIMenuSwitchMenusItem)MenuItem;
+
+        protected override void UpdateMenuDisplay() { }
+        protected override int MaxInputLength => SwitchMenuItem.Collection.Count.ToString().Length;
+        protected override bool ValidateInput(string input, out int value)
+        {
+            return int.TryParse(input, out value) && value >= 1 && value <= SwitchMenuItem.Collection.Count;
+        }
+
+        protected override int itemValue 
+        { 
+            get => SwitchMenuItem.Index + 1; 
+            set => SwitchMenuItem.Index = (value - 1); 
         }
     }
 
