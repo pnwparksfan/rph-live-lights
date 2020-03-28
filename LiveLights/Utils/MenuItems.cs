@@ -39,6 +39,7 @@ namespace RAGENativeUI.Elements
             this.MenuItem = menuItem;
             this.ItemValue = value;
             this.MenuItem.Activated += ActivatedHandler;
+            this.MenuItem.Description += "\n Press ~b~ENTER~w~ to set custom value";
         }
 
         public virtual UIMenuItem MenuItem { get; }

@@ -62,7 +62,7 @@ namespace LiveLights.Menu
 
             HeadlightsMenu = new UIMenuRefreshable(Menu.Title.Caption, "~b~Headlights");
             HeadlightsMenuItem = new UIMenuItem("Headlights", "Modify headlight sequences and multipliers");
-            Menu.AddItem(HeadlightsMenuItem);
+            Menu.AddItem(HeadlightsMenuItem, 3);
             Menu.BindMenuAndCopyProperties(HeadlightsMenu, HeadlightsMenuItem);
 
             LeftHeadlightMultiplesItem = new UIMenuListItemSelector<byte>("Front Left Multiples", "Left headlight multiples per flash", ELS.LeftHeadLightMultiples, Enumerable.Range(1, 4).Select(x => (byte)x));
@@ -77,6 +77,26 @@ namespace LiveLights.Menu
             RightHeadlightSequenceItem = new UIMenuStringSelector("Front Right Sequence", ELS.RightHeadLightSequence, "Right headlight flash pattern sequence") { MaxLength = 32 };
             HeadlightsMenu.AddMenuDataBinding(RightHeadlightSequenceItem, (x) => ELS.RightHeadLightSequence = x, () => ELS.RightHeadLightSequence);
 
+            // Taillights
+
+            TaillightsMenu = new UIMenuRefreshable(Menu.Title.Caption, "~b~Taillights");
+            TaillightsMenuItem = new UIMenuItem("Taillights", "Modify Taillight sequences and multipliers");
+            Menu.AddItem(TaillightsMenuItem, 4);
+            Menu.BindMenuAndCopyProperties(TaillightsMenu, TaillightsMenuItem);
+
+            LeftTaillightMultiplesItem = new UIMenuListItemSelector<byte>("Front Left Multiples", "Left Taillight multiples per flash", ELS.LeftTailLightMultiples, Enumerable.Range(1, 4).Select(x => (byte)x));
+            TaillightsMenu.AddMenuDataBinding(LeftTaillightMultiplesItem, (x) => ELS.LeftTailLightMultiples = x, () => ELS.LeftTailLightMultiples);
+
+            LeftTaillightSequenceItem = new UIMenuStringSelector("Front Left Sequence", ELS.LeftTailLightSequence, "Left Taillight flash pattern sequence") { MaxLength = 32 };
+            TaillightsMenu.AddMenuDataBinding(LeftTaillightSequenceItem, (x) => ELS.LeftTailLightSequence = x, () => ELS.LeftTailLightSequence);
+
+            RightTaillightMultiplesItem = new UIMenuListItemSelector<byte>("Front Right Multiples", "Right Taillight multiples per flash", ELS.RightTailLightMultiples, Enumerable.Range(1, 4).Select(x => (byte)x));
+            TaillightsMenu.AddMenuDataBinding(RightTaillightMultiplesItem, (x) => ELS.RightTailLightMultiples = x, () => ELS.RightTailLightMultiples);
+
+            RightTaillightSequenceItem = new UIMenuStringSelector("Front Right Sequence", ELS.RightTailLightSequence, "Right Taillight flash pattern sequence") { MaxLength = 32 };
+            TaillightsMenu.AddMenuDataBinding(RightTaillightSequenceItem, (x) => ELS.RightTailLightSequence = x, () => ELS.RightTailLightSequence);
+
+
             // Final stuff
 
             RefreshItem = new UIMenuItem("Refresh Siren Setting Data", "Refreshes the menu with the siren setting data for the current vehicle. Use this if the data may have been changed outside the menu.");
@@ -84,6 +104,7 @@ namespace LiveLights.Menu
 
             MenuController.Pool.Add(Menu);
             MenuController.Pool.Add(HeadlightsMenu);
+            MenuController.Pool.Add(TaillightsMenu);
 
             Menu.RefreshIndex();
         }
@@ -112,6 +133,12 @@ namespace LiveLights.Menu
         public UIMenuListItemSelector<byte> RightHeadlightMultiplesItem { get; }
         public UIMenuStringSelector RightHeadlightSequenceItem { get; }
 
-
+        // Taillights menu 
+        public UIMenuItem TaillightsMenuItem { get; }
+        public UIMenuRefreshable TaillightsMenu { get; }
+        public UIMenuListItemSelector<byte> LeftTaillightMultiplesItem { get; }
+        public UIMenuStringSelector LeftTaillightSequenceItem { get; }
+        public UIMenuListItemSelector<byte> RightTaillightMultiplesItem { get; }
+        public UIMenuStringSelector RightTaillightSequenceItem { get; }
     }
 }
