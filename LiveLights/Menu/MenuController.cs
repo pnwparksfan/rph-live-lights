@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace LiveLights.Menu
 {
@@ -19,18 +20,25 @@ namespace LiveLights.Menu
 
         internal static void Process()
         {
+            if(Game.IsKeyDown(Keys.Multiply))
+            {
+                menu.Menu.Visible = !menu.Menu.Visible;
+            }
             Pool.ProcessMenus();
         }
 
+        private static EmergencyLightingMenu menu;
+
         [ConsoleCommand]
-        private static void TestMenu()
+        private static void StartMenu()
         {
             Vehicle v = Game.LocalPlayer.Character.CurrentVehicle;
             EmergencyLighting els = v.GetELSForVehicle();
-            EmergencyLightingMenu menu = new EmergencyLightingMenu(els);
-            menu.Menu.Visible = true;
+            menu = new EmergencyLightingMenu(els);
+            // menu.Menu.Visible = true;
 
-            GameFiber.ExecuteNewWhile(Process, () => menu.Menu.Visible);
+            GameFiber.ExecuteNewWhile(Process, () => v);
+            Game.LogTrivial("Menu process exited");
         }
     }
 }

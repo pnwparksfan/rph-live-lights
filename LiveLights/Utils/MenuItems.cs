@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 
 namespace RAGENativeUI.Elements
 {
+    using System.Drawing;
     using Rage;
     using Rage.Native;
     using RAGENativeUI;
@@ -347,6 +348,70 @@ namespace RAGENativeUI.Elements
         {
             MenuUpdateBinding = menuBinding;
             DataUpdateBinding = dataBinding;
+        }
+    }
+
+    internal class UIMenuRefreshable : UIMenu
+    {
+        public UIMenuRefreshable(string title, string subtitle) : base(title, subtitle)
+        {
+        }
+
+        public UIMenuRefreshable(string title, string subtitle, Point offset) : base(title, subtitle, offset)
+        {
+        }
+
+        public UIMenuRefreshable(string title, string subtitle, Point offset, Texture customBanner) : base(title, subtitle, offset, customBanner)
+        {
+        }
+
+        public UIMenuRefreshable(string title, string subtitle, Point offset, string spriteLibrary, string spriteName) : base(title, subtitle, offset, spriteLibrary, spriteName)
+        {
+        }
+
+        private List<IRefreshableItemWrapper> bindings = new List<IRefreshableItemWrapper>();
+
+        public void AddMenuDataBinding<TMenuItem, TData>(TMenuItem menuItem, Action<TData> menuBinding, Func<TData> dataBinding) where TMenuItem : IRefreshableBindingWrapper<TData> where TData : IEquatable<TData>
+        {
+            menuItem.SetBindings(menuBinding, dataBinding);
+            this.AddItem(menuItem.MenuItem);
+            bindings.Add(menuItem);
+        }
+
+        public void RefreshData(bool refreshSubMenus = true)
+        {
+            foreach (var binding in bindings)
+            {
+                // Check if the bound item is still in the menu, in case it was removed
+                if(MenuItems.Contains(binding.MenuItem))
+                {
+                    binding.RefreshFromData();
+                }
+            }
+
+            if(refreshSubMenus)
+            {
+                foreach (var subMenu in Children)
+                {
+                    if (subMenu.Value is UIMenuRefreshable)
+                    {
+                        ((UIMenuRefreshable)subMenu.Value).RefreshData(true);
+                    }
+                }
+            }
+        }
+    }
+
+    internal static class MenuExtensions
+    {
+        public static void BindMenuAndCopyProperties(this UIMenu parentMenu, UIMenu menuToBind, UIMenuItem itemToBindTo)
+        {
+            parentMenu.BindMenuToItem(menuToBind, itemToBindTo);
+            menuToBind.SetMenuWidthOffset(parentMenu.WidthOffset);
+            menuToBind.ControlDisablingEnabled = parentMenu.ControlDisablingEnabled;
+            menuToBind.MouseControlsEnabled = parentMenu.MouseControlsEnabled;
+            menuToBind.MouseEdgeEnabled = parentMenu.MouseEdgeEnabled;
+            menuToBind.AllowCameraMovement = parentMenu.AllowCameraMovement;
         }
     }
 }
