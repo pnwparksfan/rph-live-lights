@@ -110,10 +110,10 @@ namespace LiveLights.Menu
             for (int i = 0; i < 20; i++)
             {
                 EmergencyLightMenu sirenMenu = new EmergencyLightMenu(ELS, i);
-                Menu.CopyMenuProperties(sirenMenu.Menu);
                 sirenMenu.Menu.ParentItem = SirensMenuItem;
                 sirenMenu.Menu.ParentMenu = Menu;
-                MenuController.Pool.Add(sirenMenu.Menu);
+                Menu.CopyMenuProperties(sirenMenu.Menu, true);
+                MenuController.Pool.AddMenuAndSubMenusToPool(sirenMenu.Menu);
                 SirenMenus.Add(sirenMenu);
             }
 

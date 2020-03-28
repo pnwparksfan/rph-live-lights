@@ -22,9 +22,33 @@ namespace LiveLights.Menu
             this.SirenID = (i + 1);
 
             Menu = new UIMenuRefreshable("Edit Siren", $"~b~Siren Setting \"{els.Name}\" > {DisplayText}");
+            
+            // Set up flashiness sub-menu
+            FlashinessMenu = new UIMenuRefreshable(Menu.Title.Caption, Menu.Subtitle.Caption + " > Flashiness");
+            FlashinessMenuItem = new UIMenuItem("Flashiness Settings", "Configure sequence, multiples, angle, and other settings for ~y~flashing~w~ light");
+            FlashinessMenuItem.SetRightLabel("→");
+            Menu.AddItem(FlashinessMenuItem);
+            Menu.BindMenuToItem(FlashinessMenu, FlashinessMenuItem);
 
-            FlashSequenceItem = new UIMenuStringSelector("Flash Sequence", Siren.FlashinessSequence, $"32-bit flash sequence for siren {SirenID}. 1 represents on, 0 represents off.");
-            Menu.AddMenuDataBinding(FlashSequenceItem, (x) => Siren.FlashinessSequence = x, () => Siren.FlashinessSequence);
+            // Set up rotation sub-menu
+            RotationMenu = new UIMenuRefreshable(Menu.Title.Caption, Menu.Subtitle.Caption + " > Rotation");
+            RotationMenuItem = new UIMenuItem("Rotation Settings", "Configure sequence, multiples, angle, and other settings for ~y~rotating~w~ light");
+            RotationMenuItem.SetRightLabel("→");
+            Menu.AddItem(RotationMenuItem);
+            Menu.BindMenuToItem(RotationMenu, RotationMenuItem);
+
+            // Set up corona sub-menu
+            CoronaMenu = new UIMenuRefreshable(Menu.Title.Caption, Menu.Subtitle.Caption + " > Corona");
+            CoronaMenuItem = new UIMenuItem("Corona Settings", "Configure size, intensity, and other corona settings");
+            CoronaMenuItem.SetRightLabel("→");
+            Menu.AddItem(CoronaMenuItem);
+            Menu.BindMenuToItem(CoronaMenu, CoronaMenuItem);
+
+
+            FlashSequenceItem = new UIMenuStringSelector("Flash Sequence", Siren.FlashinessSequence, $"32-bit flash sequence for siren {SirenID}. ~g~1~w~ represents on, ~y~0~w~ represents off.");
+            FlashinessMenu.AddMenuDataBinding(FlashSequenceItem, (x) => Siren.FlashinessSequence = x, () => Siren.FlashinessSequence);
+
+            
         }
 
         public EmergencyLight Siren { get; }
@@ -42,8 +66,19 @@ namespace LiveLights.Menu
 
         public override int GetHashCode() => Siren.GetHashCode();
 
-        // Siren settings
+        // Flashing submenu
+        public UIMenuRefreshable FlashinessMenu { get; }
+        public UIMenuItem FlashinessMenuItem { get; }
         public UIMenuStringSelector FlashSequenceItem { get; }
+
+        // Rotation submenu
+        public UIMenuRefreshable RotationMenu { get; }
+        public UIMenuItem RotationMenuItem { get; }
+
+        // Corona submenu
+        public UIMenuRefreshable CoronaMenu { get; }
+        public UIMenuItem CoronaMenuItem { get; }
+
 
     }
 }

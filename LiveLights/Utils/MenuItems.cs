@@ -427,19 +427,42 @@ namespace RAGENativeUI.Elements
 
     internal static class MenuExtensions
     {
-        public static void BindMenuAndCopyProperties(this UIMenu parentMenu, UIMenu menuToBind, UIMenuItem itemToBindTo)
+        public static void BindMenuAndCopyProperties(this UIMenu parentMenu, UIMenu menuToBind, UIMenuItem itemToBindTo, bool recursiveCopyProperties = true)
         {
             parentMenu.BindMenuToItem(menuToBind, itemToBindTo);
             parentMenu.CopyMenuProperties(menuToBind);
         }
 
-        public static void CopyMenuProperties(this UIMenu parentMenu, UIMenu newMenu)
+        public static void CopyMenuProperties(this UIMenu parentMenu, UIMenu newMenu, bool recursive = true)
         {
             newMenu.SetMenuWidthOffset(parentMenu.WidthOffset);
             newMenu.ControlDisablingEnabled = parentMenu.ControlDisablingEnabled;
             newMenu.MouseControlsEnabled = parentMenu.MouseControlsEnabled;
             newMenu.MouseEdgeEnabled = parentMenu.MouseEdgeEnabled;
             newMenu.AllowCameraMovement = parentMenu.AllowCameraMovement;
+
+            if(recursive)
+            {
+                foreach (UIMenu subMenu in newMenu.Children.Values)
+                {
+                    newMenu.CopyMenuProperties(subMenu, true);
+                }
+            }
+        }
+
+        public static void AddMenuAndSubMenusToPool(this MenuPool pool, UIMenu menu)
+        {
+            if(!pool.Contains(menu))
+            {
+                pool.Add(menu);
+            }
+
+            foreach (UIMenu subMenu in menu.Children.Values)
+            {
+                // Don't need to call pool.Add here because it'll 
+                // get called above when the function recurses
+                pool.AddMenuAndSubMenusToPool(subMenu);
+            }
         }
     }
 }
