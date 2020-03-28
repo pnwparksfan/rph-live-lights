@@ -99,26 +99,30 @@ namespace LiveLights.Menu
             // Sirens 
 
             SirensMenuItem = new UIMenuItem("Sirens", "Edit sequences and other settings for individual sirens");
-            SirenSwitcherItem = new UIMenuSwitchMenusItem("Siren", "Select the siren to edit", new UIMenu[] { new UIMenu("Dummy Menu", "") });
             Menu.AddItem(SirensMenuItem, 3);
-            SirenSwitcherItem.Collection.Clear();
-            // Add each siren
+            SirensMenuItem.Activated += onSirenSubmenuActivated;
+            SirenMenus = new List<EmergencyLightMenu>();
+            
+            // Create each siren menu
             for (int i = 0; i < 20; i++)
             {
-                EmergencyLightMenu sirenMenu = new EmergencyLightMenu(ELS, i, SirenSwitcherItem);
+                EmergencyLightMenu sirenMenu = new EmergencyLightMenu(ELS, i);
                 Menu.CopyMenuProperties(sirenMenu.Menu);
                 sirenMenu.Menu.ParentItem = SirensMenuItem;
                 sirenMenu.Menu.ParentMenu = Menu;
-                if(i == 0)
-                {
-                    Menu.BindMenuToItem(sirenMenu.Menu, SirensMenuItem);
-                }
                 MenuController.Pool.Add(sirenMenu.Menu);
+                SirenMenus.Add(sirenMenu);
             }
 
+            // Create switcher and add to menus
+            // This has to be after the for loop above because all the menus need to be created before the switcher can be created
+            SirenSwitcherItem = new UIMenuSwitchMenusItem("Siren", "Select the siren to edit", SirenMenus);
+            foreach (var sirenMenu in SirenMenus)
+            {
+                sirenMenu.Menu.AddItem(SirenSwitcherItem, 0);
+                sirenMenu.Menu.RefreshIndex();
+            }
             
-
-
             // Final stuff
 
             RefreshItem = new UIMenuItem("Refresh Siren Setting Data", "Refreshes the menu with the siren setting data for the current vehicle. Use this if the data may have been changed outside the menu.");
@@ -130,7 +134,15 @@ namespace LiveLights.Menu
 
             Menu.RefreshIndex();
         }
-        
+
+        private void onSirenSubmenuActivated(UIMenu sender, UIMenuItem selectedItem)
+        {
+            sender.Visible = false;
+            // UIMenu selectedSubMenu = (UIMenu)(SirenSwitcherItem.SelectedValue);
+            // SirenSwitcherItem.Index = SirenSwitcherItem.Index;
+            SirenSwitcherItem.CurrentMenu.Visible = true;
+        }
+
         public EmergencyLighting ELS { get; }
 
         // Core lighting settings
@@ -166,5 +178,9 @@ namespace LiveLights.Menu
         // Sirens menu
         public UIMenuItem SirensMenuItem { get; }
         public UIMenuSwitchMenusItem SirenSwitcherItem { get; }
+
+        private List<EmergencyLightMenu> SirenMenus { get; }
+
+        public EmergencyLightMenu[] SirenSubMenus => SirenMenus.ToArray();
     }
 }

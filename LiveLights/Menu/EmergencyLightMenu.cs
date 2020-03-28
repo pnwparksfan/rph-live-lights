@@ -16,14 +16,12 @@ namespace LiveLights.Menu
     {
         public int SirenID { get; }
         
-        public EmergencyLightMenu(EmergencyLighting els, int i, UIMenuSwitchMenusItem switcher)
+        public EmergencyLightMenu(EmergencyLighting els, int i)
         {
             this.Siren = els.Lights[i];
             this.SirenID = (i + 1);
 
-            Menu = new UIMenuRefreshable("Edit Siren", $"~b~{DisplayText}");
-            Menu.AddItem(switcher);
-            switcher.Collection.Add(this.Menu, this.DisplayText);
+            Menu = new UIMenuRefreshable("Edit Siren", $"~b~Siren Setting \"{els.Name}\" > {DisplayText}");
 
             FlashSequenceItem = new UIMenuStringSelector("Flash Sequence", Siren.FlashinessSequence, $"32-bit flash sequence for siren {SirenID}. 1 represents on, 0 represents off.");
             Menu.AddMenuDataBinding(FlashSequenceItem, (x) => Siren.FlashinessSequence = x, () => Siren.FlashinessSequence);
