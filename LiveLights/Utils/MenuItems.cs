@@ -195,40 +195,6 @@ namespace RAGENativeUI.Elements
         protected override bool ValidateInput(string input, out float value) => float.TryParse(input, out value);
     }
 
-    internal class UIMenuListItemSelector<T> : UIMenuValueEntrySelector<T> where T : IEquatable<T>
-    {
-        // public UIMenuListItem ListMenuItem => MenuItem as UIMenuListItem;
-        // public override UIMenuItem MenuItem => ListMenuItem;
-        public UIMenuCustomListItem<T> ListMenuItem => MenuItem as UIMenuCustomListItem<T>;
-
-        public UIMenuListItemSelector(UIMenuCustomListItem<T> menuItem, T value) : base(menuItem, value) 
-        {
-            ListMenuItem.OnListChanged += OnSelectionChanged;
-        }
-
-        private void OnSelectionChanged(UIMenuItem sender, int newIndex)
-        {
-            this.ItemValue = ListMenuItem.Value;
-        }
-
-        /*
-        protected override void UpdateMenuDisplay()
-        {
-            if (!EqualityComparer<T>.Default.Equals(ListMenuItem.Value, ItemValue))
-            {
-                ListMenuItem.Value = ItemValue;
-            }
-        }
-        */
-        protected override void UpdateMenuDisplay() { }
-
-        protected override T itemValue 
-        { 
-            get => ListMenuItem.Value; 
-            set => ListMenuItem.Value = value; 
-        }
-    }
-
     // VECTOR3
     internal class UIMenuVector3Selector : UIMenuValueEntrySelector<Vector3>
     {
@@ -257,6 +223,45 @@ namespace RAGENativeUI.Elements
             }
 
             return success;
+        }
+    }
+
+    // CUSTOM-EDIT LIST SELECTOR
+    internal class UIMenuListItemSelector<T> : UIMenuValueEntrySelector<T> where T : IEquatable<T>
+    {
+        // public UIMenuListItem ListMenuItem => MenuItem as UIMenuListItem;
+        // public override UIMenuItem MenuItem => ListMenuItem;
+        public UIMenuCustomListItem<T> ListMenuItem => MenuItem as UIMenuCustomListItem<T>;
+
+        public UIMenuListItemSelector(string text, string description, T value, params T[] items) : this(new UIMenuCustomListItem<T>(text, description, items), value) { }
+
+        public UIMenuListItemSelector(string text, string description, T value, IEnumerable<T> items) : this(new UIMenuCustomListItem<T>(text, description, items), value) { }
+
+        public UIMenuListItemSelector(UIMenuCustomListItem<T> menuItem, T value) : base(menuItem, value)
+        {
+            ListMenuItem.OnListChanged += OnSelectionChanged;
+        }
+
+        private void OnSelectionChanged(UIMenuItem sender, int newIndex)
+        {
+            this.ItemValue = ListMenuItem.Value;
+        }
+
+        /*
+        protected override void UpdateMenuDisplay()
+        {
+            if (!EqualityComparer<T>.Default.Equals(ListMenuItem.Value, ItemValue))
+            {
+                ListMenuItem.Value = ItemValue;
+            }
+        }
+        */
+        protected override void UpdateMenuDisplay() { }
+
+        protected override T itemValue
+        {
+            get => ListMenuItem.Value;
+            set => ListMenuItem.Value = value;
         }
     }
 
