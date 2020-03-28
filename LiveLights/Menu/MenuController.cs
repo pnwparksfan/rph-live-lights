@@ -22,6 +22,10 @@ namespace LiveLights.Menu
         {
             if(Game.IsKeyDown(Keys.Multiply))
             {
+                if(!menu.Menu.Visible)
+                {
+                    menu.Menu.RefreshData();
+                }
                 menu.Menu.Visible = !menu.Menu.Visible;
             }
             Pool.ProcessMenus();

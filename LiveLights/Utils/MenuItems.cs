@@ -353,21 +353,13 @@ namespace RAGENativeUI.Elements
 
     internal class UIMenuRefreshable : UIMenu
     {
-        public UIMenuRefreshable(string title, string subtitle) : base(title, subtitle)
-        {
-        }
+        public UIMenuRefreshable(string title, string subtitle) : base(title, subtitle) { }
 
-        public UIMenuRefreshable(string title, string subtitle, Point offset) : base(title, subtitle, offset)
-        {
-        }
+        public UIMenuRefreshable(string title, string subtitle, Point offset) : base(title, subtitle, offset) { }
 
-        public UIMenuRefreshable(string title, string subtitle, Point offset, Texture customBanner) : base(title, subtitle, offset, customBanner)
-        {
-        }
+        public UIMenuRefreshable(string title, string subtitle, Point offset, Texture customBanner) : base(title, subtitle, offset, customBanner) { }
 
-        public UIMenuRefreshable(string title, string subtitle, Point offset, string spriteLibrary, string spriteName) : base(title, subtitle, offset, spriteLibrary, spriteName)
-        {
-        }
+        public UIMenuRefreshable(string title, string subtitle, Point offset, string spriteLibrary, string spriteName) : base(title, subtitle, offset, spriteLibrary, spriteName) { }
 
         private List<IRefreshableItemWrapper> bindings = new List<IRefreshableItemWrapper>();
 
@@ -400,6 +392,14 @@ namespace RAGENativeUI.Elements
                 }
             }
         }
+
+        public void AddRefreshItem(UIMenuItem item)
+        {
+            this.AddItem(item);
+            item.Activated += onRefreshActivated;
+        }
+
+        private void onRefreshActivated(UIMenu sender, UIMenuItem selectedItem) => this.RefreshData(true);
     }
 
     internal static class MenuExtensions

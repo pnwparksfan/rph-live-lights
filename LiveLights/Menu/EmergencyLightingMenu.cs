@@ -77,6 +77,11 @@ namespace LiveLights.Menu
             RightHeadlightSequenceItem = new UIMenuStringSelector("Front Right Sequence", ELS.RightHeadLightSequence, "Right headlight flash pattern sequence") { MaxLength = 32 };
             HeadlightsMenu.AddMenuDataBinding(RightHeadlightSequenceItem, (x) => ELS.RightHeadLightSequence = x, () => ELS.RightHeadLightSequence);
 
+            // Final stuff
+
+            RefreshItem = new UIMenuItem("Refresh Siren Setting Data", "Refreshes the menu with the siren setting data for the current vehicle. Use this if the data may have been changed outside the menu.");
+            Menu.AddRefreshItem(RefreshItem);
+
             MenuController.Pool.Add(Menu);
             MenuController.Pool.Add(HeadlightsMenu);
 
@@ -97,6 +102,7 @@ namespace LiveLights.Menu
         public UIMenuListItemSelector<float> OuterConeAngleItem { get; }
         public UIMenuRefreshableCheckboxItem RealLightsItem { get; }
         public UIMenuFloatSelector LightOffsetItem { get; }
+        public UIMenuItem RefreshItem { get; }
 
         // Headlights menu
         public UIMenuItem HeadlightsMenuItem { get; }
