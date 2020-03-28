@@ -45,26 +45,29 @@ namespace LiveLights.Menu
             Menu.BindMenuToItem(CoronaMenu, CoronaMenuItem);
 
             // Flashiness menu items
-            FlashEnabledItem = new UIMenuRefreshableCheckboxItem("Flash Enabled", Siren.Flash, "Enable/disable this siren from flashing. Note: setting to False for a siren which was previously on may result in the siren being stuck on temporarily. Cycle siren off/on to reset.");
+            FlashEnabledItem = new UIMenuRefreshableCheckboxItem("Flash Enabled", Siren.Flash, "Enable/disable this siren from flashing. Note: setting to False for a siren which was previously on may result in the siren being stuck on temporarily. Toggle vehicle's sirens off/on to reset.");
             FlashinessMenu.AddMenuDataBinding(FlashEnabledItem, (x) => Siren.Flash = x, () => Siren.Flash);
             
             FlashSequenceItem = new UIMenuStringSelector("Flash Sequence", Siren.FlashinessSequence, $"32-bit flash sequence for siren {SirenID}. ~g~1~w~ represents on, ~y~0~w~ represents off.") { MaxLength = 32 };
-            FlashinessMenu.AddMenuDataBinding(FlashSequenceItem, (x) => Siren.FlashinessSequence = x, () => Siren.FlashinessSequence);
+            FlashinessMenu.AddMenuDataBinding(FlashSequenceItem, (x) => Siren.FlashinessSequence = x, () => Siren.FlashinessSequence, () => FlashSequenceRawItem);
 
             FlashSequenceRawItem = new UIMenuUIntSelector("Flash Sequence (raw)", Siren.FlashinessSequenceRaw, "32-bit unsigned integer representation of siren sequence. This value is how the sequence is represented in carcols.meta. Automatically updates/updated by binary formatted sequence above.");
-            FlashinessMenu.AddMenuDataBinding(FlashSequenceRawItem, (x) => Siren.FlashinessSequenceRaw = x, () => Siren.FlashinessSequenceRaw);
+            FlashinessMenu.AddMenuDataBinding(FlashSequenceRawItem, (x) => Siren.FlashinessSequenceRaw = x, () => Siren.FlashinessSequenceRaw, () => FlashSequenceItem);
 
             FlashMultiplesItem = new UIMenuListItemSelector<byte>("Flash Multiples", "How many times the corona flashes for each sequence step the light is on", Siren.FlashinessMultiples, CommonSelectionItems.MultiplesBytes);
             FlashinessMenu.AddMenuDataBinding(FlashMultiplesItem, (x) => Siren.FlashinessMultiples = x, () => Siren.FlashinessMultiples);
 
             FlashDeltaItem = new UIMenuListItemSelector<float>("Flash Delta", "Angle the light should flash at", Siren.FlashinessDelta, CommonSelectionItems.UnitCircleDegrees);
-            FlashinessMenu.AddMenuDataBinding(FlashDeltaItem, (x) => Siren.FlashinessDelta = x, () => Siren.FlashinessDelta);
+            FlashinessMenu.AddMenuDataBinding(FlashDeltaItem, (x) => Siren.FlashinessDelta = x, () => Siren.FlashinessDelta, () => FlashDeltaRadItem);
 
             FlashDeltaRadItem = new UIMenuFloatSelector("Flash Delta (Radians)", MathHelper.ConvertDegreesToRadians(Siren.FlashinessDelta), "Angle the light should flash at in radians");
-            FlashinessMenu.AddMenuDataBinding(FlashDeltaRadItem, (x) => Siren.FlashinessDelta = MathHelper.ConvertRadiansToDegrees(x), () => MathHelper.ConvertDegreesToRadians(Siren.FlashinessDelta));
+            FlashinessMenu.AddMenuDataBinding(FlashDeltaRadItem, (x) => Siren.FlashinessDelta = MathHelper.ConvertRadiansToDegrees(x), () => MathHelper.ConvertDegreesToRadians(Siren.FlashinessDelta), () => FlashDeltaItem);
 
             FlashStartItem = new UIMenuListItemSelector<float>("Flash Start", "Starting rotation angle of the light (usually 0 for flashing sirens)", Siren.FlashinessStart, CommonSelectionItems.UnitCircleDegrees);
-            FlashinessMenu.AddMenuDataBinding(FlashStartItem, (x) => Siren.FlashinessStart = x, () => Siren.FlashinessStart);
+            FlashinessMenu.AddMenuDataBinding(FlashStartItem, (x) => Siren.FlashinessStart = x, () => Siren.FlashinessStart, () => FlashStartRadItem);
+
+            FlashStartRadItem = new UIMenuFloatSelector("Flash Start (Radians)", MathHelper.ConvertDegreesToRadians(Siren.FlashinessStart), "Starting rotation angle of the light in radians");
+            FlashinessMenu.AddMenuDataBinding(FlashStartRadItem, (x) => Siren.FlashinessStart = MathHelper.ConvertRadiansToDegrees(x), () => MathHelper.ConvertDegreesToRadians(Siren.FlashinessStart), () => FlashStartItem);
 
             FlashSpeedItem = new UIMenuFloatSelector("Flash Speed", Siren.FlashinessSpeed, "How fast the light flashes within each beat");
             FlashinessMenu.AddMenuDataBinding(FlashSpeedItem, (x) => Siren.FlashinessSpeed = x, () => Siren.FlashinessSpeed);

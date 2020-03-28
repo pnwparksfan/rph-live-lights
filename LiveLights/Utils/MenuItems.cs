@@ -394,6 +394,18 @@ namespace RAGENativeUI.Elements
             bindings.Add(menuItem);
         }
 
+        public void AddMenuDataBinding<TMenuItem, TData>(TMenuItem menuItem, Action<TData> menuBinding, Func<TData> dataBinding, Func<IRefreshableItemWrapper> relatedItem) where TMenuItem : IRefreshableBindingWrapper<TData> where TData : IEquatable<TData>
+        {
+            menuItem.SetBindings(
+                (x) => {
+                    menuBinding(x);                     // Update this item's data from the menu
+                    relatedItem()?.RefreshFromData();   // Update the related item's data from the source
+                }, () => dataBinding());
+
+            this.AddItem(menuItem.MenuItem);
+            bindings.Add(menuItem);
+        }
+
         // This is used when a submenu isn't directly registered (specifically for 
         // the case of a submenu which uses a menu selector) and is manually configured
         // but still needs to be updated when the parent menu is updated
