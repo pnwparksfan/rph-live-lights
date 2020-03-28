@@ -12,13 +12,22 @@ namespace RAGENativeUI.Elements
     using Rage.Native;
     using RAGENativeUI;
 
+    // This needs to be a separate non-generic interface so we can have a List<IRefreshableItemWrapper>
+    // which calls RefreshFromData() without knowing what the data types are
     internal interface IRefreshableItemWrapper
     {
         void RefreshFromData();
         UIMenuItem MenuItem { get; }
     }
 
-    internal class UIMenuValueEntrySelector<T> : IRefreshableItemWrapper where T : IEquatable<T>
+    internal interface IRefreshableBindingWrapper<T> : IRefreshableItemWrapper
+    {
+        Action<T> MenuUpdateBinding { get; set; }
+        Func<T> DataUpdateBinding { get; set; }
+        void SetBindings(Action<T> menuBinding, Func<T> dataBinding);
+    }
+
+    internal class UIMenuValueEntrySelector<T> : IRefreshableBindingWrapper<T> where T : IEquatable<T>
     {
         public static implicit operator UIMenuItem(UIMenuValueEntrySelector<T> i) => i.MenuItem;
 
@@ -309,5 +318,35 @@ namespace RAGENativeUI.Elements
         public UIMenuCustomListItem(string text, string description) : base(text, description) { }
         public UIMenuCustomListItem(string text, string description, IEnumerable<IDisplayItem> items) : base(text, description, items) { }
         public UIMenuCustomListItem(string text, string description, IEnumerable<T> items) : base(text, description, items.Select(x => (object)x).ToArray())  { }
+    }
+
+    internal class UIMenuRefreshableCheckboxItem : UIMenuCheckboxItem, IRefreshableBindingWrapper<bool>
+    {
+        public UIMenuRefreshableCheckboxItem(string text, bool check, string description) : base(text, check, description)
+        {
+            this.CheckboxEvent += onValueChanged;
+        }
+
+        // Whenever the user changes the checkbox, trigger the menu update binding with the new value
+        private void onValueChanged(UIMenuCheckboxItem sender, bool Checked)
+        {
+            MenuUpdateBinding(Checked);
+        }
+
+        public Action<bool> MenuUpdateBinding { get; set; }
+        public Func<bool> DataUpdateBinding { get; set; }
+
+        public UIMenuItem MenuItem => this;
+
+        public void RefreshFromData()
+        {
+            this.Checked = DataUpdateBinding();
+        }
+
+        public void SetBindings(Action<bool> menuBinding, Func<bool> dataBinding)
+        {
+            MenuUpdateBinding = menuBinding;
+            DataUpdateBinding = dataBinding;
+        }
     }
 }

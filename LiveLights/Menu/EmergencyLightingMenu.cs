@@ -52,6 +52,9 @@ namespace LiveLights.Menu
             OuterConeAngleItem = new UIMenuListItemSelector<float>("Outer Cone Angle", "Outer angle of environmental lighting cone emitted from sirens", ELS.LightOuterConeAngle, 30f, 40f, 50f, 60f, 70f, 80f, 90f);
             AddMenuDataBinding(OuterConeAngleItem, (x) => ELS.LightOuterConeAngle = x, () => ELS.LightOuterConeAngle);
 
+            RealLightsItem = new UIMenuRefreshableCheckboxItem("Use Real Lights", ELS.UseRealLights, "Configured whether to use real lights (exact effect unknown)");
+            AddMenuDataBinding(RealLightsItem, (x) => ELS.UseRealLights = x, () => ELS.UseRealLights);
+
             LeftHeadlightMultiplesItem = new UIMenuListItemSelector<byte>("Front Left Multiples", "Left headlight multiples per flash", ELS.LeftHeadLightMultiples, Enumerable.Range(1, 4).Select(x => (byte)x));
             AddMenuDataBinding(LeftHeadlightMultiplesItem, (x) => ELS.LeftHeadLightMultiples = x, () => ELS.LeftHeadLightMultiples);
 
@@ -67,7 +70,7 @@ namespace LiveLights.Menu
             MenuController.Pool.Add(Menu);
         }
 
-        private void AddMenuDataBinding<TMenuItem, TData>(TMenuItem menuItem, Action<TData> menuBinding, Func<TData> dataBinding) where TMenuItem : UIMenuValueEntrySelector<TData>, IRefreshableItemWrapper where TData : IEquatable<TData>
+        private void AddMenuDataBinding<TMenuItem, TData>(TMenuItem menuItem, Action<TData> menuBinding, Func<TData> dataBinding) where TMenuItem : IRefreshableBindingWrapper<TData> where TData : IEquatable<TData>
         {
             menuItem.SetBindings(menuBinding, dataBinding);
             Menu.AddItem(menuItem.MenuItem);
@@ -91,7 +94,7 @@ namespace LiveLights.Menu
         public UIMenuListItemSelector<float> FalloffExponentItem { get; }
         public UIMenuListItemSelector<float> InnerConeAngleItem { get; }
         public UIMenuListItemSelector<float> OuterConeAngleItem { get; }
-
+        public UIMenuRefreshableCheckboxItem RealLightsItem { get; }
 
     }
 }
