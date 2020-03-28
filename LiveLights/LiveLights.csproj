@@ -61,6 +61,7 @@
     <Compile Include="CarcolSerializer.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="Menu\EmergencyLightingMenu.cs" />
+    <Compile Include="Menu\EmergencyLightMenu.cs" />
     <Compile Include="Menu\MenuController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer.cs" />

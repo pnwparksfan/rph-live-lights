@@ -168,8 +168,8 @@ namespace RAGENativeUI.Elements
         }
 
         protected override int MaxInputLength => MaxLength;
-        
-        public int MaxLength { get; set; }
+
+        public int MaxLength { get; set; } = 1000;
     }
 
     // UINT 
@@ -408,11 +408,16 @@ namespace RAGENativeUI.Elements
         public static void BindMenuAndCopyProperties(this UIMenu parentMenu, UIMenu menuToBind, UIMenuItem itemToBindTo)
         {
             parentMenu.BindMenuToItem(menuToBind, itemToBindTo);
-            menuToBind.SetMenuWidthOffset(parentMenu.WidthOffset);
-            menuToBind.ControlDisablingEnabled = parentMenu.ControlDisablingEnabled;
-            menuToBind.MouseControlsEnabled = parentMenu.MouseControlsEnabled;
-            menuToBind.MouseEdgeEnabled = parentMenu.MouseEdgeEnabled;
-            menuToBind.AllowCameraMovement = parentMenu.AllowCameraMovement;
+            parentMenu.CopyMenuProperties(menuToBind);
+        }
+
+        public static void CopyMenuProperties(this UIMenu parentMenu, UIMenu newMenu)
+        {
+            newMenu.SetMenuWidthOffset(parentMenu.WidthOffset);
+            newMenu.ControlDisablingEnabled = parentMenu.ControlDisablingEnabled;
+            newMenu.MouseControlsEnabled = parentMenu.MouseControlsEnabled;
+            newMenu.MouseEdgeEnabled = parentMenu.MouseEdgeEnabled;
+            newMenu.AllowCameraMovement = parentMenu.AllowCameraMovement;
         }
     }
 }

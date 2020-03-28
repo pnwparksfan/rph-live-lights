@@ -96,6 +96,28 @@ namespace LiveLights.Menu
             RightTaillightSequenceItem = new UIMenuStringSelector("Front Right Sequence", ELS.RightTailLightSequence, "Right Taillight flash pattern sequence") { MaxLength = 32 };
             TaillightsMenu.AddMenuDataBinding(RightTaillightSequenceItem, (x) => ELS.RightTailLightSequence = x, () => ELS.RightTailLightSequence);
 
+            // Sirens 
+
+            SirensMenuItem = new UIMenuItem("Sirens", "Edit sequences and other settings for individual sirens");
+            SirenSwitcherItem = new UIMenuSwitchMenusItem("Siren", "Select the siren to edit", new UIMenu[] { new UIMenu("Dummy Menu", "") });
+            Menu.AddItem(SirensMenuItem, 3);
+            SirenSwitcherItem.Collection.Clear();
+            // Add each siren
+            for (int i = 0; i < 20; i++)
+            {
+                EmergencyLightMenu sirenMenu = new EmergencyLightMenu(ELS, i, SirenSwitcherItem);
+                Menu.CopyMenuProperties(sirenMenu.Menu);
+                sirenMenu.Menu.ParentItem = SirensMenuItem;
+                sirenMenu.Menu.ParentMenu = Menu;
+                if(i == 0)
+                {
+                    Menu.BindMenuToItem(sirenMenu.Menu, SirensMenuItem);
+                }
+                MenuController.Pool.Add(sirenMenu.Menu);
+            }
+
+            
+
 
             // Final stuff
 
@@ -140,5 +162,9 @@ namespace LiveLights.Menu
         public UIMenuStringSelector LeftTaillightSequenceItem { get; }
         public UIMenuListItemSelector<byte> RightTaillightMultiplesItem { get; }
         public UIMenuStringSelector RightTaillightSequenceItem { get; }
+
+        // Sirens menu
+        public UIMenuItem SirensMenuItem { get; }
+        public UIMenuSwitchMenusItem SirenSwitcherItem { get; }
     }
 }
