@@ -385,12 +385,24 @@ namespace RAGENativeUI.Elements
         public UIMenuRefreshable(string title, string subtitle, Point offset, string spriteLibrary, string spriteName) : base(title, subtitle, offset, spriteLibrary, spriteName) { }
 
         private List<IRefreshableItemWrapper> bindings = new List<IRefreshableItemWrapper>();
+        private List<UIMenuRefreshable> menuBindings = new List<UIMenuRefreshable>();
 
         public void AddMenuDataBinding<TMenuItem, TData>(TMenuItem menuItem, Action<TData> menuBinding, Func<TData> dataBinding) where TMenuItem : IRefreshableBindingWrapper<TData> where TData : IEquatable<TData>
         {
             menuItem.SetBindings(menuBinding, dataBinding);
             this.AddItem(menuItem.MenuItem);
             bindings.Add(menuItem);
+        }
+
+        // This is used when a submenu isn't directly registered (specifically for 
+        // the case of a submenu which uses a menu selector) and is manually configured
+        // but still needs to be updated when the parent menu is updated
+        public void AddSubMenuBinding(UIMenuRefreshable subMenu) 
+        {
+            if(subMenu.ParentMenu == this)
+            {
+                menuBindings.Add(subMenu);
+            }
         }
 
         public void RefreshData(bool refreshSubMenus = true)
@@ -412,6 +424,10 @@ namespace RAGENativeUI.Elements
                     {
                         ((UIMenuRefreshable)subMenu.Value).RefreshData(true);
                     }
+                }
+                foreach (var subMenu in menuBindings)
+                {
+                    subMenu.RefreshData();
                 }
             }
         }

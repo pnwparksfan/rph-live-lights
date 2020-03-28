@@ -112,6 +112,7 @@ namespace LiveLights.Menu
                 EmergencyLightMenu sirenMenu = new EmergencyLightMenu(ELS, i);
                 sirenMenu.Menu.ParentItem = SirensMenuItem;
                 sirenMenu.Menu.ParentMenu = Menu;
+                Menu.AddSubMenuBinding(sirenMenu.Menu);
                 Menu.CopyMenuProperties(sirenMenu.Menu, true);
                 MenuController.Pool.AddMenuAndSubMenusToPool(sirenMenu.Menu);
                 SirenMenus.Add(sirenMenu);
