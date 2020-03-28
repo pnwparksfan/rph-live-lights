@@ -62,6 +62,7 @@ namespace LiveLights.Menu
 
             HeadlightsMenu = new UIMenuRefreshable(Menu.Title.Caption, "~b~Headlights");
             HeadlightsMenuItem = new UIMenuItem("Headlights", "Modify headlight sequences and multipliers");
+            HeadlightsMenuItem.SetRightLabel("→");
             Menu.AddItem(HeadlightsMenuItem, 3);
             Menu.BindMenuAndCopyProperties(HeadlightsMenu, HeadlightsMenuItem);
 
@@ -81,6 +82,7 @@ namespace LiveLights.Menu
 
             TaillightsMenu = new UIMenuRefreshable(Menu.Title.Caption, "~b~Taillights");
             TaillightsMenuItem = new UIMenuItem("Taillights", "Modify Taillight sequences and multipliers");
+            TaillightsMenuItem.SetRightLabel("→");
             Menu.AddItem(TaillightsMenuItem, 4);
             Menu.BindMenuAndCopyProperties(TaillightsMenu, TaillightsMenuItem);
 
@@ -99,6 +101,7 @@ namespace LiveLights.Menu
             // Sirens 
 
             SirensMenuItem = new UIMenuItem("Sirens", "Edit sequences and other settings for individual sirens");
+            SirensMenuItem.SetRightLabel("→");
             Menu.AddItem(SirensMenuItem, 3);
             SirensMenuItem.Activated += onSirenSubmenuActivated;
             SirenMenus = new List<EmergencyLightMenu>();
@@ -138,8 +141,6 @@ namespace LiveLights.Menu
         private void onSirenSubmenuActivated(UIMenu sender, UIMenuItem selectedItem)
         {
             sender.Visible = false;
-            // UIMenu selectedSubMenu = (UIMenu)(SirenSwitcherItem.SelectedValue);
-            // SirenSwitcherItem.Index = SirenSwitcherItem.Index;
             SirenSwitcherItem.SwitchMenuItem.CurrentMenu.Visible = true;
         }
 
@@ -177,7 +178,6 @@ namespace LiveLights.Menu
 
         // Sirens menu
         public UIMenuItem SirensMenuItem { get; }
-        // public UIMenuSwitchMenusItem SirenSwitcherItem { get; }
 
         public UIMenuSwitchSelectable SirenSwitcherItem { get; }
 
