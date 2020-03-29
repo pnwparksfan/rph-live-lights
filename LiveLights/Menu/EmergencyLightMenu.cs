@@ -112,6 +112,38 @@ namespace LiveLights.Menu
             RotationSyncBpmItem = new UIMenuRefreshableCheckboxItem("Sync Rotation to BPM", Siren.RotationSynchronizeToBpm, "Sync Rotation pattern to BPM");
             RotationMenu.AddMenuDataBinding(RotationSyncBpmItem, (x) => Siren.RotationSynchronizeToBpm = x, () => Siren.RotationSynchronizeToBpm);
 
+            // Corona menu items
+            CoronaIntensityItem = new UIMenuFloatSelector("Corona Intensity", Siren.CoronaIntensity, "Brightness/intensity of the corona for this siren");
+            CoronaMenu.AddMenuDataBinding(CoronaIntensityItem, (x) => Siren.CoronaIntensity = x, () => Siren.CoronaIntensity);
+
+            CoronaSizeItem = new UIMenuFloatSelector("Corona Size", Siren.CoronaSize, "Size of corona for this siren");
+            CoronaMenu.AddMenuDataBinding(CoronaSizeItem, (x) => Siren.CoronaSize = x, () => Siren.CoronaSize);
+
+            CoronaPullItem = new UIMenuFloatSelector("Corona Pull", Siren.CoronaPull, "Corona pull (effect not documented)");
+            CoronaMenu.AddMenuDataBinding(CoronaPullItem, (x) => Siren.CoronaPull = x, () => Siren.CoronaPull);
+
+            CoronaFaceCameraItem = new UIMenuRefreshableCheckboxItem("Corona Face Camera", Siren.CoronaFaceCamera, "Enable/disable corona to always be visible regardless of camera angle");
+            CoronaMenu.AddMenuDataBinding(CoronaFaceCameraItem, (x) => Siren.CoronaFaceCamera = x, () => Siren.CoronaFaceCamera);
+
+            // Remaining main menu items
+            ScaleToggleItem = new UIMenuRefreshableCheckboxItem("Scale Sirens", Siren.Scale, "Enable/disable scaling sirens up when they flash. Should be enabled for flashing lights and disabled for rotating lights.");
+            Menu.AddMenuDataBinding(ScaleToggleItem, (x) => Siren.Scale = x, () => Siren.Scale);
+
+            ScaleFactorItem = new UIMenuListItemSelector<byte>("Scale Factor", "How much to scale up siren when siren is flashed on. Default is 2 for most flashing sirens.", Siren.ScaleFactor, CommonSelectionItems.ScaleFactorByte);
+            Menu.AddMenuDataBinding(ScaleFactorItem, (x) => Siren.ScaleFactor = x, () => Siren.ScaleFactor);
+            
+            IntensityItem = new UIMenuListItemSelector<float>("Intensity", "Intensity of environmental lighting emitted by this light", Siren.Intensity, CommonSelectionItems.IntensityFloat);
+            Menu.AddMenuDataBinding(IntensityItem, (x) => Siren.Intensity = x, () => Siren.Intensity);
+
+            SpotLightItem = new UIMenuRefreshableCheckboxItem("Spot Light", Siren.SpotLight, "Enable/disable spotlight effect on environmental light from this siren");
+            Menu.AddMenuDataBinding(SpotLightItem, (x) => Siren.SpotLight = x, () => Siren.SpotLight);
+
+            CastShadowsItem = new UIMenuRefreshableCheckboxItem("Cast Shadows", Siren.CastShadows, "Enable/disable casting shadows with environmental light from this siren");
+            Menu.AddMenuDataBinding(CastShadowsItem, (x) => Siren.CastShadows = x, () => Siren.CastShadows);
+
+            LightGroupItem = new UIMenuListItemSelector<byte>("Light Group", "Light group for siren. Usage not documented.", Siren.LightGroup, CommonSelectionItems.LightGroupByte);
+            Menu.AddMenuDataBinding(LightGroupItem, (x) => Siren.LightGroup = x, () => Siren.LightGroup);
+
             // Final setup
             FlashinessMenu.RefreshIndex();
             RotationMenu.RefreshIndex();
@@ -167,7 +199,18 @@ namespace LiveLights.Menu
         // Corona submenu
         public UIMenuRefreshable CoronaMenu { get; }
         public UIMenuItem CoronaMenuItem { get; }
+        public UIMenuFloatSelector CoronaIntensityItem { get; }
+        public UIMenuFloatSelector CoronaSizeItem { get; }
+        public UIMenuFloatSelector CoronaPullItem { get; }
+        public UIMenuRefreshableCheckboxItem CoronaFaceCameraItem { get; }
 
+        // Other siren properties
+        public UIMenuListItemSelector<float> IntensityItem { get; }
+        public UIMenuListItemSelector<byte> LightGroupItem { get; }
+        public UIMenuRefreshableCheckboxItem ScaleToggleItem { get; }
+        public UIMenuListItemSelector<byte> ScaleFactorItem { get; }
+        public UIMenuRefreshableCheckboxItem SpotLightItem { get; }
+        public UIMenuRefreshableCheckboxItem CastShadowsItem { get; }
 
     }
 }

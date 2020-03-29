@@ -28,7 +28,6 @@ namespace LiveLights
         [XmlElement("id")]
         public ValueItem<uint> ID { get; set; } = 0;
 
-        // [SirenProperty(typeof(EmergencyLighting), "Name")]
         [XmlElement("name")]
         public string Name { get; set; } = "";
 
