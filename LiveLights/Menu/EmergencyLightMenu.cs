@@ -127,9 +127,7 @@ namespace LiveLights.Menu
             CoronaMenu.AddMenuDataBinding(CoronaFaceCameraItem, (x) => Siren.CoronaFaceCamera = x, () => Siren.CoronaFaceCamera);
 
             // Remaining main menu items
-            // ColorItem = new UIMenuListItemSelector<KnownColor>("Color", "Color of corona and environmental lighting from this siren", Siren.Color.ToKnownColor());
-            // System.Drawing.Color.FromArgb(220, 128, 39, 172);
-            ColorItem = new UIMenuColorSelector("Color", "Color of corona and environmental lighting from this siren", Siren.Color, CommonSelectionItems.CommonColors);
+            ColorItem = new UIMenuColorSelector("Color", "Color of corona and environmental lighting from this siren. You can any typical recognized color name (e.g. \"Indigo\"), or hex format as 0xAARRGGBB or 0xRRGGBB (e.g. \"0xFFFF00AA\").", Siren.Color, CommonSelectionItems.CommonColors);
             Menu.AddMenuDataBinding(ColorItem, (x) => Siren.Color = x, () => Siren.Color);
 
             ScaleToggleItem = new UIMenuRefreshableCheckboxItem("Scale Sirens", Siren.Scale, "Enable/disable scaling sirens up when they flash. Should be enabled for flashing lights and disabled for rotating lights.");

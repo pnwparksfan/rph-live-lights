@@ -331,7 +331,7 @@ namespace RAGENativeUI.Elements
         protected override bool ValidateInput(string input, out Color value)
         {
             value = Color.FromName(input);
-            if(!value.IsEmpty()) 
+            if(value.IsValid()) 
             {
                 return true;
             }
@@ -340,7 +340,7 @@ namespace RAGENativeUI.Elements
             {
                 string tempInput = input.ToLower().Replace("0x", "").Replace("#", "").Replace("x","").Trim();
                 value = ColorTranslator.FromHtml("#" + tempInput);
-                if(!value.IsEmpty())
+                if(value.IsValid())
                 {
                     return true;
                 }
@@ -353,8 +353,8 @@ namespace RAGENativeUI.Elements
 
         protected override Color itemValue 
         { 
-            get => base.itemValue; 
-            set => base.itemValue = value; 
+            get => base.itemValue.ToNamedColor(false); 
+            set => base.itemValue = value.ToNamedColor(false); 
         }
     }
 
