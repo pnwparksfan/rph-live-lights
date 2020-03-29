@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace LiveLights.Menu
 {
+
     internal static class CommonSelectionItems
     {
         public static IEnumerable<byte> MultiplesBytes => Enumerable.Range(1, 4).Select(x => (byte)x);
@@ -14,5 +16,6 @@ namespace LiveLights.Menu
         public static float[] IntensityFloat => new float[] { 0.5f, 1.0f, 2.0f, 4.0f };
         public static IEnumerable<byte> LightGroupByte => Enumerable.Range(0, 4).Select(x => (byte)x);
         public static byte[] ScaleFactorByte => new byte[] { 0, 2, 4, 10, 20 };
+        public static Color[] CommonColors => new Color[] { Color.Red, Color.Blue, Color.Yellow, Color.White, Color.Orange, Color.Green, Color.Purple };
     }
 }

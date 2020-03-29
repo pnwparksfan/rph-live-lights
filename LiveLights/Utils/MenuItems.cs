@@ -12,6 +12,7 @@ namespace RAGENativeUI.Elements
     using Rage;
     using Rage.Native;
     using RAGENativeUI;
+    using LiveLights.Utils;
 
     // This needs to be a separate non-generic interface so we can have a List<IRefreshableItemWrapper>
     // which calls RefreshFromData() without knowing what the data types are
@@ -28,7 +29,7 @@ namespace RAGENativeUI.Elements
         void SetBindings(Action<T> menuBinding, Func<T> dataBinding);
     }
 
-    internal class UIMenuValueEntrySelector<T> : IRefreshableBindingWrapper<T> where T : IEquatable<T>
+    internal class UIMenuValueEntrySelector<T> : IRefreshableBindingWrapper<T> // where T : IEquatable<T>
     {
         public static implicit operator UIMenuItem(UIMenuValueEntrySelector<T> i) => i.MenuItem;
 
@@ -238,7 +239,7 @@ namespace RAGENativeUI.Elements
     }
 
     // CUSTOM-EDIT LIST SELECTOR
-    internal class UIMenuListItemSelector<T> : UIMenuValueEntrySelector<T> where T : IEquatable<T>
+    internal class UIMenuListItemSelector<T> : UIMenuValueEntrySelector<T> // where T : IEquatable<T>
     {
         // public UIMenuListItem ListMenuItem => MenuItem as UIMenuListItem;
         // public override UIMenuItem MenuItem => ListMenuItem;
@@ -273,6 +274,71 @@ namespace RAGENativeUI.Elements
         {
             get => ListMenuItem.Value;
             set => ListMenuItem.Value = value;
+        }
+    }
+
+    // Color Selector
+    internal class UIMenuColorSelector : UIMenuListItemSelector<UIMenuColorSelector.ColorDisplayItem>
+    {
+        public struct ColorDisplayItem : IDisplayItem
+        {
+            public ColorDisplayItem(Color color)
+            {
+                this.Color = color;
+            }
+
+            public static implicit operator Color(ColorDisplayItem item) => item.Color;
+
+            public static implicit operator ColorDisplayItem(Color color) => new ColorDisplayItem(color);
+
+            public Color Color { get; set; }
+
+            public object Value => Color;
+
+            public string DisplayText => Color.DisplayText();
+
+            public bool Equals(IDisplayItem other)
+            {
+                return (
+                    other.Value != null 
+                    && other.Value.GetType() == typeof(Color) 
+                    && ((Color)other.Value).ToArgb() == Color.ToArgb()
+                );
+            }
+
+            public override int GetHashCode() => this.Color.ToArgb();
+
+            public bool IsEmpty() => this.Color.ToArgb() == 0;
+        }
+
+        public UIMenuColorSelector(string text, string description, Color value, params Color[] items) : base(text, description, value, items.Select(c => new ColorDisplayItem(c))) { }
+        public UIMenuColorSelector(string text, string description, Color value, IEnumerable<Color> items) : base(text, description, value, items.Select(c => new ColorDisplayItem(c))) { }
+        public UIMenuColorSelector(string text, string description, Color value, params KnownColor[] items) : base(text, description, value, items.Select(c => new ColorDisplayItem(Color.FromKnownColor(c)))) { }
+        public UIMenuColorSelector(string text, string description, Color value, IEnumerable<KnownColor> items) : base(text, description, value, items.Select(c => new ColorDisplayItem(Color.FromKnownColor(c)))) { }
+
+        protected override string DisplayInputBox => ItemValue.Color.DisplayText();
+
+        protected override bool ValidateInput(string input, out ColorDisplayItem value)
+        {
+            value = Color.FromName(input);
+            if(!value.IsEmpty()) 
+            {
+                return true;
+            }
+
+            try
+            {
+                string tempInput = input.ToLower().Replace("0x", "").Replace("#", "").Replace("x","").Trim();
+                value = ColorTranslator.FromHtml("#" + tempInput);
+                if(!value.IsEmpty())
+                {
+                    return true;
+                }
+            } catch (Exception) { }
+
+            // If no matches, return empty color
+            value = Color.Empty;
+            return false;
         }
     }
 
@@ -322,7 +388,12 @@ namespace RAGENativeUI.Elements
                 } else
                 {
                     customItemValue = value;
-                    this.Collection.Add(value, $"Custom: {value}");
+                    string label = value.ToString();
+                    if(value is IDisplayItem)
+                    {
+                        label = ((IDisplayItem)value).DisplayText;
+                    }
+                    this.Collection.Add(value, $"Custom: {label}");
                     this.Index = (this.Collection.Count - 1);
                 }
             }
@@ -387,7 +458,7 @@ namespace RAGENativeUI.Elements
         private List<IRefreshableItemWrapper> bindings = new List<IRefreshableItemWrapper>();
         private List<UIMenuRefreshable> menuBindings = new List<UIMenuRefreshable>();
 
-        public void AddMenuDataBinding<TMenuItem, TData>(TMenuItem menuItem, Action<TData> menuBinding, Func<TData> dataBinding) where TMenuItem : IRefreshableBindingWrapper<TData> where TData : IEquatable<TData>
+        public void AddMenuDataBinding<TMenuItem, TData>(TMenuItem menuItem, Action<TData> menuBinding, Func<TData> dataBinding) where TMenuItem : IRefreshableBindingWrapper<TData> // where TData : IEquatable<TData>
         {
             menuItem.SetBindings(menuBinding, dataBinding);
             this.AddItem(menuItem.MenuItem);

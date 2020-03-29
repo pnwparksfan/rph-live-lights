@@ -63,6 +63,7 @@
     <Compile Include="Serializer.cs" />
     <Compile Include="SirenApply.cs" />
     <Compile Include="SirenSetting.cs" />
+    <Compile Include="Utils\ColorTools.cs" />
     <Compile Include="Utils\MenuItems.cs" />
     <Compile Include="Utils\TextureHash.cs" />
     <Compile Include="XMLTesting.cs" />
