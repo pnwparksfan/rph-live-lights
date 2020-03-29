@@ -253,6 +253,14 @@ namespace RAGENativeUI.Elements
 
         public UIMenuListItemSelector(string text, string description, T value, params T[] items) : this(new UIMenuCustomListItem<T>(text, description, items), value) { }
 
+        public UIMenuListItemSelector(string text, string description, T value, Func<T, string> labelGenerator, IEnumerable<IDisplayItem> items) : this(new UIMenuCustomListItem<T>(text, description, labelGenerator, items), value) { }
+
+        public UIMenuListItemSelector(string text, string description, T value, Func<T, string> labelGenerator, params IDisplayItem[] items) : this(new UIMenuCustomListItem<T>(text, description, labelGenerator, items), value) { }
+
+        public UIMenuListItemSelector(string text, string description, T value, Func<T, string> labelGenerator, IEnumerable<T> items) : this(new UIMenuCustomListItem<T>(text, description, labelGenerator, items), value) { }
+
+        public UIMenuListItemSelector(string text, string description, T value, Func<T, string> labelGenerator, params T[] items) : this(new UIMenuCustomListItem<T>(text, description, labelGenerator, items), value) { }
+
         public UIMenuListItemSelector(UIMenuCustomListItem<T> menuItem, T value) : base(menuItem, value)
         {
             ListMenuItem.OnListChanged += OnSelectionChanged;
@@ -310,13 +318,13 @@ namespace RAGENativeUI.Elements
                 );
             }
 
-            public override int GetHashCode() => this.Color.ToArgb();
+            // public override int GetHashCode() => this.Color.ToArgb();
         }
 
-        public UIMenuColorSelector(string text, string description, Color value, params Color[] items) : base(text, description, value, items.Select(c => new ColorDisplayItem(c))) { }
-        public UIMenuColorSelector(string text, string description, Color value, IEnumerable<Color> items) : base(text, description, value, items.Select(c => new ColorDisplayItem(c))) { }
-        public UIMenuColorSelector(string text, string description, Color value, params KnownColor[] items) : base(text, description, value, items.Select(c => new ColorDisplayItem(Color.FromKnownColor(c)))) { }
-        public UIMenuColorSelector(string text, string description, Color value, IEnumerable<KnownColor> items) : base(text, description, value, items.Select(c => new ColorDisplayItem(Color.FromKnownColor(c)))) { }
+        public UIMenuColorSelector(string text, string description, Color value, params Color[] items) : base(text, description, value, (c) => c.DisplayText(), items.Select(c => new ColorDisplayItem(c))) { }
+        public UIMenuColorSelector(string text, string description, Color value, IEnumerable<Color> items) : base(text, description, value, (c) => c.DisplayText(), items.Select(c => new ColorDisplayItem(c))) { }
+        public UIMenuColorSelector(string text, string description, Color value, params KnownColor[] items) : this(text, description, value, items.Select(Color.FromKnownColor)) { }
+        public UIMenuColorSelector(string text, string description, Color value, IEnumerable<KnownColor> items) : this(text, description, value, items.Select(Color.FromKnownColor)) { }
 
         protected override string DisplayInputBox => ItemValue.DisplayText();
 
@@ -389,31 +397,28 @@ namespace RAGENativeUI.Elements
                 {
                     this.Index = this.Collection.IndexOf(value);
                     
-                } else if(AddNewItems)
-                {
-                    this.Collection.Add(value, NewItemGenerator(value));
-                    this.Index = (this.Collection.Count - 1);
                 } else
                 {
-                    customItemValue = value;
-                    string label = value.ToString();
-                    if(value is IDisplayItem)
+                    string label = CustomLabelGenerator?.Invoke(value) ?? value.ToString();
+                    if (!AddNewItems)
                     {
-                        label = ((IDisplayItem)value).DisplayText;
+                        customItemValue = value;
+                        label = "Custom: " + label;
                     }
-                    this.Collection.Add(value, $"Custom: {label}");
+                    this.Collection.Add(value, label);
                     this.Index = (this.Collection.Count - 1);
                 }
             }
         }
 
-        public bool AddNewItems => (NewItemGenerator != null); // { get; } = false;
+        public bool AddNewItems { get; set; }
 
-        public Func<T, string> NewItemGenerator { get; private set; } = null;
+        public Func<T, string> CustomLabelGenerator { get; set; } = null;
 
         public void SetAddNewItems(Func<T, string> generator)
         {
-            this.NewItemGenerator = generator;
+            AddNewItems = true;
+            this.CustomLabelGenerator = generator;
         }
 
         private T customItemValue;
@@ -421,6 +426,15 @@ namespace RAGENativeUI.Elements
         public UIMenuCustomListItem(string text, string description) : base(text, description) { }
         public UIMenuCustomListItem(string text, string description, IEnumerable<IDisplayItem> items) : base(text, description, items) { }
         public UIMenuCustomListItem(string text, string description, IEnumerable<T> items) : base(text, description, items.Select(x => (object)x).ToArray())  { }
+
+        public UIMenuCustomListItem(string text, string description, Func<T, string> labelGenerator, IEnumerable<IDisplayItem> items) : base(text, description, items) 
+        {
+            this.CustomLabelGenerator = labelGenerator;
+        }
+        public UIMenuCustomListItem(string text, string description, Func<T, string> labelGenerator, IEnumerable<T> items) : base(text, description, items.Select(x => (object)x).ToArray()) 
+        {
+            this.CustomLabelGenerator = labelGenerator;
+        }
     }
 
     internal class UIMenuRefreshableCheckboxItem : UIMenuCheckboxItem, IRefreshableBindingWrapper<bool>
