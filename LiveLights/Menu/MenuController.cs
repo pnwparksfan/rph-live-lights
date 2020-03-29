@@ -28,6 +28,9 @@ namespace LiveLights.Menu
                 }
                 menu.Menu.Visible = !menu.Menu.Visible;
             }
+
+            menu.ShowSirenPositions(Game.LocalPlayer.Character.CurrentVehicle, true);
+
             Pool.ProcessMenus();
         }
 

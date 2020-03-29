@@ -145,6 +145,17 @@ namespace LiveLights.Menu
             SirenSwitcherItem.SwitchMenuItem.CurrentMenu.Visible = true;
         }
 
+        public void ShowSirenPositions(Vehicle v, bool selectedOnly)
+        {
+            foreach (EmergencyLightMenu sirenMenu in SirenSubMenus)
+            {
+                if (v && (!selectedOnly || sirenMenu.Menu.Visible || sirenMenu.Menu.Children.Values.Any(c => c.Visible)))
+                {
+                    v.ShowSirenMarker(sirenMenu.SirenID);
+                }
+            }
+        }
+
         public EmergencyLighting ELS { get; }
 
         // Core lighting settings
