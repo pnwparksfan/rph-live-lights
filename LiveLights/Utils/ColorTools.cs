@@ -13,6 +13,10 @@ namespace LiveLights.Utils
         public static ILookup<int, Color> ARGBToKnownColorLookup { get; } = Enum.GetValues(typeof(KnownColor)).Cast<KnownColor>().Select(Color.FromKnownColor).ToLookup(c => c.ToArgb());
         public static Color ToNamedColor(this Color color)
         {
+            if(color.IsNamedColor)
+            {
+                return color;
+            }
             int key = color.ToArgb();
             return ARGBToKnownColorLookup[key].FirstOrDefault();
         }
@@ -26,5 +30,7 @@ namespace LiveLights.Utils
             }
             return string.Format("0x{0:X8}", color.ToArgb());
         }
+
+        public static bool IsEmpty(this Color color) => color.ToArgb() == 0;
     }
 }

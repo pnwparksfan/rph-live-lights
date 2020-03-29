@@ -245,9 +245,13 @@ namespace RAGENativeUI.Elements
         // public override UIMenuItem MenuItem => ListMenuItem;
         public UIMenuCustomListItem<T> ListMenuItem => MenuItem as UIMenuCustomListItem<T>;
 
-        public UIMenuListItemSelector(string text, string description, T value, params T[] items) : this(new UIMenuCustomListItem<T>(text, description, items), value) { }
+        public UIMenuListItemSelector(string text, string description, T value, IEnumerable<IDisplayItem> items) : this(new UIMenuCustomListItem<T>(text, description, items), value) { }
+
+        public UIMenuListItemSelector(string text, string description, T value, params IDisplayItem[] items) : this(new UIMenuCustomListItem<T>(text, description, items), value) { }
 
         public UIMenuListItemSelector(string text, string description, T value, IEnumerable<T> items) : this(new UIMenuCustomListItem<T>(text, description, items), value) { }
+
+        public UIMenuListItemSelector(string text, string description, T value, params T[] items) : this(new UIMenuCustomListItem<T>(text, description, items), value) { }
 
         public UIMenuListItemSelector(UIMenuCustomListItem<T> menuItem, T value) : base(menuItem, value)
         {
@@ -278,9 +282,9 @@ namespace RAGENativeUI.Elements
     }
 
     // Color Selector
-    internal class UIMenuColorSelector : UIMenuListItemSelector<UIMenuColorSelector.ColorDisplayItem>
+    internal class UIMenuColorSelector : UIMenuListItemSelector<Color>
     {
-        public struct ColorDisplayItem : IDisplayItem
+        public class ColorDisplayItem : IDisplayItem
         {
             public ColorDisplayItem(Color color)
             {
@@ -307,8 +311,6 @@ namespace RAGENativeUI.Elements
             }
 
             public override int GetHashCode() => this.Color.ToArgb();
-
-            public bool IsEmpty() => this.Color.ToArgb() == 0;
         }
 
         public UIMenuColorSelector(string text, string description, Color value, params Color[] items) : base(text, description, value, items.Select(c => new ColorDisplayItem(c))) { }
@@ -316,9 +318,9 @@ namespace RAGENativeUI.Elements
         public UIMenuColorSelector(string text, string description, Color value, params KnownColor[] items) : base(text, description, value, items.Select(c => new ColorDisplayItem(Color.FromKnownColor(c)))) { }
         public UIMenuColorSelector(string text, string description, Color value, IEnumerable<KnownColor> items) : base(text, description, value, items.Select(c => new ColorDisplayItem(Color.FromKnownColor(c)))) { }
 
-        protected override string DisplayInputBox => ItemValue.Color.DisplayText();
+        protected override string DisplayInputBox => ItemValue.DisplayText();
 
-        protected override bool ValidateInput(string input, out ColorDisplayItem value)
+        protected override bool ValidateInput(string input, out Color value)
         {
             value = Color.FromName(input);
             if(!value.IsEmpty()) 
@@ -339,6 +341,12 @@ namespace RAGENativeUI.Elements
             // If no matches, return empty color
             value = Color.Empty;
             return false;
+        }
+
+        protected override Color itemValue 
+        { 
+            get => base.itemValue; 
+            set => base.itemValue = value; 
         }
     }
 
