@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Linq.Expressions;
+using System.Windows.Forms;
 
 namespace RAGENativeUI.Elements
 {
@@ -357,7 +358,8 @@ namespace RAGENativeUI.Elements
             set 
             { 
                 base.itemValue = value.ToNamedColor(false);
-                ListMenuItem.ForeColor = value;
+                ListMenuItem.ForeColor = ControlPaint.Light(value);
+                ListMenuItem.HighlightedForeColor = ControlPaint.Dark(value);
             }
         }
     }
