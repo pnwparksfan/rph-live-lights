@@ -352,9 +352,13 @@ namespace RAGENativeUI.Elements
         }
 
         protected override Color itemValue 
-        { 
-            get => base.itemValue.ToNamedColor(false); 
-            set => base.itemValue = value.ToNamedColor(false); 
+        {
+            get => base.itemValue.ToNamedColor(false);
+            set 
+            { 
+                base.itemValue = value.ToNamedColor(false);
+                ListMenuItem.ForeColor = value;
+            }
         }
     }
 

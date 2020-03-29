@@ -18,7 +18,7 @@ namespace LiveLights.Utils
                 return color;
             }
             int key = color.ToArgb();
-            Color knownColor = ARGBToKnownColorLookup[key].FirstOrDefault();
+            Color knownColor = ARGBToKnownColorLookup[key].OrderBy(x => x.Name.Length).FirstOrDefault();
             if(knownColor.IsNamedColor && knownColor.IsValid())
             {
                 return knownColor;
