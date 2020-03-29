@@ -77,6 +77,46 @@ namespace LiveLights.Menu
 
             FlashSyncBpmItem = new UIMenuRefreshableCheckboxItem("Sync Flash to BPM", Siren.FlashinessSynchronizeToBpm, "Sync flash pattern to BPM");
             FlashinessMenu.AddMenuDataBinding(FlashSyncBpmItem, (x) => Siren.FlashinessSynchronizeToBpm = x, () => Siren.FlashinessSynchronizeToBpm);
+
+            // Rotation menu items
+            RotationEnabledItem = new UIMenuRefreshableCheckboxItem("Rotation Enabled", Siren.Rotate, "Enable/disable this siren from rotating. Note: setting to False for a siren which was previously on may result in the siren being stuck on temporarily. Toggle vehicle's sirens off/on to reset.");
+            RotationMenu.AddMenuDataBinding(RotationEnabledItem, (x) => Siren.Rotate = x, () => Siren.Rotate);
+
+            RotationSequenceItem = new UIMenuStringSelector("Rotation Sequence", Siren.RotationSequence, $"32-bit Rotation sequence for siren {SirenID}. ~g~1~w~ represents on, ~y~0~w~ represents off.") { MaxLength = 32 };
+            RotationMenu.AddMenuDataBinding(RotationSequenceItem, (x) => Siren.RotationSequence = x, () => Siren.RotationSequence, () => RotationSequenceRawItem);
+
+            RotationSequenceRawItem = new UIMenuUIntSelector("Rotation Sequence (raw)", Siren.RotationSequenceRaw, "32-bit unsigned integer representation of siren sequence. This value is how the sequence is represented in carcols.meta. Automatically updates/updated by binary formatted sequence above.");
+            RotationMenu.AddMenuDataBinding(RotationSequenceRawItem, (x) => Siren.RotationSequenceRaw = x, () => Siren.RotationSequenceRaw, () => RotationSequenceItem);
+
+            RotationMultiplesItem = new UIMenuListItemSelector<byte>("Rotation Multiples", "How many times the corona rotates for each sequence step the light is on", Siren.RotationMultiples, CommonSelectionItems.MultiplesBytes);
+            RotationMenu.AddMenuDataBinding(RotationMultiplesItem, (x) => Siren.RotationMultiples = x, () => Siren.RotationMultiples);
+
+            RotationDeltaItem = new UIMenuListItemSelector<float>("Rotation Delta", "Angle the light should rotate to", Siren.RotationDelta, CommonSelectionItems.UnitCircleDegrees);
+            RotationMenu.AddMenuDataBinding(RotationDeltaItem, (x) => Siren.RotationDelta = x, () => Siren.RotationDelta, () => RotationDeltaRadItem);
+
+            RotationDeltaRadItem = new UIMenuFloatSelector("Rotation Delta (Radians)", MathHelper.ConvertDegreesToRadians(Siren.RotationDelta), "Angle the light should rotate to in radians");
+            RotationMenu.AddMenuDataBinding(RotationDeltaRadItem, (x) => Siren.RotationDelta = MathHelper.ConvertRadiansToDegrees(x), () => MathHelper.ConvertDegreesToRadians(Siren.RotationDelta), () => RotationDeltaItem);
+
+            RotationStartItem = new UIMenuListItemSelector<float>("Rotation Start", "Starting rotation angle of the light", Siren.RotationStart, CommonSelectionItems.UnitCircleDegrees);
+            RotationMenu.AddMenuDataBinding(RotationStartItem, (x) => Siren.RotationStart = x, () => Siren.RotationStart, () => RotationStartRadItem);
+
+            RotationStartRadItem = new UIMenuFloatSelector("Rotation Start (Radians)", MathHelper.ConvertDegreesToRadians(Siren.RotationStart), "Starting rotation angle of the light in radians");
+            RotationMenu.AddMenuDataBinding(RotationStartRadItem, (x) => Siren.RotationStart = MathHelper.ConvertRadiansToDegrees(x), () => MathHelper.ConvertDegreesToRadians(Siren.RotationStart), () => RotationStartItem);
+
+            RotationSpeedItem = new UIMenuFloatSelector("Rotation Speed", Siren.RotationSpeed, "How fast the light rotates within each beat");
+            RotationMenu.AddMenuDataBinding(RotationSpeedItem, (x) => Siren.RotationSpeed = x, () => Siren.RotationSpeed);
+
+            RotationDirectionItem = new UIMenuRefreshableCheckboxItem("Rotation Direction Enabled", Siren.RotationDirection, "Enable/disable rotation direction");
+            RotationMenu.AddMenuDataBinding(RotationDirectionItem, (x) => Siren.RotationDirection = x, () => Siren.RotationDirection);
+
+            RotationSyncBpmItem = new UIMenuRefreshableCheckboxItem("Sync Rotation to BPM", Siren.RotationSynchronizeToBpm, "Sync Rotation pattern to BPM");
+            RotationMenu.AddMenuDataBinding(RotationSyncBpmItem, (x) => Siren.RotationSynchronizeToBpm = x, () => Siren.RotationSynchronizeToBpm);
+
+            // Final setup
+            FlashinessMenu.RefreshIndex();
+            RotationMenu.RefreshIndex();
+            CoronaMenu.RefreshIndex();
+            Menu.RefreshIndex();
         }
 
         public EmergencyLight Siren { get; }
@@ -112,6 +152,17 @@ namespace LiveLights.Menu
         // Rotation submenu
         public UIMenuRefreshable RotationMenu { get; }
         public UIMenuItem RotationMenuItem { get; }
+        public UIMenuRefreshableCheckboxItem RotationEnabledItem { get; }
+        public UIMenuListItemSelector<float> RotationDeltaItem { get; }
+        public UIMenuFloatSelector RotationDeltaRadItem { get; }
+        public UIMenuListItemSelector<float> RotationStartItem { get; }
+        public UIMenuFloatSelector RotationStartRadItem { get; }
+        public UIMenuFloatSelector RotationSpeedItem { get; }
+        public UIMenuStringSelector RotationSequenceItem { get; }
+        public UIMenuUIntSelector RotationSequenceRawItem { get; }
+        public UIMenuListItemSelector<byte> RotationMultiplesItem { get; }
+        public UIMenuRefreshableCheckboxItem RotationDirectionItem { get; }
+        public UIMenuRefreshableCheckboxItem RotationSyncBpmItem { get; }
 
         // Corona submenu
         public UIMenuRefreshable CoronaMenu { get; }
