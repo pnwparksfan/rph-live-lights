@@ -54,11 +54,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="carcols.cs">
-      <SubType>code</SubType>
-      <DependentUpon>carcols.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CarcolSerializer.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="Menu\CommonSelectionItems.cs" />
     <Compile Include="Menu\EmergencyLightingMenu.cs" />
@@ -71,11 +66,6 @@
     <Compile Include="Utils\MenuItems.cs" />
     <Compile Include="Utils\TextureHash.cs" />
     <Compile Include="XMLTesting.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="carcols.xsd">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
