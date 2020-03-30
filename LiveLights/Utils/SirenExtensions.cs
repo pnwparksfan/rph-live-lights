@@ -30,5 +30,31 @@ namespace LiveLights.Utils
                 // Debug.DrawLine(bonePosition, bonePosition + direction * 0.3f, light.Color);
             }
         }
+
+        public static bool IsCustomSetting(this EmergencyLighting els)
+        {
+            return EmergencyLighting.Get(false, true).Contains(els);
+        }
+
+        public static EmergencyLighting GetCustomOrClone(this EmergencyLighting els)
+        {
+            if(els.IsCustomSetting())
+            {
+                return els;
+            } else
+            {
+                return els.Clone();
+            }
+        }
+
+        public static EmergencyLighting GetOrCreateOverrideEmergencyLighting(this Vehicle vehicle)
+        {
+            if (!vehicle.EmergencyLightingOverride.Exists())
+            {
+                vehicle.EmergencyLightingOverride = vehicle.DefaultEmergencyLighting.Clone();
+            }
+
+            return vehicle.EmergencyLightingOverride;
+        }
     }
 }

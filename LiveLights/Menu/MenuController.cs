@@ -24,28 +24,29 @@ namespace LiveLights.Menu
             {
                 if(!menu.Menu.Visible)
                 {
-                    menu.Menu.RefreshData();
+                    menu.SirenConfigMenu?.Menu.RefreshData();
                 }
                 menu.Menu.Visible = !menu.Menu.Visible;
             }
 
-            menu.ShowSirenPositions(Game.LocalPlayer.Character.CurrentVehicle, true);
+            menu.SirenConfigMenu?.ShowSirenPositions(Game.LocalPlayer.Character.CurrentVehicle, true);
 
             Pool.ProcessMenus();
         }
 
-        private static EmergencyLightingMenu menu;
+        // private static EmergencyLightingMenu menu;
+        private static VehicleMenu menu;
 
         [ConsoleCommand]
         private static void StartMenu()
         {
             Vehicle v = Game.LocalPlayer.Character.CurrentVehicle;
             EmergencyLighting els = v.GetELSForVehicle();
-            menu = new EmergencyLightingMenu(els);
+            // menu = new EmergencyLightingMenu(els);
+            menu = new VehicleMenu(v);
             // menu.Menu.Visible = true;
 
             GameFiber.ExecuteNewWhile(Process, () => v);
-            Game.LogTrivial("Menu process exited");
         }
     }
 }
