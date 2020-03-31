@@ -577,19 +577,34 @@ namespace RAGENativeUI.Elements
             }
         }
 
-        public static void AddMenuAndSubMenusToPool(this MenuPool pool, UIMenu menu)
+        public static void AddMenuAndSubMenusToPool(this MenuPool pool, UIMenu menu, bool afterYield = false)
         {
             if(!pool.Contains(menu))
             {
-                pool.Add(menu);
+                if(afterYield)
+                {
+                    pool.AddAfterYield(menu);
+                } else
+                {
+                    pool.Add(menu);
+                }
             }
 
             foreach (UIMenu subMenu in menu.Children.Values)
             {
                 // Don't need to call pool.Add here because it'll 
                 // get called above when the function recurses
-                pool.AddMenuAndSubMenusToPool(subMenu);
+                pool.AddMenuAndSubMenusToPool(subMenu, afterYield);
             }
+        }
+
+        public static void AddAfterYield(this MenuPool pool, UIMenu menu)
+        {
+            GameFiber.StartNew(() =>
+            {
+                GameFiber.Yield();
+                pool.Add(menu);
+            });
         }
     }
 }

@@ -66,6 +66,7 @@
     <Compile Include="SirenApply.cs" />
     <Compile Include="SirenSetting.cs" />
     <Compile Include="Utils\ColorTools.cs" />
+    <Compile Include="Utils\EmergencyLightingWrapper.cs" />
     <Compile Include="Utils\Marker.cs" />
     <Compile Include="Utils\MenuItems.cs" />
     <Compile Include="Utils\SirenExtensions.cs" />

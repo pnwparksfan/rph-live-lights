@@ -114,7 +114,7 @@ namespace LiveLights.Menu
                 sirenMenu.Menu.ParentMenu = Menu;
                 Menu.AddSubMenuBinding(sirenMenu.Menu);
                 Menu.CopyMenuProperties(sirenMenu.Menu, true);
-                MenuController.Pool.AddMenuAndSubMenusToPool(sirenMenu.Menu);
+                MenuController.Pool.AddMenuAndSubMenusToPool(sirenMenu.Menu, true);
                 SirenMenus.Add(sirenMenu);
             }
 
@@ -132,9 +132,9 @@ namespace LiveLights.Menu
             RefreshItem = new UIMenuItem("Refresh Siren Setting Data", "Refreshes the menu with the siren setting data for the current vehicle. Use this if the data may have been changed outside the menu.");
             Menu.AddRefreshItem(RefreshItem);
 
-            MenuController.Pool.Add(Menu);
-            MenuController.Pool.Add(HeadlightsMenu);
-            MenuController.Pool.Add(TaillightsMenu);
+            MenuController.Pool.AddAfterYield(Menu);
+            MenuController.Pool.AddAfterYield(HeadlightsMenu);
+            MenuController.Pool.AddAfterYield(TaillightsMenu);
 
             Menu.RefreshIndex();
         }

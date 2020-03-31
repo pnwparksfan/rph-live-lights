@@ -14,7 +14,7 @@ namespace LiveLights.Menu
     internal class SirenSettingsSelectionMenu
     {
         public UIMenu Menu { get; }
-        private Dictionary<EmergencyLighting, SirenSettingMenuItem> elsEntries = new Dictionary<EmergencyLighting, SirenSettingMenuItem>();
+        private Dictionary<EmergencyLightingWrapper, SirenSettingMenuItem> elsEntries = new Dictionary<EmergencyLightingWrapper, SirenSettingMenuItem>();
 
         public bool CloseOnSelection { get; }
         public bool IncludeBuiltInSettings { get; }
@@ -30,7 +30,7 @@ namespace LiveLights.Menu
             this.IncludeCustomSettings = custom;
 
             Menu = new UIMenu("Siren Selection", "");
-            MenuController.Pool.Add(Menu);
+            MenuController.Pool.AddAfterYield(Menu);
             RefreshSirenSettingList();
             Menu.OnItemSelect += OnMenuItemSelected;
 
@@ -86,15 +86,15 @@ namespace LiveLights.Menu
                     selectedSetting = null;
                 } else
                 {
-                    selectedSetting = Tuple.Create(item.ELS, item);
+                    selectedSetting = Tuple.Create(item.ELSWrapper, item);
                     item.SetRightBadge(UIMenuItem.BadgeStyle.Tick);
                 }
-                OnSirenSettingSelected?.Invoke(this, Menu, item, item?.ELS);
+                OnSirenSettingSelected?.Invoke(this, Menu, item, item?.ELSWrapper?.ELS);
             }
         }
 
-        private Tuple<EmergencyLighting, SirenSettingMenuItem> selectedSetting = null;
-        public EmergencyLighting SelectedEmergencyLighting 
+        private Tuple<EmergencyLightingWrapper, SirenSettingMenuItem> selectedSetting = null;
+        public EmergencyLightingWrapper SelectedEmergencyLighting 
         {
             get
             {
@@ -112,12 +112,13 @@ namespace LiveLights.Menu
 
         public void RefreshSirenSettingList()
         {
-            EmergencyLighting[] elsToShow = EmergencyLighting.Get(IncludeBuiltInSettings, IncludeCustomSettings);
+            // EmergencyLighting[] elsToShow = EmergencyLighting.Get(IncludeBuiltInSettings, IncludeCustomSettings);
+            EmergencyLightingWrapper[] elsToShow = EmergencyLighting.Get(IncludeBuiltInSettings, IncludeCustomSettings).Select(l => new EmergencyLightingWrapper(l)).ToArray();
 
             // Remove any lighting entries which are no longer valid
-            foreach (EmergencyLighting els in elsEntries.Keys.ToArray())
+            foreach (EmergencyLightingWrapper els in elsEntries.Keys.ToArray())
             {
-                if(!els.IsValid() || !elsToShow.Contains(els))
+                if(!els.ELS.IsValid() || !elsToShow.Contains(els))
                 {
                     if(elsEntries.ContainsKey(els))
                     {
@@ -128,19 +129,19 @@ namespace LiveLights.Menu
                         }
                     }
                     elsEntries.Remove(els);
-                    Game.LogTrivialDebug("Removed EmergencyLighting entry " + (els.IsValid() ? " of undesired type" : "for being invalid"));
+                    Game.LogTrivialDebug("Removed EmergencyLighting entry " + (els.ELS.IsValid() ? " of undesired type" : "for being invalid"));
                 }
             }
 
             // Add any new lighting entries
-            foreach (EmergencyLighting els in elsToShow)
+            foreach (EmergencyLightingWrapper els in elsToShow)
             {
                 if(!elsEntries.ContainsKey(els))
                 {
                     SirenSettingMenuItem newMenuEntry = new SirenSettingMenuItem(els);
                     elsEntries.Add(els, newMenuEntry);
                     Menu.AddItem(newMenuEntry);
-                    Game.LogTrivialDebug("Added EmergencyLighting entry " + els.Name);
+                    Game.LogTrivialDebug("Added EmergencyLighting entry " + els.ELS.Name);
                 }
             }
 
@@ -149,11 +150,11 @@ namespace LiveLights.Menu
 
         internal class SirenSettingMenuItem : UIMenuItem
         {
-            public EmergencyLighting ELS { get; }
+            public EmergencyLightingWrapper ELSWrapper { get; }
 
-            public SirenSettingMenuItem(EmergencyLighting els) : base(els.Name)
+            public SirenSettingMenuItem(EmergencyLightingWrapper els) : base(els.ELS.Name)
             {
-                this.ELS = els;
+                this.ELSWrapper = els;
             }
         }
     }

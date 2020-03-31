@@ -19,7 +19,7 @@ namespace LiveLights.Menu
             Vehicle = v;
             
             Menu = new UIMenu("Siren Configuration", $"~b~Configure emergency lighting for {v.Model.Name}");
-            MenuController.Pool.Add(Menu);
+            MenuController.Pool.AddAfterYield(Menu);
             Menu.SetMenuWidthOffset(250);
             Menu.ControlDisablingEnabled = true;
             Menu.MouseControlsEnabled = false;
