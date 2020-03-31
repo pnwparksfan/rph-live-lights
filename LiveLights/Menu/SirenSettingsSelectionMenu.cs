@@ -20,14 +20,17 @@ namespace LiveLights.Menu
         public bool IncludeBuiltInSettings { get; }
         public bool IncludeCustomSettings { get; }
 
+        public bool AlwaysReturnEditableSetting { get; }
+
         public delegate void SirenSettingSelectedEvent(SirenSettingsSelectionMenu sender, UIMenu menu, SirenSettingMenuItem item, EmergencyLighting setting);
         public event SirenSettingSelectedEvent OnSirenSettingSelected;
 
-        public SirenSettingsSelectionMenu(EmergencyLighting initialSelected, bool closeOnSelect = true, bool builtIn = true, bool custom = true)
+        public SirenSettingsSelectionMenu(EmergencyLighting initialSelected, bool closeOnSelect = true, bool builtIn = true, bool custom = true, bool returnEditable = true)
         {
             this.CloseOnSelection = closeOnSelect;
             this.IncludeBuiltInSettings = builtIn;
             this.IncludeCustomSettings = custom;
+            this.AlwaysReturnEditableSetting = returnEditable;
 
             Menu = new UIMenu("Siren Selection", "");
             MenuController.Pool.AddAfterYield(Menu);
@@ -86,6 +89,13 @@ namespace LiveLights.Menu
                     selectedSetting = null;
                 } else
                 {
+                    EmergencyLighting selectedEls = item.ELSWrapper.ELS;
+                    if(AlwaysReturnEditableSetting && !selectedEls.IsCustomSetting())
+                    {
+                        selectedEls = selectedEls.Clone();
+                        RefreshSirenSettingList();
+                        item = elsEntries[selectedEls];
+                    }
                     selectedSetting = Tuple.Create(item.ELSWrapper, item);
                     item.SetRightBadge(UIMenuItem.BadgeStyle.Tick);
                 }

@@ -27,7 +27,8 @@ namespace LiveLights.Utils
 
         public override bool Equals(object obj)
         {
-            if (obj == null || obj.GetType() != this.GetType()) {
+            if (obj == null || obj.GetType() != this.GetType()) 
+            {
                 return false;
             }
 
