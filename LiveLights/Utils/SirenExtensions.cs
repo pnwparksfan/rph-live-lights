@@ -57,5 +57,23 @@ namespace LiveLights.Utils
 
             return vehicle.EmergencyLightingOverride;
         }
+
+        public static void RefreshSiren(this Vehicle vehicle)
+        {
+            if (vehicle)
+            {
+                if (vehicle.IsSirenOn)
+                {
+                    GameFiber.StartNew(() =>
+                    {
+                        if (!vehicle) return;
+                        vehicle.IsSirenOn = false;
+                        GameFiber.Sleep(5);
+                        if (!vehicle) return;
+                        vehicle.IsSirenOn = true;
+                    });
+                }
+            }
+        }
     }
 }

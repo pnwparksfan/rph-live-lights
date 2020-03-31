@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace LiveLights.Menu
 {
@@ -30,9 +31,13 @@ namespace LiveLights.Menu
             this.CloseOnSelection = closeOnSelect;
             this.IncludeBuiltInSettings = builtIn;
             this.IncludeCustomSettings = custom;
-            this.AlwaysReturnEditableSetting = returnEditable;
+            this.AlwaysReturnEditableSetting = (returnEditable && custom);
+            if(returnEditable && !custom)
+            {
+                Game.LogTrivialDebug("Warning: Attempted to create siren setting selection menu without custom entries but with editable required");
+            }
 
-            Menu = new UIMenu("Siren Selection", "");
+            Menu = new UIMenu("Siren Selection", "~b~Select a siren setting to use");
             MenuController.Pool.AddAfterYield(Menu);
             RefreshSirenSettingList();
             Menu.OnItemSelect += OnMenuItemSelected;
@@ -50,10 +55,20 @@ namespace LiveLights.Menu
                 parentMenu.AddItem(item);
             }
             parentMenu.BindMenuAndCopyProperties(Menu, item, false);
+            if(this.selectedSetting != null)
+            {
+                // item.SetRightLabel(selectedSetting.Item1.ELS.Name);
+                UpdateBoundMenuLabel(item);
+            }
 
             this.OnSirenSettingSelected += OnBoundMenuUpdated;
             item.Activated += OnBoundMenuItemActivated;
             return item;
+        }
+
+        public void UpdateBoundMenuLabel(UIMenuItem item)
+        {
+            item.SetRightLabel(selectedSetting.Item1.ELS.Name + " →");
         }
 
         private void OnBoundMenuItemActivated(UIMenu sender, UIMenuItem selectedItem)
@@ -63,7 +78,8 @@ namespace LiveLights.Menu
 
         private void OnBoundMenuUpdated(SirenSettingsSelectionMenu sender, UIMenu menu, SirenSettingMenuItem item, EmergencyLighting setting)
         {
-            menu.ParentItem.SetRightLabel(setting.Name);
+            UpdateBoundMenuLabel(menu.ParentItem);
+            // menu.ParentItem.SetRightLabel(setting.Name);
         }
 
         private void OnMenuItemSelected(UIMenu sender, UIMenuItem selectedItem, int index)
@@ -83,7 +99,12 @@ namespace LiveLights.Menu
         {
             if(item != selectedSetting?.Item2)
             {
-                selectedSetting?.Item2.SetRightBadge(UIMenuItem.BadgeStyle.None);
+                if(selectedSetting?.Item2 != null)
+                {
+                    selectedSetting.Item2.SetRightBadge(UIMenuItem.BadgeStyle.None);
+                    selectedSetting.Item2.BackColor = Color.Black;
+                }
+                
                 if(item == null)
                 {
                     selectedSetting = null;
@@ -98,8 +119,10 @@ namespace LiveLights.Menu
                     }
                     selectedSetting = Tuple.Create(item.ELSWrapper, item);
                     item.SetRightBadge(UIMenuItem.BadgeStyle.Tick);
+                    item.BackColor = Color.DarkGray;
                 }
                 OnSirenSettingSelected?.Invoke(this, Menu, item, item?.ELSWrapper?.ELS);
+                SelectedSelectedItem();
             }
         }
 
@@ -148,14 +171,29 @@ namespace LiveLights.Menu
             {
                 if(!elsEntries.ContainsKey(els))
                 {
+                    bool isCustom = els.ELS.IsCustomSetting();
                     SirenSettingMenuItem newMenuEntry = new SirenSettingMenuItem(els);
                     elsEntries.Add(els, newMenuEntry);
                     Menu.AddItem(newMenuEntry);
+                    if(isCustom)
+                    {
+                        newMenuEntry.SetLeftBadge(UIMenuItem.BadgeStyle.Car);
+                        newMenuEntry.Description = "~g~Editable~w~ siren setting entry";
+                    } else
+                    {
+                        newMenuEntry.SetLeftBadge(UIMenuItem.BadgeStyle.Lock);
+                        newMenuEntry.Description = "~y~Built-in~w~ siren setting entry";
+                        if(AlwaysReturnEditableSetting)
+                        {
+                            newMenuEntry.Description += ". An ~g~editable~w~ copy will be created if you select this setting.";
+                        }
+                    }
+                    
                     Game.LogTrivialDebug("Added EmergencyLighting entry " + els.ELS.Name);
                 }
             }
 
-            Menu.RefreshIndex();
+            SelectedSelectedItem();
         }
 
         internal class SirenSettingMenuItem : UIMenuItem
@@ -165,6 +203,15 @@ namespace LiveLights.Menu
             public SirenSettingMenuItem(EmergencyLightingWrapper els) : base(els.ELS.Name)
             {
                 this.ELSWrapper = els;
+            }
+        }
+
+        private void SelectedSelectedItem()
+        {
+            Menu.RefreshIndex();
+            if(selectedSetting != null)
+            {
+                Menu.CurrentSelection = Menu.MenuItems.IndexOf(selectedSetting.Item2);
             }
         }
     }

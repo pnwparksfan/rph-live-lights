@@ -127,6 +127,9 @@ namespace LiveLights.Menu
             CoronaMenu.AddMenuDataBinding(CoronaFaceCameraItem, (x) => Siren.CoronaFaceCamera = x, () => Siren.CoronaFaceCamera);
 
             // Remaining main menu items
+            EnvLightItem = new UIMenuRefreshableCheckboxItem("Env Light", Siren.Light, "Enable/disable environmental lighting from this siren");
+            Menu.AddMenuDataBinding(EnvLightItem, (x) => Siren.Light = x, () => Siren.Light);
+
             ColorItem = new UIMenuColorSelector("Color", "Color of corona and environmental lighting from this siren. You can any typical recognized color name (e.g. \"Indigo\"), or hex format as 0xAARRGGBB or 0xRRGGBB (e.g. \"0xFFFF00AA\").", Siren.Color, CommonSelectionItems.CommonColors);
             Menu.AddMenuDataBinding(ColorItem, (x) => Siren.Color = x, () => Siren.Color);
 
@@ -210,6 +213,7 @@ namespace LiveLights.Menu
 
         // Other siren properties
         // public UIMenuListItemSelector<KnownColor> ColorItem { get; }
+        public UIMenuRefreshableCheckboxItem EnvLightItem { get; }
         public UIMenuColorSelector ColorItem { get; }
         public UIMenuListItemSelector<float> IntensityItem { get; }
         public UIMenuListItemSelector<byte> LightGroupItem { get; }

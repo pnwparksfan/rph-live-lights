@@ -41,6 +41,7 @@ namespace LiveLights.Menu
             if (Vehicle)
             {
                 Vehicle.EmergencyLightingOverride = els;
+                Vehicle.RefreshSiren();
             }
             Menu.ReleaseMenuFromItem(SirenConfigItem);
             SirenConfigMenu = new EmergencyLightingMenu(els);
