@@ -108,10 +108,13 @@ namespace RAGENativeUI.Elements
         protected virtual int MaxInputLength { get; } = 1000;
         protected virtual string DisplayMenu => ItemValue?.ToString() ?? "(empty)";
         protected virtual string DisplayInputBox => ItemValue.ToString();
+        protected virtual string DisplayInputPrompt => $"Enter a value for ~b~{this.MenuItem.Text}~w~ ~c~({typeof(T).Name}, max length {MaxInputLength})";
+        public virtual string CustomInputPrompt { get; set; } = null;
 
         protected virtual void ActivatedHandler(UIMenu sender, UIMenuItem selectedItem)
         {
-            string input = GetUserInput(this.MenuItem.Text, DisplayInputBox, this.MaxInputLength);
+            string prompt = CustomInputPrompt ?? DisplayInputPrompt;
+            string input = UserInput.GetUserInput(prompt, DisplayInputBox, this.MaxInputLength);
             if(input != null && ValidateInput(input, out T parsedValue))
             {
                 ItemValue = parsedValue;
@@ -119,22 +122,6 @@ namespace RAGENativeUI.Elements
             {
                 Game.DisplaySubtitle($"The value ~b~{input}~w~ is ~r~invalid~w~ for property ~b~{MenuItem.Text}", 6000);
             }
-        }
-
-        private static string GetUserInput(string windowTitle, string defaultText, int maxLength)
-        {
-            NativeFunction.Natives.DISABLE_ALL_CONTROL_ACTIONS(2);
-
-            NativeFunction.Natives.DISPLAY_ONSCREEN_KEYBOARD(true, windowTitle, 0, defaultText, 0, 0, 0, maxLength);
-
-            while (NativeFunction.Natives.UPDATE_ONSCREEN_KEYBOARD<int>() == 0)
-            {
-                GameFiber.Yield();
-            }
-
-            NativeFunction.Natives.ENABLE_ALL_CONTROL_ACTIONS(2);
-
-            return NativeFunction.Natives.GET_ONSCREEN_KEYBOARD_RESULT<string>();
         }
 
         private TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));

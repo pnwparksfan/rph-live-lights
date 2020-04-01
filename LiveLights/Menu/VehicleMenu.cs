@@ -18,7 +18,7 @@ namespace LiveLights.Menu
         {
             Vehicle = v;
             
-            Menu = new UIMenu("Siren Configuration", $"~b~Configure emergency lighting for {v.Model.Name}");
+            Menu = new UIMenuRefreshable("Siren Configuration", $"~b~Configure emergency lighting for {v.Model.Name}");
             MenuController.Pool.AddAfterYield(Menu);
             Menu.SetMenuWidthOffset(250);
             Menu.ControlDisablingEnabled = true;
@@ -32,6 +32,13 @@ namespace LiveLights.Menu
             SirenConfigItem = new UIMenuItem("Edit Emergency Lighting", "Modify siren settings including flash patterns, environmental lighting, etc.");
             Menu.AddItem(SirenConfigItem);
             Menu.BindMenuToItem(SirenConfigMenu.Menu, SirenConfigItem);
+            
+            EmergencyLightsOnItem = new UIMenuRefreshableCheckboxItem("Emergency Lights Enabled", Vehicle.IsSirenOn, "Toggle flashing lights on this vehicle");
+            Menu.AddMenuDataBinding(EmergencyLightsOnItem, (x) => Vehicle.IsSirenOn = x, () => Vehicle.IsSirenOn);
+
+            SirenAudioOnItem = new UIMenuRefreshableCheckboxItem("Siren Audio Enabled", !Vehicle.IsSirenSilent, "Toggle siren audio on this vehicle");
+            Menu.AddMenuDataBinding(SirenAudioOnItem, (x) => Vehicle.IsSirenSilent = !x, () => !Vehicle.IsSirenSilent);
+
             SirenSettingMenu.OnSirenSettingSelected += OnSirenSelectionChanged;
         }
 
@@ -50,10 +57,12 @@ namespace LiveLights.Menu
 
         public Vehicle Vehicle { get; }
 
-        public UIMenu Menu { get; }
+        public UIMenuRefreshable Menu { get; }
         public SirenSettingsSelectionMenu SirenSettingMenu { get; }
         public UIMenuItem SirenSettingSelectorItem { get; }
         public EmergencyLightingMenu SirenConfigMenu { get; private set; }
         public UIMenuItem SirenConfigItem { get; }
+        public UIMenuRefreshableCheckboxItem EmergencyLightsOnItem { get; }
+        public UIMenuRefreshableCheckboxItem SirenAudioOnItem { get; }
     }
 }

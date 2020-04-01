@@ -132,11 +132,29 @@ namespace LiveLights.Menu
             RefreshItem = new UIMenuItem("Refresh Siren Setting Data", "Refreshes the menu with the siren setting data for the current vehicle. Use this if the data may have been changed outside the menu.");
             Menu.AddRefreshItem(RefreshItem);
 
+            ImportCarcolsItem = new UIMenuItem("Import carcols.meta file", "Imports all siren settings in selected carcols.meta file");
+            Menu.AddItem(ImportCarcolsItem);
+            ImportCarcolsItem.Activated += OnImportExportClicked;
+            ExportCarcolsItem = new UIMenuItem("Export carcols.meta file", "Exports the siren setting currently being modified to a carcols.meta file");
+            Menu.AddItem(ExportCarcolsItem);
+            ExportCarcolsItem.Activated += OnImportExportClicked;
+
             MenuController.Pool.AddAfterYield(Menu);
             MenuController.Pool.AddAfterYield(HeadlightsMenu);
             MenuController.Pool.AddAfterYield(TaillightsMenu);
 
             Menu.RefreshIndex();
+        }
+
+        private void OnImportExportClicked(UIMenu sender, UIMenuItem selectedItem)
+        {
+            if(selectedItem == ImportCarcolsItem)
+            {
+                ImportExportMenu.OnImportCarcols(this);
+            } else if(selectedItem == ExportCarcolsItem)
+            {
+                ImportExportMenu.ExportCarcols(this);
+            }
         }
 
         private void onSirenSubmenuActivated(UIMenu sender, UIMenuItem selectedItem)
@@ -190,11 +208,12 @@ namespace LiveLights.Menu
 
         // Sirens menu
         public UIMenuItem SirensMenuItem { get; }
-
         public UIMenuSwitchSelectable SirenSwitcherItem { get; }
-
         private List<EmergencyLightMenu> SirenMenus { get; }
-
         public EmergencyLightMenu[] SirenSubMenus => SirenMenus.ToArray();
+
+        // Import/export
+        public UIMenuItem ExportCarcolsItem { get; }
+        public UIMenuItem ImportCarcolsItem { get; }
     }
 }

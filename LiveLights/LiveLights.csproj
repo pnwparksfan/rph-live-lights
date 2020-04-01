@@ -58,6 +58,7 @@
     <Compile Include="Menu\CommonSelectionItems.cs" />
     <Compile Include="Menu\EmergencyLightingMenu.cs" />
     <Compile Include="Menu\EmergencyLightMenu.cs" />
+    <Compile Include="Menu\ImportExportMenu.cs" />
     <Compile Include="Menu\MenuController.cs" />
     <Compile Include="Menu\SirenSettingsSelectionMenu.cs" />
     <Compile Include="Menu\VehicleMenu.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Utils\MenuItems.cs" />
     <Compile Include="Utils\SirenExtensions.cs" />
     <Compile Include="Utils\TextureHash.cs" />
+    <Compile Include="Utils\UserInput.cs" />
     <Compile Include="XMLTesting.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
