@@ -55,11 +55,7 @@ namespace LiveLights.Menu
                 parentMenu.AddItem(item);
             }
             parentMenu.BindMenuAndCopyProperties(Menu, item, false);
-            if(this.selectedSetting != null)
-            {
-                // item.SetRightLabel(selectedSetting.Item1.ELS.Name);
-                UpdateBoundMenuLabel(item);
-            }
+            UpdateBoundMenuLabel(item);
 
             this.OnSirenSettingSelected += OnBoundMenuUpdated;
             item.Activated += OnBoundMenuItemActivated;
@@ -68,7 +64,13 @@ namespace LiveLights.Menu
 
         public void UpdateBoundMenuLabel(UIMenuItem item)
         {
-            item.SetRightLabel(selectedSetting.Item1.ELS.Name + " →");
+            if(selectedSetting?.Item1?.ELS?.Exists() == true)
+            {
+                item.SetRightLabel(selectedSetting.Item1.ELS.Name + " →");
+            } else
+            {
+                item.SetRightLabel("~c~none~w~");
+            }
         }
 
         private void OnBoundMenuItemActivated(UIMenu sender, UIMenuItem selectedItem)

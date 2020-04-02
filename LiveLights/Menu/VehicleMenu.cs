@@ -27,7 +27,8 @@ namespace LiveLights.Menu
             SirenSettingMenu = new SirenSettingsSelectionMenu(null, true, true, true, false);
             SirenSettingSelectorItem = SirenSettingMenu.CreateAndBindToSubmenuItem(Menu);
             SirenConfigMenu = null; // new EmergencyLightingMenu(null);
-            SirenConfigItem = new UIMenuItem("Edit Emergency Lighting", "Modify siren settings including flash patterns, environmental lighting, etc.");
+            SirenConfigItem = new UIMenuItem("Edit Emergency Lighting", defaultConfigMenuDesc);
+            SirenConfigItem.SetRightLabel("→");
             Menu.AddItem(SirenConfigItem);
             // Menu.BindMenuToItem(SirenConfigMenu.Menu, SirenConfigItem);
             
@@ -61,7 +62,9 @@ namespace LiveLights.Menu
                 Menu.RefreshData(false);
             } else
             {
+                SirenSettingMenu.SelectedEmergencyLighting = null;
                 Menu.Subtitle.Caption = "~y~No valid vehicle detected";
+                SirenSettingSelectorItem.SetRightLabel("");
             }
         }
 
@@ -80,19 +83,46 @@ namespace LiveLights.Menu
         {
             EmergencyLighting els = (Vehicle.Exists()) ? Vehicle.EmergencyLighting : null;
 
-            if(SirenConfigMenu?.ELS.Name != els.Name)
+            if(SirenConfigMenu?.ELS.Name != els?.Name || els == null)
             {
                 Menu.ReleaseMenuFromItem(SirenConfigItem);
-                if(els.Exists() && els.IsCustomSetting())
+                SirenConfigItem.Activated -= OnNonEditableConfigSelected;
+                
+                if (els.Exists() && els.IsCustomSetting())
                 {
                     SirenConfigMenu = new EmergencyLightingMenu(els);
                     Menu.BindMenuToItem(SirenConfigMenu.Menu, SirenConfigItem);
                     SirenConfigItem.Enabled = true;
+                    SirenConfigItem.SetLeftBadge(UIMenuItem.BadgeStyle.None);
+                    SirenConfigItem.Description = defaultConfigMenuDesc;
+                } else if(els.Exists())
+                {
+                    SirenConfigMenu = null;
+                    SirenConfigItem.Enabled = true;
+                    SirenConfigItem.SetLeftBadge(UIMenuItem.BadgeStyle.Alert);
+                    SirenConfigItem.Activated += OnNonEditableConfigSelected;
+                    SirenConfigItem.Description = defaultConfigMenuDesc + builtInConfigMenuDesc + new string(' ', 20);
                 } else
                 {
-                    SirenConfigItem.Enabled = false;
                     SirenConfigMenu = null;
+                    SirenConfigItem.SetLeftBadge(UIMenuItem.BadgeStyle.None);
+                    SirenConfigItem.Enabled = false;
+                    SirenConfigItem.Description = "No selected siren setting";
                 }
+            }
+        }
+
+        private static string defaultConfigMenuDesc = "Modify siren settings including flash patterns, environmental lighting, etc.";
+        private static string builtInConfigMenuDesc = "~n~~y~This is a built-in siren setting and cannot be directly edited. An editable copy will be created if you edit this setting.";
+
+        private static void OnNonEditableConfigSelected(UIMenu sender, UIMenuItem selectedItem)
+        {
+            if(Vehicle && Vehicle.EmergencyLighting.Exists())
+            {
+                Vehicle.EmergencyLightingOverride = Vehicle.EmergencyLighting.Clone();
+                SirenSettingMenu.RefreshSirenSettingList();
+                SirenSettingMenu.SelectedEmergencyLighting = Vehicle.EmergencyLighting;
+                ResetConfigMenu();
             }
         }
 
