@@ -16,6 +16,7 @@ namespace LiveLights
     {
         private static void Main()
         {
+            GameFiber.ExecuteWhile(Menu.MenuController.Process, () => true);
             GameFiber.Hibernate();
         }
     }

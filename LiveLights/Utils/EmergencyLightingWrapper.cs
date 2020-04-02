@@ -22,7 +22,7 @@ namespace LiveLights.Utils
 
         public override int GetHashCode()
         {
-            return this.ELS.Name.GetHashCode();
+            return this.ELS?.Name.GetHashCode() ?? 0;
         }
 
         public override bool Equals(object obj)

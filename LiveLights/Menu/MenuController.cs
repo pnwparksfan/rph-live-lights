@@ -22,21 +22,24 @@ namespace LiveLights.Menu
         {
             if(Game.IsKeyDown(Keys.Multiply))
             {
-                if(!menu.Menu.Visible)
+                if(!VehicleMenu.Menu.Visible)
                 {
-                    menu.SirenConfigMenu?.Menu.RefreshData();
+                    // VehicleMenu.SirenConfigMenu?.Menu.RefreshData();
+                    VehicleMenu.Refresh();
                 }
-                menu.Menu.Visible = !menu.Menu.Visible;
+                VehicleMenu.Menu.Visible = !VehicleMenu.Menu.Visible;
             }
 
-            menu.SirenConfigMenu?.ShowSirenPositions(Game.LocalPlayer.Character.CurrentVehicle, true);
+            // VehicleMenu.SirenConfigMenu?.ShowSirenPositions(Game.LocalPlayer.Character.CurrentVehicle, true);
+
 
             Pool.ProcessMenus();
         }
 
         // private static EmergencyLightingMenu menu;
-        private static VehicleMenu menu;
+        // private static VehicleMenu menu;
 
+        /*
         [ConsoleCommand]
         private static void StartMenu()
         {
@@ -48,5 +51,6 @@ namespace LiveLights.Menu
 
             GameFiber.ExecuteNewWhile(Process, () => v);
         }
+        */
     }
 }

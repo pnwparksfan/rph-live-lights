@@ -12,59 +12,98 @@ namespace LiveLights.Menu
     using RAGENativeUI.Elements;
     using Utils;
 
-    internal class VehicleMenu
+    internal static class VehicleMenu
     {
-        public VehicleMenu(Vehicle v)
+        static VehicleMenu()
         {
-            Vehicle = v;
-
-            string vehicleName = NativeFunction.Natives.GET_DISPLAY_NAME_FROM_VEHICLE_MODEL<string>(v.Model.Hash);
-            vehicleName = NativeFunction.Natives.x7B5280EBA9840C72<string>(vehicleName);
-            Menu = new UIMenuRefreshable("Siren Configuration", $"~b~Configure sirens for {vehicleName} ({v.Model.Name})");
+            Menu = new UIMenuRefreshable("Siren Configuration", "~y~No vehicle selected");
             MenuController.Pool.AddAfterYield(Menu);
             Menu.SetMenuWidthOffset(250);
             Menu.ControlDisablingEnabled = true;
             Menu.MouseControlsEnabled = false;
             Menu.AllowCameraMovement = true;
 
-            EmergencyLighting els = v.GetOrCreateOverrideEmergencyLighting();
-            SirenSettingMenu = new SirenSettingsSelectionMenu(els, true, true, true);
+            
+            SirenSettingMenu = new SirenSettingsSelectionMenu(null, true, true, true, false);
             SirenSettingSelectorItem = SirenSettingMenu.CreateAndBindToSubmenuItem(Menu);
-            SirenConfigMenu = new EmergencyLightingMenu(els);
+            SirenConfigMenu = null; // new EmergencyLightingMenu(null);
             SirenConfigItem = new UIMenuItem("Edit Emergency Lighting", "Modify siren settings including flash patterns, environmental lighting, etc.");
             Menu.AddItem(SirenConfigItem);
-            Menu.BindMenuToItem(SirenConfigMenu.Menu, SirenConfigItem);
+            // Menu.BindMenuToItem(SirenConfigMenu.Menu, SirenConfigItem);
             
-            EmergencyLightsOnItem = new UIMenuRefreshableCheckboxItem("Emergency Lights Enabled", Vehicle.IsSirenOn, "Toggle flashing lights on this vehicle");
+            EmergencyLightsOnItem = new UIMenuRefreshableCheckboxItem("Emergency Lights Enabled", false, "Toggle flashing lights on this vehicle");
             Menu.AddMenuDataBinding(EmergencyLightsOnItem, (x) => Vehicle.IsSirenOn = x, () => Vehicle.IsSirenOn);
 
-            SirenAudioOnItem = new UIMenuRefreshableCheckboxItem("Siren Audio Enabled", !Vehicle.IsSirenSilent, "Toggle siren audio on this vehicle");
+            SirenAudioOnItem = new UIMenuRefreshableCheckboxItem("Siren Audio Enabled", false, "Toggle siren audio on this vehicle");
             Menu.AddMenuDataBinding(SirenAudioOnItem, (x) => Vehicle.IsSirenSilent = !x, () => !Vehicle.IsSirenSilent);
 
             SirenSettingMenu.OnSirenSettingSelected += OnSirenSelectionChanged;
+
+            Refresh();
         }
 
-        private void OnSirenSelectionChanged(SirenSettingsSelectionMenu sender, UIMenu menu, SirenSettingsSelectionMenu.SirenSettingMenuItem item, EmergencyLighting setting)
+        public static void Refresh()
         {
-            EmergencyLighting els = setting.GetCustomOrClone();
+            bool validVehicle = Vehicle.Exists();
+            foreach (UIMenuItem menuItem in Menu.MenuItems)
+            {
+                menuItem.Enabled = validVehicle;
+            }
+
+            if(Vehicle)
+            {
+                string vehicleName = NativeFunction.Natives.GET_DISPLAY_NAME_FROM_VEHICLE_MODEL<string>(Vehicle.Model.Hash);
+                vehicleName = NativeFunction.Natives.x7B5280EBA9840C72<string>(vehicleName);
+                Menu.Subtitle.Caption = $"~b~Configure sirens for {vehicleName} ({Vehicle.Model.Name})";
+                // EmergencyLighting els = Vehicle.GetOrCreateOverrideEmergencyLighting();
+                SirenSettingMenu.SelectedEmergencyLighting = Vehicle.EmergencyLighting;
+                ResetConfigMenu();
+                Menu.RefreshData(false);
+            } else
+            {
+                Menu.Subtitle.Caption = "~y~No valid vehicle detected";
+            }
+        }
+
+        private static void OnSirenSelectionChanged(SirenSettingsSelectionMenu sender, UIMenu menu, SirenSettingsSelectionMenu.SirenSettingMenuItem item, EmergencyLighting setting)
+        {
+            // EmergencyLighting els = setting.GetCustomOrClone();
             if (Vehicle)
             {
-                Vehicle.EmergencyLightingOverride = els;
+                Vehicle.EmergencyLightingOverride = setting;
                 Vehicle.RefreshSiren();
             }
-            Menu.ReleaseMenuFromItem(SirenConfigItem);
-            SirenConfigMenu = new EmergencyLightingMenu(els);
-            Menu.BindMenuToItem(SirenConfigMenu.Menu, SirenConfigItem);
+            ResetConfigMenu();
         }
 
-        public Vehicle Vehicle { get; }
+        private static void ResetConfigMenu()
+        {
+            EmergencyLighting els = (Vehicle.Exists()) ? Vehicle.EmergencyLighting : null;
 
-        public UIMenuRefreshable Menu { get; }
-        public SirenSettingsSelectionMenu SirenSettingMenu { get; }
-        public UIMenuItem SirenSettingSelectorItem { get; }
-        public EmergencyLightingMenu SirenConfigMenu { get; private set; }
-        public UIMenuItem SirenConfigItem { get; }
-        public UIMenuRefreshableCheckboxItem EmergencyLightsOnItem { get; }
-        public UIMenuRefreshableCheckboxItem SirenAudioOnItem { get; }
+            if(SirenConfigMenu?.ELS.Name != els.Name)
+            {
+                Menu.ReleaseMenuFromItem(SirenConfigItem);
+                if(els.Exists() && els.IsCustomSetting())
+                {
+                    SirenConfigMenu = new EmergencyLightingMenu(els);
+                    Menu.BindMenuToItem(SirenConfigMenu.Menu, SirenConfigItem);
+                    SirenConfigItem.Enabled = true;
+                } else
+                {
+                    SirenConfigItem.Enabled = false;
+                    SirenConfigMenu = null;
+                }
+            }
+        }
+
+        public static Vehicle Vehicle => Game.LocalPlayer.Character.LastVehicle;
+
+        public static UIMenuRefreshable Menu { get; }
+        public static SirenSettingsSelectionMenu SirenSettingMenu { get; }
+        public static UIMenuItem SirenSettingSelectorItem { get; }
+        public static EmergencyLightingMenu SirenConfigMenu { get; private set; }
+        public static UIMenuItem SirenConfigItem { get; }
+        public static UIMenuRefreshableCheckboxItem EmergencyLightsOnItem { get; }
+        public static UIMenuRefreshableCheckboxItem SirenAudioOnItem { get; }
     }
 }

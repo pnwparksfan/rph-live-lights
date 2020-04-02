@@ -137,7 +137,8 @@ namespace LiveLights.Menu
 
             set
             {
-                SetSelectedSetting(elsEntries[value]);
+                elsEntries.TryGetValue(value, out SirenSettingMenuItem item);
+                SetSelectedSetting(item);
                 // elsEntries[value].Selected = true;
                 // Menu.CurrentSelection = Menu.MenuItems.IndexOf(elsEntries[value]);
             }
