@@ -30,7 +30,7 @@ namespace LiveLights.Menu
                 VehicleMenu.Menu.Visible = !VehicleMenu.Menu.Visible;
             }
 
-            // VehicleMenu.SirenConfigMenu?.ShowSirenPositions(Game.LocalPlayer.Character.CurrentVehicle, true);
+            VehicleMenu.SirenConfigMenu?.ShowSirenPositions(VehicleMenu.Vehicle, true);
 
 
             Pool.ProcessMenus();

@@ -440,7 +440,15 @@ namespace RAGENativeUI.Elements
         // Whenever the user changes the checkbox, trigger the menu update binding with the new value
         private void onValueChanged(UIMenuCheckboxItem sender, bool Checked)
         {
-            MenuUpdateBinding(Checked);
+            try
+            {
+                MenuUpdateBinding?.Invoke(Checked);
+            } catch(Exception e)
+            {
+                Game.LogTrivial($"Unable to set {this.MenuItem.Text} to {Checked}");
+                Game.LogTrivialDebug(e.Message);
+            }
+            
         }
 
         public Action<bool> MenuUpdateBinding { get; set; }

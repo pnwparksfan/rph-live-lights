@@ -39,7 +39,7 @@ namespace LiveLights.Menu
             Menu.AddMenuDataBinding(SirenAudioOnItem, (x) => Vehicle.IsSirenSilent = !x, () => !Vehicle.IsSirenSilent);
 
             SirenSettingMenu.OnSirenSettingSelected += OnSirenSelectionChanged;
-
+            
             Refresh();
         }
 
