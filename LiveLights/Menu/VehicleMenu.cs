@@ -17,8 +17,10 @@ namespace LiveLights.Menu
         public VehicleMenu(Vehicle v)
         {
             Vehicle = v;
-            
-            Menu = new UIMenuRefreshable("Siren Configuration", $"~b~Configure emergency lighting for {v.Model.Name}");
+
+            string vehicleName = NativeFunction.Natives.GET_DISPLAY_NAME_FROM_VEHICLE_MODEL<string>(v.Model.Hash);
+            vehicleName = NativeFunction.Natives.x7B5280EBA9840C72<string>(vehicleName);
+            Menu = new UIMenuRefreshable("Siren Configuration", $"~b~Configure sirens for {vehicleName} ({v.Model.Name})");
             MenuController.Pool.AddAfterYield(Menu);
             Menu.SetMenuWidthOffset(250);
             Menu.ControlDisablingEnabled = true;
