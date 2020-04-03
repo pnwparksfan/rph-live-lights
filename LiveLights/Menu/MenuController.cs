@@ -35,5 +35,11 @@ namespace LiveLights.Menu
 
             Pool.ProcessMenus();
         }
+
+        [ConsoleCommand("Open the Live Lights menu (use this if you don't have a keybinding for it)")]
+        private static void OpenLiveLightsMenu()
+        {
+            VehicleMenu.Menu.Visible = true;
+        }
     }
 }
