@@ -64,16 +64,23 @@
     <Compile Include="Menu\VehicleMenu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="SirenApply.cs" />
     <Compile Include="SirenSetting.cs" />
     <Compile Include="Utils\ColorTools.cs" />
     <Compile Include="Utils\EmergencyLightingWrapper.cs" />
+    <Compile Include="Utils\KeyChecker.cs" />
     <Compile Include="Utils\Marker.cs" />
     <Compile Include="Utils\MenuItems.cs" />
     <Compile Include="Utils\SirenExtensions.cs" />
     <Compile Include="Utils\TextureHash.cs" />
     <Compile Include="Utils\UserInput.cs" />
     <Compile Include="XMLTesting.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LiveLights\LiveLightsSettings.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

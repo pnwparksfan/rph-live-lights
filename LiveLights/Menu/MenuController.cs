@@ -13,6 +13,7 @@ namespace LiveLights.Menu
     using RAGENativeUI.Elements;
 
     using Menu;
+    using Utils;
 
     internal static class MenuController
     {
@@ -20,11 +21,10 @@ namespace LiveLights.Menu
 
         internal static void Process()
         {
-            if(Game.IsKeyDown(Keys.Multiply))
+            if(KeyChecker.AreKeysDownExclusively(Settings.MenuModifier, Settings.MenuKey))
             {
                 if(!VehicleMenu.Menu.Visible)
                 {
-                    // VehicleMenu.SirenConfigMenu?.Menu.RefreshData();
                     VehicleMenu.Refresh();
                 }
                 VehicleMenu.Menu.Visible = !VehicleMenu.Menu.Visible;
@@ -35,22 +35,5 @@ namespace LiveLights.Menu
 
             Pool.ProcessMenus();
         }
-
-        // private static EmergencyLightingMenu menu;
-        // private static VehicleMenu menu;
-
-        /*
-        [ConsoleCommand]
-        private static void StartMenu()
-        {
-            Vehicle v = Game.LocalPlayer.Character.CurrentVehicle;
-            EmergencyLighting els = v.GetELSForVehicle();
-            // menu = new EmergencyLightingMenu(els);
-            menu = new VehicleMenu(v);
-            // menu.Menu.Visible = true;
-
-            GameFiber.ExecuteNewWhile(Process, () => v);
-        }
-        */
     }
 }
