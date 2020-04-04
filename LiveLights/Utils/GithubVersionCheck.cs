@@ -57,7 +57,7 @@ namespace LiveLights.Utils
             } catch (Exception e)
             {
                 LatestRelease = AllReleases.FirstOrDefault();
-                Rage.Game.LogTrivial($"Unable to check latest release on GitHub: {e.Message}");
+                Rage.Game.LogTrivialDebug($"Unable to check latest release on GitHub: {e.Message}");
                 if (LatestRelease == null)
                 {
                     Rage.Game.LogTrivial("Full release list unsuccessful");

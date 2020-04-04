@@ -50,7 +50,7 @@ namespace LiveLights
                 if (VersionCheck.IsUpdateAvailable())
                 {
                     Game.LogTrivial("Current version is out of date");
-                    Game.DisplayNotification("commonmenu", "mp_alerttriangle", "LiveLights by PNWParksFan", "~y~Update Available", $"A new version ~b~LiveLights~w~ is available!\n\n~y~<i>{VersionCheck.LatestRelease.Name}</i>");
+                    Game.DisplayNotification("commonmenu", "mp_alerttriangle", "LiveLights by PNWParksFan", "~y~Update Available", $"~b~LiveLights {VersionCheck.LatestRelease.TagName}~w~ is available!\n\n~y~<i>{VersionCheck.LatestRelease.Name}</i>");
                 }
                 else
                 {

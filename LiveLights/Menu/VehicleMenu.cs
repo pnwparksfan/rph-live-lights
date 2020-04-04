@@ -50,7 +50,11 @@ namespace LiveLights.Menu
 
             Refresh();
             Menu.RefreshIndex();
-            Menu.CurrentSelection = 1;
+            
+            if(UpdateItem != null)
+            {
+                Menu.CurrentSelection = 1;
+            }
         }
 
         private static void OnUpdateClicked(UIMenu sender, UIMenuItem selectedItem)
