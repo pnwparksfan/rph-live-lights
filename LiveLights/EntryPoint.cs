@@ -43,17 +43,21 @@ namespace LiveLights
                 Game.LogTrivial("Use the OpenLiveLightsMenu console command to open the menu");
             }
 
-            
-            VersionCheck = new GithubVersionCheck("pnwparksfan", "rph-live-lights", 25194022);
-            Game.LogTrivial($"Latest release on github: {VersionCheck.LatestRelease?.TagName}");
-            if (VersionCheck.IsUpdateAvailable())
+            if(Settings.CheckForUpdates)
             {
-                Game.LogTrivial("Current version is out of date");
-                Game.DisplayNotification("", "", "~y~Update Available", "LiveLights by PNWParksFan", $"Version ~b~{VersionCheck.LatestRelease.TagName}~w~ of LiveLights is available!\n<i>{VersionCheck.LatestRelease.Body}</i>");
-            } else
-            {
-                Game.LogTrivial($"Current version is up to date");
+                VersionCheck = new GithubVersionCheck("pnwparksfan", "rph-live-lights", 25194022);
+                Game.LogTrivial($"Latest release on github: {VersionCheck.LatestRelease?.TagName}");
+                if (VersionCheck.IsUpdateAvailable())
+                {
+                    Game.LogTrivial("Current version is out of date");
+                    Game.DisplayNotification("commonmenu", "mp_alerttriangle", "LiveLights by PNWParksFan", "~y~Update Available", $"A new version ~b~LiveLights~w~ is available!\n\n~y~<i>{VersionCheck.LatestRelease.Name}</i>");
+                }
+                else
+                {
+                    Game.LogTrivial($"Current version is up to date");
+                }
             }
+            
             
             GameFiber.ExecuteWhile(Menu.MenuController.Process, () => true);
             GameFiber.Hibernate();

@@ -23,6 +23,14 @@ namespace LiveLights.Menu
             Menu.MouseControlsEnabled = false;
             Menu.AllowCameraMovement = true;
 
+            if(EntryPoint.VersionCheck?.IsUpdateAvailable() == true)
+            {
+                UpdateItem = new UIMenuItem("Update Available", $"Version ~y~{EntryPoint.VersionCheck.LatestRelease.TagName}~w~ is available for download. Press ~b~Enter~w~ to download ~y~{EntryPoint.VersionCheck.LatestRelease.Name}~w~.");
+                UpdateItem.SetRightLabel("~o~" + EntryPoint.VersionCheck.LatestRelease.TagName);
+                UpdateItem.SetLeftBadge(UIMenuItem.BadgeStyle.Alert);
+                Menu.AddItem(UpdateItem);
+                UpdateItem.Activated += OnUpdateClicked;
+            }
             
             SirenSettingMenu = new SirenSettingsSelectionMenu(null, true, true, true, false);
             SirenSettingSelectorItem = SirenSettingMenu.CreateAndBindToSubmenuItem(Menu);
@@ -39,8 +47,21 @@ namespace LiveLights.Menu
             Menu.AddMenuDataBinding(SirenAudioOnItem, (x) => Vehicle.IsSirenSilent = !x, () => !Vehicle.IsSirenSilent);
 
             SirenSettingMenu.OnSirenSettingSelected += OnSirenSelectionChanged;
-            
+
             Refresh();
+            Menu.RefreshIndex();
+            Menu.CurrentSelection = 1;
+        }
+
+        private static void OnUpdateClicked(UIMenu sender, UIMenuItem selectedItem)
+        {
+            string url = EntryPoint.VersionCheck.LatestRelease.HtmlUrl;
+            if (!string.IsNullOrWhiteSpace(url))
+            {
+                System.Diagnostics.Process.Start(url);
+                sender.Visible = false;
+                NativeFunction.Natives.SET_FRONTEND_ACTIVE(true);
+            }
         }
 
         public static void Refresh()
@@ -48,7 +69,10 @@ namespace LiveLights.Menu
             bool validVehicle = Vehicle.Exists();
             foreach (UIMenuItem menuItem in Menu.MenuItems)
             {
-                menuItem.Enabled = validVehicle;
+                if(menuItem != UpdateItem)
+                {
+                    menuItem.Enabled = validVehicle;
+                }
             }
 
             if(Vehicle)
@@ -129,6 +153,7 @@ namespace LiveLights.Menu
         public static Vehicle Vehicle => Game.LocalPlayer.Character.LastVehicle;
 
         public static UIMenuRefreshable Menu { get; }
+        public static UIMenuItem UpdateItem { get; }
         public static SirenSettingsSelectionMenu SirenSettingMenu { get; }
         public static UIMenuItem SirenSettingSelectorItem { get; }
         public static EmergencyLightingMenu SirenConfigMenu { get; private set; }

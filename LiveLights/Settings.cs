@@ -15,5 +15,7 @@ namespace LiveLights
 
         public static Keys MenuModifier { get; } = INI.ReadEnum("Keybindings", "MenuModifier", Keys.None);
         public static Keys MenuKey { get; } = INI.ReadEnum("Keybindings", "MenuKey", Keys.OemMinus);
+
+        public static bool CheckForUpdates { get; } = INI.ReadBoolean("Updates", "CheckForUpdates", true);
     }
 }
