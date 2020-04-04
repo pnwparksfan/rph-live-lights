@@ -14,10 +14,10 @@ not intended as a general-use siren controller.
 
 [Download the latest version from the releases tab](https://github.com/pnwparksfan/rph-live-lights/releases)
 
-![Latest Version](https://img.shields.io/github/release/pnwparksfan/rph-live-lights?include_prereleases)  
-![Download Count](https://img.shields.io/github/downloads/pnwparksfan/rph-live-lights/total)    
+[![Latest Version](https://img.shields.io/github/release/pnwparksfan/rph-live-lights?include_prereleases)](https://github.com/pnwparksfan/rph-live-lights/releases)  
+[![Download Count](https://img.shields.io/github/downloads/pnwparksfan/rph-live-lights/total)](https://github.com/pnwparksfan/rph-live-lights/releases)    
 
 If you encounter any bugs, please [submit an issue](https://github.com/pnwparksfan/rph-live-lights/issues) or contact me on Discord if we share a mutual server.
 
-![Issues](https://img.shields.io/github/issues/pnwparksfan/rph-live-lights)  
-![Issues](https://img.shields.io/github/issues-closed/pnwparksfan/rph-live-lights)
+[![Issues](https://img.shields.io/github/issues/pnwparksfan/rph-live-lights)](https://github.com/pnwparksfan/rph-live-lights/issues)  
+[![Issues](https://img.shields.io/github/issues-closed/pnwparksfan/rph-live-lights)](https://github.com/pnwparksfan/rph-live-lights/issues)
