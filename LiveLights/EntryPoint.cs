@@ -15,8 +15,12 @@ using Rage.Attributes;
 
 namespace LiveLights
 {
-    public class EntryPoint
+    using Utils;
+
+    internal class EntryPoint
     {
+        public static GithubVersionCheck VersionCheck;
+
         private static void Main()
         {
             // Older versions of RPH do not support the EmergencyLighting API properly
@@ -37,6 +41,18 @@ namespace LiveLights
             } else
             {
                 Game.LogTrivial("Use the OpenLiveLightsMenu console command to open the menu");
+            }
+
+            
+            VersionCheck = new GithubVersionCheck("pnwparksfan", "rph-live-lights", 25194022);
+            Game.LogTrivial($"Latest release on github: {VersionCheck.LatestRelease?.TagName}");
+            if (VersionCheck.IsUpdateAvailable())
+            {
+                Game.LogTrivial("Current version is out of date");
+                Game.DisplayNotification("", "", "~y~Update Available", "LiveLights by PNWParksFan", $"Version ~b~{VersionCheck.LatestRelease.TagName}~w~ of LiveLights is available!\n<i>{VersionCheck.LatestRelease.Body}</i>");
+            } else
+            {
+                Game.LogTrivial($"Current version is up to date");
             }
             
             GameFiber.ExecuteWhile(Menu.MenuController.Process, () => true);
