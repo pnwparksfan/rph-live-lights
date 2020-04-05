@@ -183,11 +183,23 @@ namespace LiveLights.Menu
 
         public void ShowSirenPositions(Vehicle v, bool selectedOnly)
         {
+            if (!v) return;
+
             foreach (EmergencyLightMenu sirenMenu in SirenSubMenus)
             {
-                if (v && (!selectedOnly || sirenMenu.Menu.Visible || sirenMenu.Menu.Children.Values.Any(c => c.Visible)))
+                if (!selectedOnly || sirenMenu.Menu.Visible || sirenMenu.Menu.Children.Values.Any(c => c.Visible))
                 {
                     v.ShowSirenMarker(sirenMenu.SirenID);
+                }
+            }
+
+            for (int i = 0; i < SequenceQuickEdit.SirenSequenceItems.Length; i++)
+            {
+                int sirenId = i + 1;
+                UIMenuStringSelector item = SequenceQuickEdit.SirenSequenceItems[i];
+                if(SequenceQuickEdit.Menu.Visible && item.MenuItem.Selected)
+                {
+                    v.ShowSirenMarker(i+1);
                 }
             }
         }

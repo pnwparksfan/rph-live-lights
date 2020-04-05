@@ -27,7 +27,7 @@ namespace LiveLights.Menu
                 string sirenId = $"Siren {i + 1}";
                 UIMenuStringSelector item = new UIMenuStringSelector($"{sirenId} Sequence", siren.FlashinessSequence, $"Edit 32-bit sequence for {sirenId}") { MaxLength = 32 };
                 Menu.AddMenuDataBinding(item, (x) => siren.FlashinessSequence = x, () => siren.FlashinessSequence);
-                SirenSequenceItems.Add(item);
+                sirenSequenceItems.Add(item);
             }
 
             Menu.AddItem(Parent.LeftHeadlightSequenceItem);
@@ -49,6 +49,8 @@ namespace LiveLights.Menu
         public EmergencyLighting ELS { get; }
         public UIMenuRefreshable Menu { get; }
 
-        private List<UIMenuItem> SirenSequenceItems = new List<UIMenuItem>();
+        private List<UIMenuStringSelector> sirenSequenceItems = new List<UIMenuStringSelector>();
+
+        public UIMenuStringSelector[] SirenSequenceItems => sirenSequenceItems.ToArray();
     }
 }
