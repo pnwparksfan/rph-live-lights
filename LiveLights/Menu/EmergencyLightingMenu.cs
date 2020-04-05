@@ -19,7 +19,7 @@ namespace LiveLights.Menu
         {
             this.ELS = els;
 
-            Menu = new UIMenuRefreshable("Emergency Lighting Settings", "");
+            Menu = new UIMenuRefreshable("Emergency Lighting Settings", $"~b~Siren Setting \"{els.Name}\"");
             Menu.SetMenuWidthOffset(250);
             Menu.ControlDisablingEnabled = true;
             Menu.MouseControlsEnabled = false;
@@ -129,6 +129,13 @@ namespace LiveLights.Menu
 
             // Final stuff
 
+            SequenceQuickEdit = new SequenceQuickEditMenu(ELS, this);
+            SequenceQuickEditItem = new UIMenuItem("Siren Sequence Quick Edit", "Edit flashiness sequences for all sirens on this siren setting at once");
+            Menu.BindMenuAndCopyProperties(SequenceQuickEdit.Menu, SequenceQuickEditItem);
+            SequenceQuickEditItem.Activated += OnQuickEditMenuOpened;
+            Menu.AddItem(SequenceQuickEditItem, 4);
+            SequenceQuickEditItem.SetRightLabel("→");
+            
             RefreshItem = new UIMenuItem("Refresh Siren Setting Data", "Refreshes the menu with the siren setting data for the current vehicle. Use this if the data may have been changed outside the menu.");
             Menu.AddRefreshItem(RefreshItem);
 
@@ -145,10 +152,18 @@ namespace LiveLights.Menu
             MenuController.Pool.AddAfterYield(Menu);
             MenuController.Pool.AddAfterYield(HeadlightsMenu);
             MenuController.Pool.AddAfterYield(TaillightsMenu);
+            MenuController.Pool.AddAfterYield(SequenceQuickEdit.Menu);
 
             Menu.RefreshIndex();
         }
-        
+
+        private void OnQuickEditMenuOpened(UIMenu sender, UIMenuItem selectedItem)
+        {
+            // Sequences may have been changed by other menus, need to refresh before showing
+            SequenceQuickEdit.Menu.RefreshData();
+            SequenceQuickEdit.Menu.RefreshIndex();
+        }
+
         private void OnImportExportClicked(UIMenu sender, UIMenuItem selectedItem)
         {
             if(selectedItem == ImportCarcolsItem)
@@ -214,6 +229,10 @@ namespace LiveLights.Menu
         public UIMenuSwitchSelectable SirenSwitcherItem { get; }
         private List<EmergencyLightMenu> SirenMenus { get; }
         public EmergencyLightMenu[] SirenSubMenus => SirenMenus.ToArray();
+
+        // Quick edit menu
+        public UIMenuItem SequenceQuickEditItem { get; }
+        public SequenceQuickEditMenu SequenceQuickEdit { get; }
 
         // Import/export
         public UIMenuItem ExportCarcolsItem { get; }

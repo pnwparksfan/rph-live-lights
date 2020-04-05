@@ -67,6 +67,7 @@
     <Compile Include="Menu\EmergencyLightMenu.cs" />
     <Compile Include="Menu\ImportExportMenu.cs" />
     <Compile Include="Menu\MenuController.cs" />
+    <Compile Include="Menu\SequenceQuickEditMenu.cs" />
     <Compile Include="Menu\SirenSettingsSelectionMenu.cs" />
     <Compile Include="Menu\VehicleMenu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -83,7 +84,6 @@
     <Compile Include="Utils\SirenExtensions.cs" />
     <Compile Include="Utils\TextureHash.cs" />
     <Compile Include="Utils\UserInput.cs" />
-    <Compile Include="XMLTesting.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ILMergeOrder.txt" />
