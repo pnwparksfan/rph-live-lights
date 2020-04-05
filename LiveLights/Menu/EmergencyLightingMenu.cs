@@ -149,7 +149,7 @@ namespace LiveLights.Menu
             Menu.AddItem(ExportCarcolsItem);
             ExportCarcolsItem.Activated += OnImportExportClicked;
 
-            ExportAllowOverwriteItem = new UIMenuCheckboxItem("Allow overwrite on export", false, "Allow exported carcols.meta files to overwrite existing files with the same name");
+            ExportAllowOverwriteItem = new UIMenuCheckboxItem("Allow overwrite on export", Settings.DefaultOverwrite, "Allow exported carcols.meta files to overwrite existing files with the same name");
             Menu.AddItem(ExportAllowOverwriteItem);
 
             MenuController.Pool.AddAfterYield(Menu);

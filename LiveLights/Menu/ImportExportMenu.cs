@@ -58,6 +58,7 @@ namespace LiveLights.Menu
                     carcols.SirenSettings.Add(setting);
                     Serializer.SaveItemToXML(carcols, filepath);
                     Game.DisplayNotification($"~g~Successfully exported~w~ \"{els.Name}\" ~g~to~w~ \"{Path.GetFullPath(filepath)}\"");
+                    Game.LogTrivial($"Exported {els.Name} to \"{Path.GetFullPath(filepath)}\"");
                     return true;
                 } catch (Exception e)
                 {

@@ -17,6 +17,21 @@ namespace LiveLights
     [XmlRoot(ElementName = "CVehicleModelInfoVarGlobal", Namespace = "")]
     public class CarcolsFile
     {
+        [XmlAnyElement("infocomment")]
+        public XmlComment ExportInfoComment
+        {
+            get => new XmlDocument().CreateComment($"  Exported by {Game.LocalPlayer.Name} on " + DateTime.Now.ToString("yyyy-MM-dd @ HH:mm") + $" using LiveLights {EntryPoint.CurrentFileVersion} by PNWParksFan  ");
+            set { }
+        }
+
+        [XmlAnyElement("linkcomment")]
+        public XmlComment LinkComment
+        {
+            get => new XmlDocument().CreateComment("  LiveLights is open source! Download or learn more at https://github.com/pnwparksfan/rph-live-lights/  ");
+            set { }
+        }
+
+
         [XmlArray("Sirens")]
         [XmlArrayItem("Item")]
         public List<SirenSetting> SirenSettings { get; set; } = new List<SirenSetting>();

@@ -13,9 +13,14 @@ namespace LiveLights
     {
         internal static InitializationFile INI = new InitializationFile(@"Plugins\LiveLights\LiveLightsSettings.ini");
 
+        // Keybindings
         public static Keys MenuModifier { get; } = INI.ReadEnum("Keybindings", "MenuModifier", Keys.None);
         public static Keys MenuKey { get; } = INI.ReadEnum("Keybindings", "MenuKey", Keys.OemMinus);
 
+        // Updates
         public static bool CheckForUpdates { get; } = INI.ReadBoolean("Updates", "CheckForUpdates", true);
+
+        // Export
+        public static bool DefaultOverwrite { get; } = INI.ReadBoolean("Export", "DefaultAllowOverwriteOnExport", false);
     }
 }
