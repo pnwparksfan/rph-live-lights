@@ -120,7 +120,7 @@ namespace LiveLights.Menu
             CoronaSizeItem = new UIMenuFloatSelector("Corona Size", Siren.CoronaSize, "Size of corona for this siren");
             CoronaMenu.AddMenuDataBinding(CoronaSizeItem, (x) => Siren.CoronaSize = x, () => Siren.CoronaSize);
 
-            CoronaPullItem = new UIMenuFloatSelector("Corona Pull", Siren.CoronaPull, "Corona pull (effect not documented)");
+            CoronaPullItem = new UIMenuFloatSelector("Corona Pull", Siren.CoronaPull, "Corona pull, affects how visible corona is through vehicle mesh");
             CoronaMenu.AddMenuDataBinding(CoronaPullItem, (x) => Siren.CoronaPull = x, () => Siren.CoronaPull);
 
             CoronaFaceCameraItem = new UIMenuRefreshableCheckboxItem("Corona Face Camera", Siren.CoronaFaceCamera, "Enable/disable corona to always be visible regardless of camera angle");
