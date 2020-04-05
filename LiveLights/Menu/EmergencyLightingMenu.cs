@@ -149,6 +149,9 @@ namespace LiveLights.Menu
             Menu.AddItem(ExportCarcolsItem);
             ExportCarcolsItem.Activated += OnImportExportClicked;
 
+            ExportAllowOverwriteItem = new UIMenuCheckboxItem("Allow overwrite on export", false, "Allow exported carcols.meta files to overwrite existing files with the same name");
+            Menu.AddItem(ExportAllowOverwriteItem);
+
             MenuController.Pool.AddAfterYield(Menu);
             MenuController.Pool.AddAfterYield(HeadlightsMenu);
             MenuController.Pool.AddAfterYield(TaillightsMenu);
@@ -171,7 +174,7 @@ namespace LiveLights.Menu
                 ImportExportMenu.OnImportCarcols(this);
             } else if(selectedItem == ExportCarcolsItem)
             {
-                ImportExportMenu.ExportCarcols(this);
+                ImportExportMenu.ExportCarcols(this.ELS, ExportAllowOverwriteItem.Checked);
             }
         }
 
@@ -248,6 +251,7 @@ namespace LiveLights.Menu
 
         // Import/export
         public UIMenuItem ExportCarcolsItem { get; }
+        public UIMenuCheckboxItem ExportAllowOverwriteItem { get; }
         public UIMenuItem ImportCarcolsItem { get; }
     }
 }

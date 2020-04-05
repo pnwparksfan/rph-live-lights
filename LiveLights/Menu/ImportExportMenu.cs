@@ -29,26 +29,35 @@ namespace LiveLights.Menu
             Game.DisplayNotification("~y~Export not implemented yet");
         }
 
-        public static bool ExportCarcols(EmergencyLightingMenu menu)
+        public static bool ExportCarcols(EmergencyLighting els, bool allowOverwrite = false)
         {
             CreateExportFolder();
-            string filename = UserInput.GetUserInput("Select an export filename", "Enter a filename", 1000);
+            string filename = UserInput.GetUserInput("Type or paste an export filename (e.g. ~c~~h~carcols-police.meta~h~~w~) or absolute path (e.g. ~c~~h~C:\\mods\\police\\carcols.meta~h~~w~)", "Enter a filename", 1000);
             if(!string.IsNullOrWhiteSpace(filename))
             {
-                string filepath = Path.Combine(exportFolder, filename);
-                if(File.Exists(filename))
-                {
-                    Game.DisplayNotification($"~y~Unable to export~w~ {filename}~y~: File already exists.");
-                    return false;
-                }
-
                 try
                 {
+                    // If the user pasted (or manually typed) an absolute path or 
+                    // a valid path relative to the GTA root folder, use that 
+                    // location. Otherwise, create file in the export folder
+                    string filepath = filename;
+                    if(!Directory.Exists(Path.GetDirectoryName(filename)))
+                    {
+                        filepath = Path.Combine(exportFolder, filename);
+                        Directory.CreateDirectory(Path.GetDirectoryName(filepath));
+                    }
+                    
+                    if(!allowOverwrite && File.Exists(filepath))
+                    {
+                        Game.DisplayNotification($"~y~Unable to export~w~ {filename}~y~: File already exists.");
+                        return false;
+                    }
+
                     CarcolsFile carcols = new CarcolsFile();
-                    SirenSetting setting = menu.ELS.ExportEmergencyLightingToSirenSettings();
+                    SirenSetting setting = els.ExportEmergencyLightingToSirenSettings();
                     carcols.SirenSettings.Add(setting);
                     Serializer.SaveItemToXML(carcols, filepath);
-                    Game.DisplayNotification($"~g~Successfully exported~w~ \"{menu.ELS.Name}\" ~g~to~w~ \"{filepath}\"");
+                    Game.DisplayNotification($"~g~Successfully exported~w~ \"{els.Name}\" ~g~to~w~ \"{Path.GetFullPath(filepath)}\"");
                     return true;
                 } catch (Exception e)
                 {
