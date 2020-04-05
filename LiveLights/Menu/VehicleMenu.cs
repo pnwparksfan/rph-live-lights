@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace LiveLights.Menu
 {
@@ -23,11 +24,23 @@ namespace LiveLights.Menu
             Menu.MouseControlsEnabled = false;
             Menu.AllowCameraMovement = true;
 
+            BannerItem = new UIMenuItem("LiveLights by PNWParksFan", $"LiveLights was created by ~g~PNWParksFan~w~ using the RPH emergency lighting SDK. If you found this plugin useful and made something cool with it, ~y~please mention it in your credits/readme~w~. If you'd like to say thanks, you can donate to support my various modding projects at ~b~parksmods.com/donate~w~ and get member-exclusive perks. Press Enter to learn more!");
+            BannerItem.SetRightLabel("v" + EntryPoint.CurrentFileVersion.ToString());
+            BannerItem.SetLeftBadge(UIMenuItem.BadgeStyle.Heart);
+            BannerItem.BackColor = Color.Black;
+            BannerItem.ForeColor = Color.LightSkyBlue;
+            BannerItem.HighlightedBackColor = Color.LightSkyBlue;
+            BannerItem.Activated += OnBannerClicked;
+            Menu.AddItem(BannerItem);
+
             if(EntryPoint.VersionCheck?.IsUpdateAvailable() == true)
             {
                 UpdateItem = new UIMenuItem("Update Available", $"Version ~y~{EntryPoint.VersionCheck.LatestRelease.TagName}~w~ is available for download. Press ~b~Enter~w~ to download ~y~{EntryPoint.VersionCheck.LatestRelease.Name}~w~.");
                 UpdateItem.SetRightLabel("~o~" + EntryPoint.VersionCheck.LatestRelease.TagName);
                 UpdateItem.SetLeftBadge(UIMenuItem.BadgeStyle.Alert);
+                UpdateItem.BackColor = Color.Black;
+                UpdateItem.ForeColor = Color.LightSkyBlue;
+                UpdateItem.HighlightedBackColor = Color.LightSkyBlue;
                 Menu.AddItem(UpdateItem);
                 UpdateItem.Activated += OnUpdateClicked;
             }
@@ -53,19 +66,21 @@ namespace LiveLights.Menu
             
             if(UpdateItem != null)
             {
+                Menu.CurrentSelection = 2;
+            } else
+            {
                 Menu.CurrentSelection = 1;
             }
         }
 
+        private static void OnBannerClicked(UIMenu sender, UIMenuItem selectedItem)
+        {
+            selectedItem.OpenUrl("https://parksmods.com/donate/");
+        }
+
         private static void OnUpdateClicked(UIMenu sender, UIMenuItem selectedItem)
         {
-            string url = EntryPoint.VersionCheck.LatestRelease.HtmlUrl;
-            if (!string.IsNullOrWhiteSpace(url))
-            {
-                System.Diagnostics.Process.Start(url);
-                sender.Visible = false;
-                NativeFunction.Natives.SET_FRONTEND_ACTIVE(true);
-            }
+            selectedItem.OpenUrl(EntryPoint.VersionCheck.LatestRelease.HtmlUrl);
         }
 
         public static void Refresh()
@@ -73,7 +88,7 @@ namespace LiveLights.Menu
             bool validVehicle = Vehicle.Exists();
             foreach (UIMenuItem menuItem in Menu.MenuItems)
             {
-                if(menuItem != UpdateItem)
+                if(menuItem != UpdateItem && menuItem != BannerItem)
                 {
                     menuItem.Enabled = validVehicle;
                 }
@@ -164,5 +179,6 @@ namespace LiveLights.Menu
         public static UIMenuItem SirenConfigItem { get; }
         public static UIMenuRefreshableCheckboxItem EmergencyLightsOnItem { get; }
         public static UIMenuRefreshableCheckboxItem SirenAudioOnItem { get; }
+        public static UIMenuItem BannerItem { get; }
     }
 }

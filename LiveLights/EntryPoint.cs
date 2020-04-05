@@ -20,6 +20,7 @@ namespace LiveLights
     internal class EntryPoint
     {
         public static GithubVersionCheck VersionCheck;
+        public static Version CurrentFileVersion;
 
         private static void Main()
         {
@@ -34,6 +35,7 @@ namespace LiveLights
             }
 
             AssemblyName pluginInfo = Assembly.GetExecutingAssembly().GetName();
+            CurrentFileVersion = pluginInfo.Version;
             Game.LogTrivial($"Loaded {pluginInfo.Name} {pluginInfo.Version}");
             if(Settings.MenuKey != Keys.None)
             {
@@ -45,7 +47,7 @@ namespace LiveLights
 
             if(Settings.CheckForUpdates)
             {
-                VersionCheck = new GithubVersionCheck("pnwparksfan", "rph-live-lights", 25194022);
+                VersionCheck = new GithubVersionCheck("pnwparksfan", "rph-live-lights", 25207902);
                 Game.LogTrivial($"Latest release on github: {VersionCheck.LatestRelease?.TagName}");
                 if (VersionCheck.IsUpdateAvailable())
                 {

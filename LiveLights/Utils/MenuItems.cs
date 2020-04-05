@@ -601,5 +601,15 @@ namespace RAGENativeUI.Elements
                 pool.Add(menu);
             });
         }
+
+        public static void OpenUrl(this UIMenuItem item, string url)
+        {
+            if (!string.IsNullOrWhiteSpace(url))
+            {
+                System.Diagnostics.Process.Start(url);
+                item.Parent.Visible = false;
+                NativeFunction.Natives.SET_FRONTEND_ACTIVE(true);
+            }
+        }
     }
 }
