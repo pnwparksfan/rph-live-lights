@@ -12,6 +12,13 @@ to create and modify siren settings. Users are welcome to use it to
 look around and try out making their own custom sequences, but it is 
 not intended as a general-use siren controller. 
 
+If you use this mod to make something cool, please mention this mod in 
+your readme or credits file, and link to this page. Feel free to send 
+me a link to your mod when it's released so I can see what you created 
+using this plugin! If you found this plugin particularly useful, you 
+can [donate to me](https://parksmods.com/donate/) to support my 
+development projects and get member-exclusive benefits. 
+
 [Download the latest version from the releases tab](https://github.com/pnwparksfan/rph-live-lights/releases)
 
 [![Latest Version](https://img.shields.io/github/release/pnwparksfan/rph-live-lights?include_prereleases)](https://github.com/pnwparksfan/rph-live-lights/releases)  
@@ -21,6 +28,7 @@ If you encounter any bugs, please [submit an issue](https://github.com/pnwparksf
 
 [![Issues](https://img.shields.io/github/issues/pnwparksfan/rph-live-lights)](https://github.com/pnwparksfan/rph-live-lights/issues)  
 [![Issues](https://img.shields.io/github/issues-closed/pnwparksfan/rph-live-lights)](https://github.com/pnwparksfan/rph-live-lights/issues)
+
 
 &nbsp;
 
