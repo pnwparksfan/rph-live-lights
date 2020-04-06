@@ -49,7 +49,7 @@ namespace LiveLights.Menu
             FlashEnabledItem = new UIMenuRefreshableCheckboxItem("Flash Enabled", Siren.Flash, "Enable/disable this siren from flashing. Note: setting to False for a siren which was previously on may result in the siren being stuck on temporarily. Toggle vehicle's sirens off/on to reset.");
             FlashinessMenu.AddMenuDataBinding(FlashEnabledItem, (x) => Siren.Flash = x, () => Siren.Flash);
             
-            FlashSequenceItem = new UIMenuStringSelector("Flash Sequence", Siren.FlashinessSequence, $"32-bit flash sequence for siren {SirenID}. ~g~1~w~ represents on, ~y~0~w~ represents off.") { MaxLength = 32 };
+            FlashSequenceItem = new UIMenuSequenceItemSelector("Flash Sequence", Siren.FlashinessSequence, $"32-bit flash sequence for siren {SirenID}. ~g~1~w~ represents on, ~y~0~w~ represents off.");
             FlashinessMenu.AddMenuDataBinding(FlashSequenceItem, (x) => Siren.FlashinessSequence = x, () => Siren.FlashinessSequence, () => FlashSequenceRawItem);
 
             FlashSequenceRawItem = new UIMenuUIntSelector("Flash Sequence (raw)", Siren.FlashinessSequenceRaw, "32-bit unsigned integer representation of siren sequence. This value is how the sequence is represented in carcols.meta. Automatically updates/updated by binary formatted sequence above.");
@@ -83,7 +83,7 @@ namespace LiveLights.Menu
             RotationEnabledItem = new UIMenuRefreshableCheckboxItem("Rotation Enabled", Siren.Rotate, "Enable/disable this siren from rotating. Note: setting to False for a siren which was previously on may result in the siren being stuck on temporarily. Toggle vehicle's sirens off/on to reset.");
             RotationMenu.AddMenuDataBinding(RotationEnabledItem, (x) => Siren.Rotate = x, () => Siren.Rotate);
 
-            RotationSequenceItem = new UIMenuStringSelector("Rotation Sequence", Siren.RotationSequence, $"32-bit Rotation sequence for siren {SirenID}. ~g~1~w~ represents on, ~y~0~w~ represents off.") { MaxLength = 32 };
+            RotationSequenceItem = new UIMenuSequenceItemSelector("Rotation Sequence", Siren.RotationSequence, $"32-bit Rotation sequence for siren {SirenID}. ~g~1~w~ represents on, ~y~0~w~ represents off.");
             RotationMenu.AddMenuDataBinding(RotationSequenceItem, (x) => Siren.RotationSequence = x, () => Siren.RotationSequence, () => RotationSequenceRawItem);
 
             RotationSequenceRawItem = new UIMenuUIntSelector("Rotation Sequence (raw)", Siren.RotationSequenceRaw, "32-bit unsigned integer representation of siren sequence. This value is how the sequence is represented in carcols.meta. Automatically updates/updated by binary formatted sequence above.");
@@ -182,7 +182,7 @@ namespace LiveLights.Menu
         public UIMenuListItemSelector<float> FlashStartItem { get; }
         public UIMenuFloatSelector FlashStartRadItem { get; }
         public UIMenuFloatSelector FlashSpeedItem { get; }
-        public UIMenuStringSelector FlashSequenceItem { get; }
+        public UIMenuSequenceItemSelector FlashSequenceItem { get; }
         public UIMenuUIntSelector FlashSequenceRawItem { get; }
         public UIMenuListItemSelector<byte> FlashMultiplesItem { get; }
         public UIMenuRefreshableCheckboxItem FlashDirectionItem { get; }
@@ -197,7 +197,7 @@ namespace LiveLights.Menu
         public UIMenuListItemSelector<float> RotationStartItem { get; }
         public UIMenuFloatSelector RotationStartRadItem { get; }
         public UIMenuFloatSelector RotationSpeedItem { get; }
-        public UIMenuStringSelector RotationSequenceItem { get; }
+        public UIMenuSequenceItemSelector RotationSequenceItem { get; }
         public UIMenuUIntSelector RotationSequenceRawItem { get; }
         public UIMenuListItemSelector<byte> RotationMultiplesItem { get; }
         public UIMenuRefreshableCheckboxItem RotationDirectionItem { get; }

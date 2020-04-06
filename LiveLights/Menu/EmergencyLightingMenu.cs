@@ -69,13 +69,13 @@ namespace LiveLights.Menu
             LeftHeadlightMultiplesItem = new UIMenuListItemSelector<byte>("Front Left Multiples", "Left headlight multiples per flash", ELS.LeftHeadLightMultiples, CommonSelectionItems.MultiplesBytes);
             HeadlightsMenu.AddMenuDataBinding(LeftHeadlightMultiplesItem, (x) => ELS.LeftHeadLightMultiples = x, () => ELS.LeftHeadLightMultiples);
 
-            LeftHeadlightSequenceItem = new UIMenuStringSelector("Front Left Sequence", ELS.LeftHeadLightSequence, "Left headlight flash pattern sequence") { MaxLength = 32 };
+            LeftHeadlightSequenceItem = new UIMenuSequenceItemSelector("Front Left Sequence", ELS.LeftHeadLightSequence, "Left headlight flash pattern sequence");
             HeadlightsMenu.AddMenuDataBinding(LeftHeadlightSequenceItem, (x) => ELS.LeftHeadLightSequence = x, () => ELS.LeftHeadLightSequence);
 
             RightHeadlightMultiplesItem = new UIMenuListItemSelector<byte>("Front Right Multiples", "Right headlight multiples per flash", ELS.RightHeadLightMultiples, CommonSelectionItems.MultiplesBytes);
             HeadlightsMenu.AddMenuDataBinding(RightHeadlightMultiplesItem, (x) => ELS.RightHeadLightMultiples = x, () => ELS.RightHeadLightMultiples);
 
-            RightHeadlightSequenceItem = new UIMenuStringSelector("Front Right Sequence", ELS.RightHeadLightSequence, "Right headlight flash pattern sequence") { MaxLength = 32 };
+            RightHeadlightSequenceItem = new UIMenuSequenceItemSelector("Front Right Sequence", ELS.RightHeadLightSequence, "Right headlight flash pattern sequence");
             HeadlightsMenu.AddMenuDataBinding(RightHeadlightSequenceItem, (x) => ELS.RightHeadLightSequence = x, () => ELS.RightHeadLightSequence);
 
             // Taillights
@@ -89,13 +89,13 @@ namespace LiveLights.Menu
             LeftTaillightMultiplesItem = new UIMenuListItemSelector<byte>("Front Left Multiples", "Left Taillight multiples per flash", ELS.LeftTailLightMultiples, CommonSelectionItems.MultiplesBytes);
             TaillightsMenu.AddMenuDataBinding(LeftTaillightMultiplesItem, (x) => ELS.LeftTailLightMultiples = x, () => ELS.LeftTailLightMultiples);
 
-            LeftTaillightSequenceItem = new UIMenuStringSelector("Front Left Sequence", ELS.LeftTailLightSequence, "Left Taillight flash pattern sequence") { MaxLength = 32 };
+            LeftTaillightSequenceItem = new UIMenuSequenceItemSelector("Front Left Sequence", ELS.LeftTailLightSequence, "Left Taillight flash pattern sequence");
             TaillightsMenu.AddMenuDataBinding(LeftTaillightSequenceItem, (x) => ELS.LeftTailLightSequence = x, () => ELS.LeftTailLightSequence);
 
             RightTaillightMultiplesItem = new UIMenuListItemSelector<byte>("Front Right Multiples", "Right Taillight multiples per flash", ELS.RightTailLightMultiples, CommonSelectionItems.MultiplesBytes);
             TaillightsMenu.AddMenuDataBinding(RightTaillightMultiplesItem, (x) => ELS.RightTailLightMultiples = x, () => ELS.RightTailLightMultiples);
 
-            RightTaillightSequenceItem = new UIMenuStringSelector("Front Right Sequence", ELS.RightTailLightSequence, "Right Taillight flash pattern sequence") { MaxLength = 32 };
+            RightTaillightSequenceItem = new UIMenuSequenceItemSelector("Front Right Sequence", ELS.RightTailLightSequence, "Right Taillight flash pattern sequence");
             TaillightsMenu.AddMenuDataBinding(RightTaillightSequenceItem, (x) => ELS.RightTailLightSequence = x, () => ELS.RightTailLightSequence);
 
             // Sirens 
@@ -227,17 +227,17 @@ namespace LiveLights.Menu
         public UIMenuItem HeadlightsMenuItem { get; }
         public UIMenuRefreshable HeadlightsMenu { get; }
         public UIMenuListItemSelector<byte> LeftHeadlightMultiplesItem { get; }
-        public UIMenuStringSelector LeftHeadlightSequenceItem { get; }
+        public UIMenuSequenceItemSelector LeftHeadlightSequenceItem { get; }
         public UIMenuListItemSelector<byte> RightHeadlightMultiplesItem { get; }
-        public UIMenuStringSelector RightHeadlightSequenceItem { get; }
+        public UIMenuSequenceItemSelector RightHeadlightSequenceItem { get; }
 
         // Taillights menu 
         public UIMenuItem TaillightsMenuItem { get; }
         public UIMenuRefreshable TaillightsMenu { get; }
         public UIMenuListItemSelector<byte> LeftTaillightMultiplesItem { get; }
-        public UIMenuStringSelector LeftTaillightSequenceItem { get; }
+        public UIMenuSequenceItemSelector LeftTaillightSequenceItem { get; }
         public UIMenuListItemSelector<byte> RightTaillightMultiplesItem { get; }
-        public UIMenuStringSelector RightTaillightSequenceItem { get; }
+        public UIMenuSequenceItemSelector RightTaillightSequenceItem { get; }
 
         // Sirens menu
         public UIMenuItem SirensMenuItem { get; }

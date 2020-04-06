@@ -69,6 +69,7 @@
     <Compile Include="Menu\MenuController.cs" />
     <Compile Include="Menu\SequenceQuickEditMenu.cs" />
     <Compile Include="Menu\SirenSettingsSelectionMenu.cs" />
+    <Compile Include="Menu\UIMenuSequenceItemSelector.cs" />
     <Compile Include="Menu\VehicleMenu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer.cs" />

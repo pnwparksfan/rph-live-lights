@@ -277,6 +277,54 @@ namespace RAGENativeUI.Elements
         }
     }
 
+    // Monospace string
+    internal class UIMenuMonoSpaceItem : UIMenuItem
+    {
+        public UIMenuMonoSpaceItem(string text) : this(text, "") { }
+
+        public UIMenuMonoSpaceItem(string text, string description) : base(text, description)
+        {
+            origLabelResText = base._labelText;
+            origMainResText = base._text;
+            RightLabelMonospace = true;
+        }
+
+        private ResText origLabelResText;
+        private ResText origMainResText;
+
+        public bool RightLabelMonospace
+        {
+            set
+            {
+                if(value)
+                {
+                    base._labelText.FontEnum = Common.EFont.Monospace;
+                } else
+                {
+                    base._labelText.FontEnum = origLabelResText.FontEnum;
+                    base._labelText.Scale = origLabelResText.Scale;
+                }
+            }
+        }
+
+        public bool MainTextMonospace
+        {
+            set
+            {
+                if (value)
+                {
+                    base._text.FontEnum = Common.EFont.Monospace;
+                    base._text.Scale = 0.45f;
+                }
+                else
+                {
+                    base._text.FontEnum = origMainResText.FontEnum;
+                    base._text.Scale = origMainResText.Scale;
+                }
+            }
+        }
+    }
+
     // Color Selector
     internal class UIMenuColorSelector : UIMenuListItemSelector<Color>
     {
