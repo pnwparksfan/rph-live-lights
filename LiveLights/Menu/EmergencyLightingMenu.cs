@@ -86,16 +86,16 @@ namespace LiveLights.Menu
             Menu.AddItem(TaillightsMenuItem, 4);
             Menu.BindMenuAndCopyProperties(TaillightsMenu, TaillightsMenuItem);
 
-            LeftTaillightMultiplesItem = new UIMenuListItemSelector<byte>("Front Left Multiples", "Left Taillight multiples per flash", ELS.LeftTailLightMultiples, CommonSelectionItems.MultiplesBytes);
+            LeftTaillightMultiplesItem = new UIMenuListItemSelector<byte>("Left Rear Multiples", "Left Taillight multiples per flash", ELS.LeftTailLightMultiples, CommonSelectionItems.MultiplesBytes);
             TaillightsMenu.AddMenuDataBinding(LeftTaillightMultiplesItem, (x) => ELS.LeftTailLightMultiples = x, () => ELS.LeftTailLightMultiples);
 
-            LeftTaillightSequenceItem = new UIMenuSequenceItemSelector("Front Left Sequence", ELS.LeftTailLightSequence, "Left Taillight flash pattern sequence");
+            LeftTaillightSequenceItem = new UIMenuSequenceItemSelector("Left Rear Sequence", ELS.LeftTailLightSequence, "Left Taillight flash pattern sequence");
             TaillightsMenu.AddMenuDataBinding(LeftTaillightSequenceItem, (x) => ELS.LeftTailLightSequence = x, () => ELS.LeftTailLightSequence);
 
-            RightTaillightMultiplesItem = new UIMenuListItemSelector<byte>("Front Right Multiples", "Right Taillight multiples per flash", ELS.RightTailLightMultiples, CommonSelectionItems.MultiplesBytes);
+            RightTaillightMultiplesItem = new UIMenuListItemSelector<byte>("Right Rear Multiples", "Right Taillight multiples per flash", ELS.RightTailLightMultiples, CommonSelectionItems.MultiplesBytes);
             TaillightsMenu.AddMenuDataBinding(RightTaillightMultiplesItem, (x) => ELS.RightTailLightMultiples = x, () => ELS.RightTailLightMultiples);
 
-            RightTaillightSequenceItem = new UIMenuSequenceItemSelector("Front Right Sequence", ELS.RightTailLightSequence, "Right Taillight flash pattern sequence");
+            RightTaillightSequenceItem = new UIMenuSequenceItemSelector("Right Rear Sequence", ELS.RightTailLightSequence, "Right Taillight flash pattern sequence");
             TaillightsMenu.AddMenuDataBinding(RightTaillightSequenceItem, (x) => ELS.RightTailLightSequence = x, () => ELS.RightTailLightSequence);
 
             // Sirens 

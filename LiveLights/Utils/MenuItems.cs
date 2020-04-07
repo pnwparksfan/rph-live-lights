@@ -299,6 +299,7 @@ namespace RAGENativeUI.Elements
                 if(value)
                 {
                     base._labelText.FontEnum = Common.EFont.Monospace;
+                    base._labelText.Scale = 0.45f;
                 } else
                 {
                     base._labelText.FontEnum = origLabelResText.FontEnum;
@@ -314,7 +315,6 @@ namespace RAGENativeUI.Elements
                 if (value)
                 {
                     base._text.FontEnum = Common.EFont.Monospace;
-                    base._text.Scale = 0.45f;
                 }
                 else
                 {

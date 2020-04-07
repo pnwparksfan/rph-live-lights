@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Drawing;
 
 namespace LiveLights.Menu
 {
@@ -35,6 +37,19 @@ namespace LiveLights.Menu
             Menu.AddItem(Parent.LeftTaillightSequenceItem);
             Menu.AddItem(Parent.RightTaillightSequenceItem);
 
+            buttons.Add(new InstructionalButton("V", "Paste sequence"));
+            buttons.Add(new InstructionalButton("C", "Copy sequence"));
+            buttons.Add(new InstructionalButton("dn", "Move siren down"));
+            buttons.Add(new InstructionalButton("up", "Move siren up"));
+            buttons.Add(new InstructionalButton(GameControl.FrontendRight, "Shift sequence"));
+            buttons.Add(new InstructionalButton(GameControl.FrontendLeft, "Shift sequence"));
+            buttons.Add(new InstructionalButton(GameControl.Duck, "Shift x4"));
+
+            foreach (InstructionalButton button in buttons)
+            {
+                Menu.AddInstructionalButton(button);
+            }
+
             Menu.OnMenuClose += OnMenuClose;
         }
 
@@ -45,6 +60,93 @@ namespace LiveLights.Menu
             Parent.Menu.RefreshData();
         }
 
+        internal void Process()
+        {
+            if(Menu.Visible)
+            {
+                
+                if(Game.IsKeyDown(Keys.C))
+                {
+                    copiedSequence = getSelectedSequence()?.ItemValue;
+                    Common.PlaySound(Menu.AUDIO_SELECT, Menu.AUDIO_LIBRARY);
+                } else if(Game.IsKeyDown(Keys.V) && copiedSequence != null)
+                {
+                    var s = getSelectedSequence();
+                    if (s != null)
+                    {
+                        s.ItemValue = copiedSequence;
+                        Common.PlaySound(Menu.AUDIO_SELECT, Menu.AUDIO_LIBRARY);
+                    }
+                } else if(Game.IsControlJustPressed(13, GameControl.FrontendLeft))
+                {
+                    shiftSelectedSequence(-1);
+                } else if(Game.IsControlJustPressed(13, GameControl.FrontendRight))
+                {
+                    shiftSelectedSequence(1);
+                } else if(Game.IsKeyDown(Keys.PageDown))
+                {
+                    shiftSelectedItem(1);
+                } else if(Game.IsKeyDown(Keys.PageUp))
+                {
+                    shiftSelectedItem(-1);
+                }
+
+                if(!string.IsNullOrEmpty(copiedSequence))
+                {
+                    string seqDisp = "Copied sequence " + UIMenuSequenceItemSelector.FormatSequence(copiedSequence);
+                    Point p = new Point(Menu.WidthOffset + 500, 30);
+                    ResText.Draw(seqDisp, p, 0.4f, Color.White, Common.EFont.Monospace, false);
+                    int rectW = (int)ResText.MeasureStringWidth(seqDisp, Common.EFont.Monospace, 0.4f);
+                    ResRectangle.Draw(new Point(p.X - 10, p.Y - 1), new Size(rectW + 20, 31), Color.FromArgb(180, Color.Black));
+                }
+            }
+        }
+
+        private string copiedSequence = "";
+
+        private void shiftSelectedItem(int shift)
+        {
+            var item = getSelectedSequence()?.MenuItem;
+            if(item != null)
+            {
+                int currentIndex = Menu.MenuItems.IndexOf(item);
+                int newIndex = (currentIndex + shift);
+                // if(newIndex > currentIndex) newIndex--;
+
+                Menu.MenuItems.RemoveAt(currentIndex);
+                Menu.MenuItems.Insert(newIndex, item);
+                Menu.RefreshIndex();
+                Menu.CurrentSelection = newIndex;
+                Common.PlaySound(Menu.AUDIO_LEFTRIGHT, Menu.AUDIO_LIBRARY);
+            }
+        }
+
+        private void shiftSelectedSequence(int shift)
+        {
+            shift *= -1;
+            if(NativeFunction.Natives.IS_DISABLED_CONTROL_PRESSED<bool>(0, (int)GameControl.Duck))
+            {
+                shift *= 4;
+            }
+            var s = getSelectedSequence();
+            if(s != null)
+            {
+                string seq = s.ItemValue;
+                if (shift < 0)
+                {
+                    shift = seq.Length + shift;
+                }
+                s.ItemValue = seq.Substring(shift) + seq.Substring(0, shift);
+                Common.PlaySound(Menu.AUDIO_LEFTRIGHT, Menu.AUDIO_LIBRARY);
+            }
+        }
+
+        private UIMenuSequenceItemSelector getSelectedSequence()
+        {
+            UIMenuItem selectedItem = Menu.MenuItems[Menu.CurrentSelection];
+            return SirenSequenceItems.FirstOrDefault(x => x.MenuItem == selectedItem);
+        }
+
         public EmergencyLightingMenu Parent { get; }
         public EmergencyLighting ELS { get; }
         public UIMenuRefreshable Menu { get; }
@@ -52,5 +154,7 @@ namespace LiveLights.Menu
         private List<UIMenuSequenceItemSelector> sirenSequenceItems = new List<UIMenuSequenceItemSelector>();
 
         public UIMenuSequenceItemSelector[] SirenSequenceItems => sirenSequenceItems.ToArray();
+
+        private List<InstructionalButton> buttons = new List<InstructionalButton>();
     }
 }

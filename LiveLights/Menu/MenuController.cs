@@ -31,6 +31,7 @@ namespace LiveLights.Menu
             }
 
             VehicleMenu.SirenConfigMenu?.ShowSirenPositions(VehicleMenu.Vehicle, true);
+            VehicleMenu.SirenConfigMenu?.SequenceQuickEdit?.Process();
 
 
             Pool.ProcessMenus();
