@@ -15,7 +15,7 @@ namespace LiveLights.Menu
         }
 
 
-        public static string FormatSequence(string sequence) => sequence.Replace("0", "~c~0~w~").Replace("1", "~r~1~w~");
+        public static string FormatSequence(string sequence) => sequence.Replace("0", "~c~0").Replace("1", "~r~1");
         protected override int MaxInputLength => 32;
         protected override string DisplayMenu => FormatSequence(base.DisplayMenu);
     }
