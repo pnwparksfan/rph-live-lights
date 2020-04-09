@@ -17,11 +17,43 @@ namespace LiveLights.Menu
         public UIMenu Menu { get; }
         private Dictionary<EmergencyLightingWrapper, SirenSettingMenuItem> elsEntries = new Dictionary<EmergencyLightingWrapper, SirenSettingMenuItem>();
 
-        public bool CloseOnSelection { get; }
-        public bool IncludeBuiltInSettings { get; }
-        public bool IncludeCustomSettings { get; }
+        public bool CloseOnSelection { get; set; }
 
-        public bool AlwaysReturnEditableSetting { get; }
+        private bool includeBuiltIn;
+        public bool IncludeBuiltInSettings
+        {
+            set
+            {
+                includeBuiltIn = value;
+                RefreshSirenSettingList(true);
+            }
+
+            get => includeBuiltIn;
+        }
+
+        private bool includeCustom;
+        public bool IncludeCustomSettings
+        {
+            set
+            {
+                includeCustom = value;
+                RefreshSirenSettingList(true);
+            }
+
+            get => includeCustom;
+        }
+
+        private bool alwaysReturnEditable;
+        public bool AlwaysReturnEditableSetting
+        {
+            set
+            {
+                alwaysReturnEditable = value;
+                RefreshSirenSettingList(true);
+            }
+
+            get => alwaysReturnEditable;
+        }
 
         public delegate void SirenSettingSelectedEvent(SirenSettingsSelectionMenu sender, UIMenu menu, SirenSettingMenuItem item, EmergencyLighting setting);
         public event SirenSettingSelectedEvent OnSirenSettingSelected;
@@ -29,9 +61,9 @@ namespace LiveLights.Menu
         public SirenSettingsSelectionMenu(EmergencyLighting initialSelected, bool closeOnSelect = true, bool builtIn = true, bool custom = true, bool returnEditable = true)
         {
             this.CloseOnSelection = closeOnSelect;
-            this.IncludeBuiltInSettings = builtIn;
-            this.IncludeCustomSettings = custom;
-            this.AlwaysReturnEditableSetting = (returnEditable && custom);
+            this.includeBuiltIn = builtIn;
+            this.includeCustom = custom;
+            this.alwaysReturnEditable = (returnEditable && custom);
             if(returnEditable && !custom)
             {
                 Game.LogTrivialDebug("Warning: Attempted to create siren setting selection menu without custom entries but with editable required");
@@ -104,7 +136,7 @@ namespace LiveLights.Menu
                 if(selectedSetting?.Item2 != null)
                 {
                     selectedSetting.Item2.SetRightBadge(UIMenuItem.BadgeStyle.None);
-                    selectedSetting.Item2.BackColor = Color.Black;
+                    selectedSetting.Item2.BackColor = Color.Empty;
                 }
                 
                 if(item == null)
@@ -150,7 +182,7 @@ namespace LiveLights.Menu
             }
         }
 
-        public void RefreshSirenSettingList()
+        public void RefreshSirenSettingList(bool forceUpdateAll = false)
         {
             // EmergencyLighting[] elsToShow = EmergencyLighting.Get(IncludeBuiltInSettings, IncludeCustomSettings);
             EmergencyLightingWrapper[] elsToShow = EmergencyLighting.Get(IncludeBuiltInSettings, IncludeCustomSettings).Select(l => new EmergencyLightingWrapper(l)).ToArray();
@@ -176,23 +208,27 @@ namespace LiveLights.Menu
             // Add any new lighting entries
             foreach (EmergencyLightingWrapper els in elsToShow)
             {
-                if(!elsEntries.ContainsKey(els))
+                if(forceUpdateAll || !elsEntries.ContainsKey(els))
                 {
                     bool isCustom = els.ELS.IsCustomSetting();
-                    SirenSettingMenuItem newMenuEntry = new SirenSettingMenuItem(els);
-                    elsEntries.Add(els, newMenuEntry);
-                    Menu.AddItem(newMenuEntry);
+                    if(!elsEntries.TryGetValue(els, out SirenSettingMenuItem menuEntry))
+                    {
+                        menuEntry = new SirenSettingMenuItem(els);
+                        elsEntries.Add(els, menuEntry);
+                        Menu.AddItem(menuEntry);
+                    }
+                    
                     if(isCustom)
                     {
-                        newMenuEntry.SetLeftBadge(UIMenuItem.BadgeStyle.Car);
-                        newMenuEntry.Description = "~g~Editable~w~ siren setting entry";
+                        menuEntry.SetLeftBadge(UIMenuItem.BadgeStyle.Car);
+                        menuEntry.Description = "~g~Editable~w~ siren setting entry";
                     } else
                     {
-                        newMenuEntry.SetLeftBadge(UIMenuItem.BadgeStyle.Lock);
-                        newMenuEntry.Description = "~y~Built-in~w~ siren setting entry";
+                        menuEntry.SetLeftBadge(UIMenuItem.BadgeStyle.Lock);
+                        menuEntry.Description = "~y~Built-in~w~ siren setting entry";
                         if(AlwaysReturnEditableSetting)
                         {
-                            newMenuEntry.Description += ". An ~g~editable~w~ copy will be created if you select this setting.";
+                            menuEntry.Description += ". An ~g~editable~w~ copy will be created if you select this setting.";
                         }
                     }
                     

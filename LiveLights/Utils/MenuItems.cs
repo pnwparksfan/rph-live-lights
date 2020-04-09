@@ -641,12 +641,15 @@ namespace RAGENativeUI.Elements
             }
         }
 
-        public static void AddAfterYield(this MenuPool pool, UIMenu menu)
+        public static void AddAfterYield(this MenuPool pool, params UIMenu[] menus)
         {
             GameFiber.StartNew(() =>
             {
                 GameFiber.Yield();
-                pool.Add(menu);
+                foreach (UIMenu menu in menus)
+                {
+                    pool.Add(menu);
+                }
             });
         }
 

@@ -139,6 +139,11 @@ namespace LiveLights.Menu
             RefreshItem = new UIMenuItem("Refresh Siren Setting Data", "Refreshes the menu with the siren setting data for the current vehicle. Use this if the data may have been changed outside the menu.");
             Menu.AddRefreshItem(RefreshItem);
 
+            CopyMenu = new CopyMenu(this);
+            CopyMenuItem = new UIMenuItem("Copy", "Copy properties to/from this siren setting");
+            Menu.BindMenuAndCopyProperties(CopyMenu.Menu, CopyMenuItem);
+            Menu.AddItem(CopyMenuItem);
+
             /*
             ImportCarcolsItem = new UIMenuItem("Import carcols.meta file", "Imports all siren settings in selected carcols.meta file");
             Menu.AddItem(ImportCarcolsItem);
@@ -152,10 +157,7 @@ namespace LiveLights.Menu
             ExportAllowOverwriteItem = new UIMenuCheckboxItem("Allow overwrite on export", Settings.DefaultOverwrite, "Allow exported carcols.meta files to overwrite existing files with the same name");
             Menu.AddItem(ExportAllowOverwriteItem);
 
-            MenuController.Pool.AddAfterYield(Menu);
-            MenuController.Pool.AddAfterYield(HeadlightsMenu);
-            MenuController.Pool.AddAfterYield(TaillightsMenu);
-            MenuController.Pool.AddAfterYield(SequenceQuickEdit.Menu);
+            MenuController.Pool.AddAfterYield(Menu, HeadlightsMenu, TaillightsMenu, SequenceQuickEdit.Menu, CopyMenu.Menu);
 
             Menu.RefreshIndex();
         }
@@ -248,6 +250,10 @@ namespace LiveLights.Menu
         // Quick edit menu
         public UIMenuItem SequenceQuickEditItem { get; }
         public SequenceQuickEditMenu SequenceQuickEdit { get; }
+
+        // Copy menu
+        public CopyMenu CopyMenu { get; }
+        public UIMenuItem CopyMenuItem { get; }
 
         // Import/export
         public UIMenuItem ExportCarcolsItem { get; }
