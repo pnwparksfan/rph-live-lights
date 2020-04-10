@@ -88,15 +88,83 @@ namespace LiveLights.Menu
 
                     if(copyAll)
                     {
-
+                        // In copy all mode, all siren-specific properties are copied for the selected sirens, no overall settings are copied 
+                        foreach (PropertyInfo property in sourceSiren.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.SetProperty))
+                        {
+                            property.SetValue(destination, property.GetValue(source));
+                        } 
                     } else
                     {
                         if (SequencesCheckbox.Checked)
                         {
                             destinationSiren.FlashinessSequence = sourceSiren.FlashinessSequence;
                             destinationSiren.RotationSequence = sourceSiren.RotationSequence;
+                            destinationSiren.FlashinessMultiples = sourceSiren.FlashinessMultiples;
+                            destinationSiren.RotationMultiples = sourceSiren.RotationMultiples;
+                        }
+
+                        if(DeltasCheckbox.Checked) 
+                        {
+                            destinationSiren.FlashinessDelta = sourceSiren.FlashinessDelta;
+                            destinationSiren.RotationDelta = sourceSiren.RotationDelta;
+                        }
+
+                        if(FlashinessCheckbox.Checked) 
+                        {
+                            // All flashiness settings except for sequences, multiples, deltas
+                            destinationSiren.Flash = sourceSiren.Flash;
+                            destinationSiren.FlashinessDirection = sourceSiren.FlashinessDirection;
+                            destinationSiren.FlashinessSpeed = sourceSiren.FlashinessSpeed;
+                            destinationSiren.FlashinessStart = sourceSiren.FlashinessStart;
+                            destinationSiren.FlashinessSynchronizeToBpm = sourceSiren.FlashinessSynchronizeToBpm;
+                            destinationSiren.Scale = sourceSiren.Scale;
+                            destinationSiren.ScaleFactor = sourceSiren.ScaleFactor;
+                        }
+
+                        if (RotationCheckbox.Checked)
+                        {
+                            // All rotation settings except for sequences, multiples, deltas
+                            destinationSiren.Rotate = sourceSiren.Rotate;
+                            destinationSiren.RotationDirection = sourceSiren.RotationDirection;
+                            destinationSiren.RotationSpeed = sourceSiren.RotationSpeed;
+                            destinationSiren.RotationStart = sourceSiren.RotationStart;
+                            destinationSiren.RotationSynchronizeToBpm = sourceSiren.RotationSynchronizeToBpm;
+                        }
+
+                        if(EnvLightingCheckbox.Checked) 
+                        {
+                            // All env lighting except color/corona
+                            destinationSiren.Light = sourceSiren.Light;
+                            destinationSiren.Intensity = sourceSiren.Intensity;
+                            destinationSiren.SpotLight = sourceSiren.SpotLight;
+                            destinationSiren.CastShadows = sourceSiren.CastShadows;
+                        }
+
+                        if(CoronaCheckbox.Checked) 
+                        {
+                            // All corona settings except color
+                            destinationSiren.CoronaFaceCamera = sourceSiren.CoronaFaceCamera;
+                            destinationSiren.CoronaIntensity = sourceSiren.CoronaIntensity;
+                            destinationSiren.CoronaPull = sourceSiren.CoronaPull;
+                            destinationSiren.CoronaSize = sourceSiren.CoronaSize;
+                        }
+
+                        if(ColorCheckbox.Checked) 
+                        {
+                            destinationSiren.Color = sourceSiren.Color;
                         }
                     }
+                }
+
+                if (!copyAll && SettingEnvCheckbox.Checked)
+                {
+                    // General env settings (not siren specific)
+                    destination.TextureHash = source.TextureHash;
+                    destination.LightFalloffMax = source.LightFalloffMax;
+                    destination.LightFalloffExponent = source.LightFalloffExponent;
+                    destination.LightInnerConeAngle = source.LightInnerConeAngle;
+                    destination.LightOuterConeAngle = source.LightOuterConeAngle;
+                    destination.UseRealLights = source.UseRealLights;
                 }
             } else
             {

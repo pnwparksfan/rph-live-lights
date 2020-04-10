@@ -79,6 +79,12 @@ namespace LiveLights.Menu
             FlashSyncBpmItem = new UIMenuRefreshableCheckboxItem("Sync Flash to BPM", Siren.FlashinessSynchronizeToBpm, "Sync flash pattern to BPM");
             FlashinessMenu.AddMenuDataBinding(FlashSyncBpmItem, (x) => Siren.FlashinessSynchronizeToBpm = x, () => Siren.FlashinessSynchronizeToBpm);
 
+            ScaleToggleItem = new UIMenuRefreshableCheckboxItem("Scale Sirens", Siren.Scale, "Enable/disable scaling sirens up when they flash. Should be enabled for flashing lights and disabled for rotating lights.");
+            FlashinessMenu.AddMenuDataBinding(ScaleToggleItem, (x) => Siren.Scale = x, () => Siren.Scale);
+
+            ScaleFactorItem = new UIMenuListItemSelector<byte>("Scale Factor", "How much to scale up siren when siren is flashed on. Default is 2 for most flashing sirens.", Siren.ScaleFactor, CommonSelectionItems.ScaleFactorByte);
+            FlashinessMenu.AddMenuDataBinding(ScaleFactorItem, (x) => Siren.ScaleFactor = x, () => Siren.ScaleFactor);
+
             // Rotation menu items
             RotationEnabledItem = new UIMenuRefreshableCheckboxItem("Rotation Enabled", Siren.Rotate, "Enable/disable this siren from rotating. Note: setting to False for a siren which was previously on may result in the siren being stuck on temporarily. Toggle vehicle's sirens off/on to reset.");
             RotationMenu.AddMenuDataBinding(RotationEnabledItem, (x) => Siren.Rotate = x, () => Siren.Rotate);
@@ -132,12 +138,6 @@ namespace LiveLights.Menu
 
             ColorItem = new UIMenuColorSelector("Color", "Color of corona and environmental lighting from this siren. You can any typical recognized color name (e.g. \"Indigo\"), or hex format as 0xAARRGGBB or 0xRRGGBB (e.g. \"0xFFFF00AA\").", Siren.Color, CommonSelectionItems.CommonColors);
             Menu.AddMenuDataBinding(ColorItem, (x) => Siren.Color = x, () => Siren.Color);
-
-            ScaleToggleItem = new UIMenuRefreshableCheckboxItem("Scale Sirens", Siren.Scale, "Enable/disable scaling sirens up when they flash. Should be enabled for flashing lights and disabled for rotating lights.");
-            Menu.AddMenuDataBinding(ScaleToggleItem, (x) => Siren.Scale = x, () => Siren.Scale);
-
-            ScaleFactorItem = new UIMenuListItemSelector<byte>("Scale Factor", "How much to scale up siren when siren is flashed on. Default is 2 for most flashing sirens.", Siren.ScaleFactor, CommonSelectionItems.ScaleFactorByte);
-            Menu.AddMenuDataBinding(ScaleFactorItem, (x) => Siren.ScaleFactor = x, () => Siren.ScaleFactor);
             
             IntensityItem = new UIMenuListItemSelector<float>("Intensity", "Intensity of environmental lighting emitted by this light", Siren.Intensity, CommonSelectionItems.IntensityFloat);
             Menu.AddMenuDataBinding(IntensityItem, (x) => Siren.Intensity = x, () => Siren.Intensity);
@@ -187,6 +187,8 @@ namespace LiveLights.Menu
         public UIMenuListItemSelector<byte> FlashMultiplesItem { get; }
         public UIMenuRefreshableCheckboxItem FlashDirectionItem { get; }
         public UIMenuRefreshableCheckboxItem FlashSyncBpmItem { get; }
+        public UIMenuRefreshableCheckboxItem ScaleToggleItem { get; }
+        public UIMenuListItemSelector<byte> ScaleFactorItem { get; }
 
         // Rotation submenu
         public UIMenuRefreshable RotationMenu { get; }
@@ -217,8 +219,6 @@ namespace LiveLights.Menu
         public UIMenuColorSelector ColorItem { get; }
         public UIMenuListItemSelector<float> IntensityItem { get; }
         public UIMenuListItemSelector<byte> LightGroupItem { get; }
-        public UIMenuRefreshableCheckboxItem ScaleToggleItem { get; }
-        public UIMenuListItemSelector<byte> ScaleFactorItem { get; }
         public UIMenuRefreshableCheckboxItem SpotLightItem { get; }
         public UIMenuRefreshableCheckboxItem CastShadowsItem { get; }
 
