@@ -19,6 +19,7 @@ namespace LiveLights.Menu
         {
             this.ParentMenu = parent;
             Menu = new UIMenu("Edit Siren", parent.Menu.Subtitle.Caption + " > Copy Siren Properties");
+            DestinationSirenSelectorMenu.Menu.Subtitle.Caption = "~b~Copy Siren Properties > Select Destination Sirens";
             TargetMenu = new SirenSettingsSelectionMenu(ParentELS);
 
             Menu.AddItem(AllPropertiesCheckbox);
@@ -26,7 +27,9 @@ namespace LiveLights.Menu
             Menu.AddItem(CopyModeItem);
             TargetMenuItem = TargetMenu.CreateAndBindToSubmenuItem(this.Menu, "Target", "Select target siren setting to copy to/from", true);
             Menu.AddItem(SourceSirenSelector);
-            Menu.AddItem(DestinationSirenSelector);
+            Menu.AddItem(DestinationSirenMenuItem);
+            Menu.BindMenuAndCopyProperties(DestinationSirenSelectorMenu.Menu, DestinationSirenMenuItem);
+            DestinationSirenMenuItem.SetRightLabel("None →");
             Menu.AddItem(CopyItem);
 
             CopyModeItem.OnListChanged += OnCopyModeChanged;
@@ -93,7 +96,9 @@ namespace LiveLights.Menu
         public SirenSettingsSelectionMenu TargetMenu { get; }
         public UIMenuItem TargetMenuItem { get; }
         public UIMenuCustomListItem<int> SourceSirenSelector { get; } = new UIMenuCustomListItem<int>("Source Siren ID", "Select siren ID to copy from the source", Enumerable.Range(1, 20));
-        public UIMenuCustomListItem<int> DestinationSirenSelector { get; } = new UIMenuCustomListItem<int>("Destination Siren ID", "Select siren ID to copy to the destination", Enumerable.Range(1, 20));
+        // public UIMenuCustomListItem<int> DestinationSirenSelector { get; } = new UIMenuCustomListItem<int>("Destination Siren ID", "Select siren ID to copy to the destination", Enumerable.Range(1, 20));
+        public SirenIdMultiselectMenu DestinationSirenSelectorMenu { get; } = new SirenIdMultiselectMenu("Copy settings to {siren}. Multiselect enabled.");
+        public UIMenuItem DestinationSirenMenuItem { get; } = new UIMenuItem("Destination Siren IDs", "Select siren IDs to copy to the destination");
         public UIMenuItem CopyItem { get; } = new UIMenuItem("~h~Copy~h~", "Copy the selected properties");
 
         /// <summary>
@@ -115,7 +120,7 @@ namespace LiveLights.Menu
         }
 
         public int SourceSiren => SourceSirenSelector.Value;
-        public int[] DestinationSirens => new int[] { DestinationSirenSelector.Value };
+        public int[] DestinationSirens => DestinationSirenSelectorMenu.SelectedSirenIDs.ToArray();
 
         private const string COPY_MODE_SELF = "Self";
         private const string COPY_MODE_TO_TARGET = "Copy to Target";

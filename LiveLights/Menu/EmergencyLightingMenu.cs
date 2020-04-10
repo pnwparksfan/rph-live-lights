@@ -141,6 +141,7 @@ namespace LiveLights.Menu
 
             CopyMenu = new CopyMenu(this);
             CopyMenuItem = new UIMenuItem("Copy", "Copy properties to/from this siren setting");
+            CopyMenuItem.SetRightLabel("→");
             Menu.BindMenuAndCopyProperties(CopyMenu.Menu, CopyMenuItem);
             Menu.AddItem(CopyMenuItem);
 
