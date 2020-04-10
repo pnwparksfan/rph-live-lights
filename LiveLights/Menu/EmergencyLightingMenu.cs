@@ -208,6 +208,8 @@ namespace LiveLights.Menu
                     v.ShowSirenMarker(i+1);
                 }
             }
+
+            CopyMenu.ProcessShowSirens(v);
         }
 
         public EmergencyLighting ELS { get; }

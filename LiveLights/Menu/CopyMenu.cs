@@ -285,6 +285,21 @@ namespace LiveLights.Menu
             }
         }
 
+        internal void ProcessShowSirens(Vehicle v)
+        {
+            if(Menu.Visible && SourceSirenSelector.Selected)
+            {
+                v.ShowSirenMarker(SourceSirenSelector.Value);
+            } else if(DestinationSirenSelectorMenu.Menu.Visible)
+            {
+                foreach (int sirenId in DestinationSirenSelectorMenu.SelectedSirenIDs)
+                {
+                    v.ShowSirenMarker(sirenId, 0.12f);
+                }
+                v.ShowSirenMarker(DestinationSirenSelectorMenu.GetHighlightedSirenId(), new Vector3(0.05f, 0.05f, 0.3f), MarkerStyle.MarkerTypeVerticalCylinder, 0f);
+            }
+        }
+
         private string CopyMode => (string)(CopyModeItem.SelectedValue);
 
         public EmergencyLightingMenu ParentMenu { get; }

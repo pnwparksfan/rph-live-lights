@@ -69,6 +69,12 @@ namespace LiveLights.Menu
         private UIMenuCheckboxItem[] checkboxes = new UIMenuCheckboxItem[20];
         public IEnumerable<UIMenuCheckboxItem> Checkboxes => checkboxes;
 
+        internal int GetHighlightedSirenId()
+        {
+            var selected = Menu.MenuItems[Menu.CurrentSelection];
+            return Array.IndexOf(checkboxes, selected) + 1;
+        }
+
         // Uses 1-indexed siren ID
         public IEnumerable<int> SelectedSirenIDs
         {
