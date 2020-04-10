@@ -7,6 +7,7 @@ using System.Drawing;
 
 namespace LiveLights.Menu
 {
+    using RAGENativeUI;
 
     internal static class CommonSelectionItems
     {
@@ -17,5 +18,6 @@ namespace LiveLights.Menu
         public static IEnumerable<byte> LightGroupByte => Enumerable.Range(0, 4).Select(x => (byte)x);
         public static byte[] ScaleFactorByte => new byte[] { 0, 2, 4, 10, 20 };
         public static Color[] CommonColors => new Color[] { Color.Red, Color.Blue, Color.Yellow, Color.White, Color.Orange, Color.Green, Color.Purple };
+        public static IEnumerable<IDisplayItem> SirensOrAll => Enumerable.Range(1, 20).Select(s => new DisplayItem(s, $"Siren {s}")).Concat(new IDisplayItem[] { new DisplayItem(-1, "1-to-1") });
     }
 }

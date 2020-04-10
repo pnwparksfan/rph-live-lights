@@ -101,7 +101,7 @@ namespace LiveLights.Menu
             (EmergencyLighting source, EmergencyLighting destination) = GetCopySourceAndDestination();
             if(source.Exists() && destination.Exists() && destination.IsCustomSetting())
             {
-                EmergencyLight sourceSiren = source.Lights[SourceSiren - 1];
+                
                 bool sirenCopyAll = AllSirenPropertiesCheckbox.Checked;
                 bool settingCopyAll = AllGeneralPropertiesCheckbox.Checked;
 
@@ -109,6 +109,9 @@ namespace LiveLights.Menu
 
                 foreach (int sirenId in DestinationSirens)
                 {
+                    // if SourceSiren is -1, signifies 1-to-1 copy with selected target sirens
+                    // otherwise, use single selected source siren ID
+                    EmergencyLight sourceSiren = source.Lights[((SourceSiren == -1) ? sirenId : SourceSiren) - 1];
                     EmergencyLight destinationSiren = destination.Lights[sirenId - 1];
                     Game.LogTrivial($"  SIREN {sirenId}:");
 
@@ -118,8 +121,14 @@ namespace LiveLights.Menu
                         Game.LogTrivial("    Copying all siren properties");
                         foreach (PropertyInfo property in sourceSiren.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.SetProperty))
                         {
-                            property.SetValue(destinationSiren, property.GetValue(sourceSiren));
-                            Game.LogTrivialDebug($"      {property.Name}");
+                            try
+                            {
+                                property.SetValue(destinationSiren, property.GetValue(sourceSiren));
+                                Game.LogTrivialDebug($"      {property.Name}");
+                            } catch (TargetInvocationException e)
+                            {
+                                Game.LogTrivial($"      Unable to copy {property.Name}: {e.InnerException?.Message}");
+                            }
                         } 
                     } else
                     {
@@ -240,8 +249,9 @@ namespace LiveLights.Menu
 
                 // After copying, refresh menus to reflect potentially updated data
                 ParentMenu.Menu.RefreshData();
-                string info = $"FROM: ~g~{source.Name}~w~, Siren ~b~{SourceSiren}~w~\n\n";
-                info += $"TO: ~g~{destination.Name}~w~, Sirens ~b~";
+                string info = $"FROM: ~g~{source.Name}~w~";
+                if(SourceSiren != -1) info += $", Siren ~b~{SourceSiren}";
+                info += $"~w~\n\nTO: ~g~{destination.Name}~w~, Sirens ~b~";
                 info += string.Join(", ", DestinationSirens);
                 info += "~w~.\n\nCheck log/console for additional details.";
                 Game.DisplayNotification("desktop_pc", "folder", "Copied Siren Settings", "", info);
@@ -305,7 +315,7 @@ namespace LiveLights.Menu
         public UIMenuListItem CopyModeItem { get; } = new UIMenuListItem("Copy Mode", "Which siren setting to copy FROM and TO", new string[] { COPY_MODE_SELF, COPY_MODE_TO_TARGET, COPY_MODE_FROM_TARGET });
         public SirenSettingsSelectionMenu TargetMenu { get; }
         public UIMenuItem TargetMenuItem { get; }
-        public UIMenuCustomListItem<int> SourceSirenSelector { get; } = new UIMenuCustomListItem<int>("Source Siren ID", "Select siren ID to copy from the source", Enumerable.Range(1, 20));
+        public UIMenuCustomListItem<int> SourceSirenSelector { get; } = new UIMenuCustomListItem<int>("Source Siren ID", "Select siren ID to copy from the source. Choose ~b~1-to-1~w~ to copy settings from multiple source sirens to the matching destination siren IDs selected below. For example, if you select destination sirens 6 & 9 with \"1-to-1\" mode, properties from source siren 6 will be copied to destination siren 6, and source siren 9 to destination siren 9.", CommonSelectionItems.SirensOrAll);
         public SirenIdMultiselectMenu DestinationSirenSelectorMenu { get; } = new SirenIdMultiselectMenu("Copy settings to {siren}. Multiselect enabled.");
         public UIMenuItem DestinationSirenMenuItem { get; } = new UIMenuItem("Destination Siren IDs", "Select siren IDs to copy to the destination");
         public UIMenuItem CopyItem { get; } = new UIMenuItem("~h~Copy~h~", "Copy the selected properties");
