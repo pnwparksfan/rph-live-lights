@@ -47,7 +47,7 @@ namespace LiveLights
 
             if(Settings.CheckForUpdates)
             {
-                VersionCheck = new GithubVersionCheck("pnwparksfan", "rph-live-lights", 25266321);
+                VersionCheck = new GithubVersionCheck("pnwparksfan", "rph-live-lights", 25387391);
                 Game.LogTrivial($"Latest release on github: {VersionCheck.LatestRelease?.TagName}");
                 if (VersionCheck.IsUpdateAvailable())
                 {
