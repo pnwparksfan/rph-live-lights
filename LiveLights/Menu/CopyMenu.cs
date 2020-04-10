@@ -23,17 +23,20 @@ namespace LiveLights.Menu
             DestinationSirenSelectorMenu.Menu.Subtitle.Caption = "~b~Copy Siren Properties > Select Destination Sirens";
             TargetMenu = new SirenSettingsSelectionMenu(ParentELS);
 
-            allCopyCheckboxes.Add(SequencesCheckbox);
-            allCopyCheckboxes.Add(DeltasCheckbox);
-            allCopyCheckboxes.Add(FlashinessCheckbox);
-            allCopyCheckboxes.Add(RotationCheckbox);
-            allCopyCheckboxes.Add(EnvLightingCheckbox);
-            allCopyCheckboxes.Add(CoronaCheckbox);
-            allCopyCheckboxes.Add(ColorCheckbox);
-            allCopyCheckboxes.Add(SettingEnvCheckbox);
+            allSirenCopyCheckboxes.Add(SequencesCheckbox);
+            allSirenCopyCheckboxes.Add(DeltasCheckbox);
+            allSirenCopyCheckboxes.Add(FlashinessCheckbox);
+            allSirenCopyCheckboxes.Add(RotationCheckbox);
+            allSirenCopyCheckboxes.Add(EnvLightingCheckbox);
+            allSirenCopyCheckboxes.Add(CoronaCheckbox);
+            allSirenCopyCheckboxes.Add(ColorCheckbox);
+            
+            allGeneralCopyCheckboxes.Add(SettingEnvCheckbox);
+            allGeneralCopyCheckboxes.Add(SettingSpeedCheckbox);
+            allGeneralCopyCheckboxes.Add(HeadTailCheckbox);
 
-            Menu.AddItem(AllPropertiesCheckbox);
-            foreach (UIMenuCheckboxItem checkbox in allCopyCheckboxes)
+            Menu.AddItem(AllSirenPropertiesCheckbox);
+            foreach (UIMenuCheckboxItem checkbox in allSirenCopyCheckboxes)
             {
                 checkbox.BackColor = Color.FromArgb(100, Color.DarkGray);
                 checkbox.ForeColor = Color.WhiteSmoke;
@@ -41,7 +44,17 @@ namespace LiveLights.Menu
                 Menu.AddItem(checkbox);
             }
 
-            AllPropertiesCheckbox.CheckboxEvent += OnAllPropertiesChecked;
+            Menu.AddItem(AllGeneralPropertiesCheckbox);
+            foreach (UIMenuCheckboxItem checkbox in allGeneralCopyCheckboxes)
+            {
+                checkbox.BackColor = Color.FromArgb(100, Color.DarkGray);
+                checkbox.ForeColor = Color.WhiteSmoke;
+                checkbox.Text = "    " + checkbox.Text;
+                Menu.AddItem(checkbox);
+            }
+
+            AllSirenPropertiesCheckbox.CheckboxEvent += OnAllPropertiesChecked;
+            AllGeneralPropertiesCheckbox.CheckboxEvent += OnAllPropertiesChecked;
 
 
             Menu.AddItem(CopyModeItem);
@@ -67,7 +80,16 @@ namespace LiveLights.Menu
 
         private void OnAllPropertiesChecked(UIMenuCheckboxItem sender, bool Checked)
         {
-            foreach (UIMenuCheckboxItem checkbox in allCopyCheckboxes)
+            List<UIMenuCheckboxItem> checkboxes = new List<UIMenuCheckboxItem>();
+            if(sender == AllGeneralPropertiesCheckbox)
+            {
+                checkboxes = allGeneralCopyCheckboxes;
+            } else if(sender == AllSirenPropertiesCheckbox)
+            {
+                checkboxes = allSirenCopyCheckboxes;
+            }
+
+            foreach (UIMenuCheckboxItem checkbox in checkboxes)
             {
                 checkbox.Enabled = !Checked;
                 checkbox.SetLeftBadge(Checked ? UIMenuItem.BadgeStyle.Lock : UIMenuItem.BadgeStyle.None);
@@ -80,23 +102,30 @@ namespace LiveLights.Menu
             if(source.Exists() && destination.Exists() && destination.IsCustomSetting())
             {
                 EmergencyLight sourceSiren = source.Lights[SourceSiren - 1];
-                bool copyAll = AllPropertiesCheckbox.Checked;
+                bool sirenCopyAll = AllSirenPropertiesCheckbox.Checked;
+                bool settingCopyAll = AllGeneralPropertiesCheckbox.Checked;
+
+                Game.LogTrivial($"Initiating siren setting property copy from \"{source.Name}\" to \"{destination.Name}\"");
 
                 foreach (int sirenId in DestinationSirens)
                 {
                     EmergencyLight destinationSiren = destination.Lights[sirenId - 1];
+                    Game.LogTrivial($"  SIREN {sirenId}:");
 
-                    if(copyAll)
+                    if(sirenCopyAll)
                     {
                         // In copy all mode, all siren-specific properties are copied for the selected sirens, no overall settings are copied 
+                        Game.LogTrivial("    Copying all siren properties");
                         foreach (PropertyInfo property in sourceSiren.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.SetProperty))
                         {
-                            property.SetValue(destination, property.GetValue(source));
+                            property.SetValue(destinationSiren, property.GetValue(sourceSiren));
+                            Game.LogTrivialDebug($"      {property.Name}");
                         } 
                     } else
                     {
                         if (SequencesCheckbox.Checked)
                         {
+                            Game.LogTrivial("    Copying flashiness and rotation sequences and multiples");
                             destinationSiren.FlashinessSequence = sourceSiren.FlashinessSequence;
                             destinationSiren.RotationSequence = sourceSiren.RotationSequence;
                             destinationSiren.FlashinessMultiples = sourceSiren.FlashinessMultiples;
@@ -105,6 +134,7 @@ namespace LiveLights.Menu
 
                         if(DeltasCheckbox.Checked) 
                         {
+                            Game.LogTrivial("    Copying flashiness and rotation deltas");
                             destinationSiren.FlashinessDelta = sourceSiren.FlashinessDelta;
                             destinationSiren.RotationDelta = sourceSiren.RotationDelta;
                         }
@@ -112,6 +142,7 @@ namespace LiveLights.Menu
                         if(FlashinessCheckbox.Checked) 
                         {
                             // All flashiness settings except for sequences, multiples, deltas
+                            Game.LogTrivial("    Copying flash toggle and flashiness direction, speed, start, sync to bpm, scale, and scale factor");
                             destinationSiren.Flash = sourceSiren.Flash;
                             destinationSiren.FlashinessDirection = sourceSiren.FlashinessDirection;
                             destinationSiren.FlashinessSpeed = sourceSiren.FlashinessSpeed;
@@ -124,6 +155,7 @@ namespace LiveLights.Menu
                         if (RotationCheckbox.Checked)
                         {
                             // All rotation settings except for sequences, multiples, deltas
+                            Game.LogTrivial("    Copying rotation toggle and rotation direction, speed, start, and sync to bpm");
                             destinationSiren.Rotate = sourceSiren.Rotate;
                             destinationSiren.RotationDirection = sourceSiren.RotationDirection;
                             destinationSiren.RotationSpeed = sourceSiren.RotationSpeed;
@@ -134,6 +166,7 @@ namespace LiveLights.Menu
                         if(EnvLightingCheckbox.Checked) 
                         {
                             // All env lighting except color/corona
+                            Game.LogTrivial("    Copying siren-specific environmental lighting");
                             destinationSiren.Light = sourceSiren.Light;
                             destinationSiren.Intensity = sourceSiren.Intensity;
                             destinationSiren.SpotLight = sourceSiren.SpotLight;
@@ -143,6 +176,7 @@ namespace LiveLights.Menu
                         if(CoronaCheckbox.Checked) 
                         {
                             // All corona settings except color
+                            Game.LogTrivial("    Copying corona settings");
                             destinationSiren.CoronaFaceCamera = sourceSiren.CoronaFaceCamera;
                             destinationSiren.CoronaIntensity = sourceSiren.CoronaIntensity;
                             destinationSiren.CoronaPull = sourceSiren.CoronaPull;
@@ -151,21 +185,66 @@ namespace LiveLights.Menu
 
                         if(ColorCheckbox.Checked) 
                         {
+                            Game.LogTrivial("    Copying siren color");
                             destinationSiren.Color = sourceSiren.Color;
                         }
                     }
                 }
 
-                if (!copyAll && SettingEnvCheckbox.Checked)
+                Game.LogTrivial("  Copying general siren settings");
+                if (settingCopyAll)
                 {
-                    // General env settings (not siren specific)
-                    destination.TextureHash = source.TextureHash;
-                    destination.LightFalloffMax = source.LightFalloffMax;
-                    destination.LightFalloffExponent = source.LightFalloffExponent;
-                    destination.LightInnerConeAngle = source.LightInnerConeAngle;
-                    destination.LightOuterConeAngle = source.LightOuterConeAngle;
-                    destination.UseRealLights = source.UseRealLights;
+                    Game.LogTrivial("    Copying all non-siren-specific settings");
+                    foreach (PropertyInfo property in source.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.SetProperty))
+                    {
+                        property.SetValue(destination, property.GetValue(source));
+                        Game.LogTrivialDebug($"      {property.Name}");
+                    }
                 }
+                else
+                {
+                    if (SettingEnvCheckbox.Checked)
+                    {
+                        // General env settings (not siren specific)
+                        Game.LogTrivial("    Copying general environmental lighting settings including texture hash, falloff, cone angle, and real lights");
+                        destination.TextureHash = source.TextureHash;
+                        destination.LightFalloffMax = source.LightFalloffMax;
+                        destination.LightFalloffExponent = source.LightFalloffExponent;
+                        destination.LightInnerConeAngle = source.LightInnerConeAngle;
+                        destination.LightOuterConeAngle = source.LightOuterConeAngle;
+                        destination.UseRealLights = source.UseRealLights;
+                    }
+                    
+                    if (SettingSpeedCheckbox.Checked)
+                    {
+                        // General bpm/multiplier 
+                        Game.LogTrivial("    Copying BPM and time multiplier");
+                        destination.SequencerBpm = source.SequencerBpm;
+                        destination.TimeMultiplier = source.TimeMultiplier;
+                    }
+
+                    if (HeadTailCheckbox.Checked)
+                    {
+                        Game.LogTrivial("    Copying headlight and taillight sequences and multiples");
+                        destination.LeftHeadLightMultiples = source.LeftHeadLightMultiples;
+                        destination.RightHeadLightMultiples = source.RightHeadLightMultiples;
+                        destination.LeftTailLightMultiples = source.LeftTailLightMultiples;
+                        destination.RightTailLightMultiples = source.RightTailLightMultiples;
+
+                        destination.LeftHeadLightSequence = source.LeftHeadLightSequence;
+                        destination.RightHeadLightSequence = source.RightHeadLightSequence;
+                        destination.LeftTailLightSequence = source.LeftTailLightSequence;
+                        destination.RightTailLightSequence = source.RightTailLightSequence;
+                    }
+                }
+
+                // After copying, refresh menus to reflect potentially updated data
+                ParentMenu.Menu.RefreshData();
+                string info = $"FROM: ~g~{source.Name}~w~, Siren ~b~{SourceSiren}~w~\n\n";
+                info += $"TO: ~g~{destination.Name}~w~, Sirens ~b~";
+                info += string.Join(", ", DestinationSirens);
+                info += "~w~.\n\nCheck log/console for additional details.";
+                Game.DisplayNotification("desktop_pc", "folder", "Copied Siren Settings", "", info);
             } else
             {
                 Game.DisplayNotification("~y~Unable to copy settings~w~, check that target is selected and destination is editable");
@@ -202,8 +281,14 @@ namespace LiveLights.Menu
         public EmergencyLighting ParentELS => ParentMenu.ELS;
         public UIMenu Menu { get; }
 
-        // Properties selection checkboxes
-        public UIMenuCheckboxItem AllPropertiesCheckbox { get; } = new UIMenuCheckboxItem("All Siren Properties", false, "Copy all properties for the selected sirens. Use individual checkboxes below to select specific properties to copy.");
+        // Overall properties selection checkboxes
+        public UIMenuCheckboxItem AllGeneralPropertiesCheckbox { get; } = new UIMenuCheckboxItem("All General Properties", false, "Copy all overall properties from the source to the destination siren setting. Does not copy any individual siren properties, only overall properties.");
+        public UIMenuCheckboxItem SettingEnvCheckbox { get; } = new UIMenuCheckboxItem("Overall Env Lighting", false, "Copy overall environmental lighting settings ~y~for the entire SirenSetting~w~ (not siren-specific settings), including falloff and cone angle");
+        public UIMenuCheckboxItem SettingSpeedCheckbox { get; } = new UIMenuCheckboxItem("BPM and Multiplier", false, "Copy BPM and Multiplier for the entire siren setting");
+        public UIMenuCheckboxItem HeadTailCheckbox { get; } = new UIMenuCheckboxItem("Head/Tail Light Settings", false, "Copy sequences and multipliers for headlights and taillights");
+
+        // Siren-specific properties selection checkboxes
+        public UIMenuCheckboxItem AllSirenPropertiesCheckbox { get; } = new UIMenuCheckboxItem("All Siren Properties", false, "Copy all properties for the selected sirens. Use individual checkboxes below to select specific properties to copy.");
         public UIMenuCheckboxItem SequencesCheckbox { get; } = new UIMenuCheckboxItem("Sequences", false, "Copy sequences and multiples properties on both flash and rotation");
         public UIMenuCheckboxItem DeltasCheckbox { get; } = new UIMenuCheckboxItem("Deltas", false, "Copy Delta properties on flash and rotation");
         public UIMenuCheckboxItem FlashinessCheckbox { get; } = new UIMenuCheckboxItem("Flashiness", false, "Copy flashiness properties ~y~except~w~ for sequences, multiples, and deltas");
@@ -211,8 +296,9 @@ namespace LiveLights.Menu
         public UIMenuCheckboxItem EnvLightingCheckbox { get; } = new UIMenuCheckboxItem("Siren Env Lighting", false, "Copy siren-specific environmental lighting properties ~y~except~w~ color");
         public UIMenuCheckboxItem CoronaCheckbox { get; } = new UIMenuCheckboxItem("Corona", false, "Copy all corona settings including intensity and size");
         public UIMenuCheckboxItem ColorCheckbox { get; } = new UIMenuCheckboxItem("Color", false, "Copy color setting for env lighting and corona");
-        public UIMenuCheckboxItem SettingEnvCheckbox { get; } = new UIMenuCheckboxItem("Overall Env Lighting", false, "Copy overall environmental lighting settings ~y~for the entire SirenSetting~w~ (not siren-specific settings), including falloff and cone angle");
-        private List<UIMenuCheckboxItem> allCopyCheckboxes = new List<UIMenuCheckboxItem>();
+        
+        private List<UIMenuCheckboxItem> allSirenCopyCheckboxes = new List<UIMenuCheckboxItem>();
+        private List<UIMenuCheckboxItem> allGeneralCopyCheckboxes = new List<UIMenuCheckboxItem>();
 
 
         // Copy details
