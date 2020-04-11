@@ -344,9 +344,9 @@ namespace LiveLights.Menu
             switch(CopyMode)
             {
                 case COPY_MODE_TO_TARGET:
-                    return (this.ParentELS, this.TargetMenu.SelectedEmergencyLighting.ELS);
+                    return (this.ParentELS, this.TargetMenu.SelectedEmergencyLighting);
                 case COPY_MODE_FROM_TARGET:
-                    return (this.TargetMenu.SelectedEmergencyLighting.ELS, this.ParentELS);
+                    return (this.TargetMenu.SelectedEmergencyLighting, this.ParentELS);
                 case COPY_MODE_SELF:
                 default:
                     return (this.ParentELS, this.ParentELS);

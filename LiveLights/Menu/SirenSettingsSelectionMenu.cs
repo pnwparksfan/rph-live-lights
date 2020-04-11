@@ -15,7 +15,7 @@ namespace LiveLights.Menu
     internal class SirenSettingsSelectionMenu
     {
         public UIMenu Menu { get; }
-        private Dictionary<EmergencyLightingWrapper, SirenSettingMenuItem> elsEntries = new Dictionary<EmergencyLightingWrapper, SirenSettingMenuItem>();
+        private Dictionary<EmergencyLighting, SirenSettingMenuItem> elsEntries = new Dictionary<EmergencyLighting, SirenSettingMenuItem>();
 
         public bool CloseOnSelection { get; set; }
 
@@ -96,9 +96,9 @@ namespace LiveLights.Menu
 
         public void UpdateBoundMenuLabel(UIMenuItem item)
         {
-            if(selectedSetting?.Item1?.ELS?.Exists() == true)
+            if(selectedSetting?.Item1?.Exists() == true)
             {
-                item.SetRightLabel(selectedSetting.Item1.ELS.Name + " →");
+                item.SetRightLabel(selectedSetting.Item1.Name + " →");
             } else
             {
                 item.SetRightLabel("~c~none~w~");
@@ -144,28 +144,27 @@ namespace LiveLights.Menu
                     selectedSetting = null;
                 } else
                 {
-                    EmergencyLighting selectedEls = item.ELSWrapper.ELS;
+                    EmergencyLighting selectedEls = item.ELS;
                     if(AlwaysReturnEditableSetting && !selectedEls.IsCustomSetting())
                     {
                         selectedEls = selectedEls.Clone();
                         RefreshSirenSettingList();
                         item = elsEntries[selectedEls];
                     }
-                    selectedSetting = Tuple.Create(item.ELSWrapper, item);
+                    selectedSetting = Tuple.Create(item.ELS, item);
                     item.SetRightBadge(UIMenuItem.BadgeStyle.Tick);
                     item.BackColor = Color.DarkGray;
                 }
-                OnSirenSettingSelected?.Invoke(this, Menu, item, item?.ELSWrapper?.ELS);
+                OnSirenSettingSelected?.Invoke(this, Menu, item, item?.ELS);
                 SelectedSelectedItem();
             }
         }
 
-        private Tuple<EmergencyLightingWrapper, SirenSettingMenuItem> selectedSetting = null;
-        public EmergencyLightingWrapper SelectedEmergencyLighting 
+        private Tuple<EmergencyLighting, SirenSettingMenuItem> selectedSetting = null;
+        public EmergencyLighting SelectedEmergencyLighting 
         {
             get
             {
-                // return (Menu.MenuItems[Menu.CurrentSelection] as SirenSettingEntry)?.ELS;
                 return selectedSetting?.Item1;
             }
 
@@ -177,20 +176,17 @@ namespace LiveLights.Menu
                     elsEntries.TryGetValue(value, out item);
                 }
                 SetSelectedSetting(item);
-                // elsEntries[value].Selected = true;
-                // Menu.CurrentSelection = Menu.MenuItems.IndexOf(elsEntries[value]);
             }
         }
 
         public void RefreshSirenSettingList(bool forceUpdateAll = false)
         {
-            // EmergencyLighting[] elsToShow = EmergencyLighting.Get(IncludeBuiltInSettings, IncludeCustomSettings);
-            EmergencyLightingWrapper[] elsToShow = EmergencyLighting.Get(IncludeBuiltInSettings, IncludeCustomSettings).Select(l => new EmergencyLightingWrapper(l)).ToArray();
+            IEnumerable<EmergencyLighting> elsToShow = EmergencyLighting.Get(IncludeBuiltInSettings, IncludeCustomSettings).Where(e => e.Exists());
 
             // Remove any lighting entries which are no longer valid
-            foreach (EmergencyLightingWrapper els in elsEntries.Keys.ToArray())
+            foreach (EmergencyLighting els in elsEntries.Keys.ToArray())
             {
-                if(!els.ELS.IsValid() || !elsToShow.Contains(els))
+                if(!els.IsValid() || !elsToShow.Contains(els))
                 {
                     if(elsEntries.ContainsKey(els))
                     {
@@ -201,16 +197,19 @@ namespace LiveLights.Menu
                         }
                     }
                     elsEntries.Remove(els);
-                    Game.LogTrivialDebug("Removed EmergencyLighting entry " + (els.ELS.IsValid() ? " of undesired type" : "for being invalid"));
+                    Game.LogTrivialDebug("Removed EmergencyLighting entry " + (els.IsValid() ? " of undesired type" : "for being invalid"));
+                } else
+                {
+                    elsEntries[els].Text = els.Name;
                 }
             }
 
             // Add any new lighting entries
-            foreach (EmergencyLightingWrapper els in elsToShow)
+            foreach (EmergencyLighting els in elsToShow)
             {
                 if(forceUpdateAll || !elsEntries.ContainsKey(els))
                 {
-                    bool isCustom = els.ELS.IsCustomSetting();
+                    bool isCustom = els.IsCustomSetting();
                     if(!elsEntries.TryGetValue(els, out SirenSettingMenuItem menuEntry))
                     {
                         menuEntry = new SirenSettingMenuItem(els);
@@ -232,7 +231,7 @@ namespace LiveLights.Menu
                         }
                     }
                     
-                    Game.LogTrivialDebug("Added EmergencyLighting entry " + els.ELS.Name);
+                    Game.LogTrivialDebug("Added EmergencyLighting entry " + els.Name);
                 }
             }
 
@@ -241,11 +240,11 @@ namespace LiveLights.Menu
 
         internal class SirenSettingMenuItem : UIMenuItem
         {
-            public EmergencyLightingWrapper ELSWrapper { get; }
+            public EmergencyLighting ELS { get; }
 
-            public SirenSettingMenuItem(EmergencyLightingWrapper els) : base(els.ELS.Name)
+            public SirenSettingMenuItem(EmergencyLighting els) : base(els.Name)
             {
-                this.ELSWrapper = els;
+                this.ELS = els;
             }
         }
 
