@@ -11,7 +11,7 @@ using Rage.Native;
 using Rage.Attributes;
 
 
-[assembly: Rage.Attributes.Plugin("Live Carcols and Siren Editor", Description = "Enable/disable emergency lights, configure siren settings, and create custom carcols entries", Author = "PNWParksFan")]
+[assembly: Rage.Attributes.Plugin("Live Carcols and Siren Editor", Description = "Enable/disable emergency lights, configure siren settings, and create custom carcols entries", Author = "PNWParksFan", PrefersSingleInstance = true, SupportUrl = "https://github.com/pnwparksfan/rph-live-lights")]
 
 namespace LiveLights
 {
