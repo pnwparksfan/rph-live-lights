@@ -57,6 +57,7 @@ namespace LiveLights
                 light.Flash = entry.Flash;
                 light.SpotLight = entry.SpotLight;
                 light.CastShadows = entry.CastShadows;
+                light.Light = entry.Light;
 
                 // Corona settings
                 light.CoronaIntensity = entry.Corona.CoronaIntensity;
@@ -65,8 +66,8 @@ namespace LiveLights
                 light.CoronaFaceCamera = entry.Corona.CoronaFaceCamera;
 
                 // Rotation settings
-                light.RotationDelta = entry.Rotation.DeltaRad;
-                light.RotationStart = entry.Rotation.DeltaRad;
+                light.RotationDelta = entry.Rotation.DeltaDeg;
+                light.RotationStart = entry.Rotation.StartDeg;
                 light.RotationSpeed = entry.Rotation.Speed;
                 light.RotationSequence = entry.Rotation.Sequence;
                 light.RotationMultiples = entry.Rotation.Multiples;
@@ -120,6 +121,7 @@ namespace LiveLights
                 entry.Flash = light.Flash;
                 entry.SpotLight = light.SpotLight;
                 entry.CastShadows = light.CastShadows;
+                entry.Light = light.Light;
 
                 // Corona settings
                 entry.Corona.CoronaIntensity = light.CoronaIntensity;
@@ -128,8 +130,8 @@ namespace LiveLights
                 entry.Corona.CoronaFaceCamera = light.CoronaFaceCamera;
 
                 // Rotation settings
-                entry.Rotation.DeltaRad = light.RotationDelta;
-                entry.Rotation.DeltaRad = light.RotationStart;
+                entry.Rotation.DeltaDeg = light.RotationDelta;
+                entry.Rotation.StartDeg = light.RotationStart;
                 entry.Rotation.Speed = light.RotationSpeed;
                 entry.Rotation.Sequence = light.RotationSequence;
                 entry.Rotation.Multiples = light.RotationMultiples;
