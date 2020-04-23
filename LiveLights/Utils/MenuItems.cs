@@ -364,28 +364,7 @@ namespace RAGENativeUI.Elements
 
         protected override string DisplayInputBox => ItemValue.DisplayText();
 
-        protected override bool ValidateInput(string input, out Color value)
-        {
-            value = Color.FromName(input);
-            if(value.IsValid()) 
-            {
-                return true;
-            }
-
-            try
-            {
-                string tempInput = input.ToLower().Replace("0x", "").Replace("#", "").Replace("x","").Trim();
-                value = ColorTranslator.FromHtml("#" + tempInput);
-                if(value.IsValid())
-                {
-                    return true;
-                }
-            } catch (Exception) { }
-
-            // If no matches, return empty color
-            value = Color.Empty;
-            return false;
-        }
+        protected override bool ValidateInput(string input, out Color value) => ColorTools.GetColorByName(input, out value);
 
         protected override Color itemValue 
         {
