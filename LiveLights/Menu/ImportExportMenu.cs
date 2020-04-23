@@ -55,6 +55,16 @@ namespace LiveLights.Menu
 
                     CarcolsFile carcols = new CarcolsFile();
                     SirenSetting setting = els.ExportEmergencyLightingToSirenSettings();
+
+                    string sirenIdStr = UserInput.GetUserInput("Enter desired siren ID", "", 3);
+                    if (byte.TryParse(sirenIdStr, out byte sirenId))
+                    {
+                        setting.ID = sirenId;
+                    } else
+                    {
+                        Game.DisplayNotification("Unable to parse a valid siren ID, defaulting to ~y~0~w~. Make sure to update the siren ID when using the exported file.");
+                    }
+
                     carcols.SirenSettings.Add(setting);
                     Serializer.SaveItemToXML(carcols, filepath);
                     Game.DisplayNotification($"~g~Successfully exported~w~ \"{els.Name}\" ~g~to~w~ \"{Path.GetFullPath(filepath)}\"");
