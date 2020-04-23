@@ -136,7 +136,7 @@ namespace LiveLights.Menu
             EnvLightItem = new UIMenuRefreshableCheckboxItem("Env Light", Siren.Light, "Enable/disable environmental lighting from this siren");
             Menu.AddMenuDataBinding(EnvLightItem, (x) => Siren.Light = x, () => Siren.Light);
 
-            ColorItem = new UIMenuColorSelector("Color", "Color of corona and environmental lighting from this siren. You can any typical recognized color name (e.g. \"Indigo\"), or hex format as 0xAARRGGBB or 0xRRGGBB (e.g. \"0xFFFF00AA\").", Siren.Color, CommonSelectionItems.CommonColors);
+            ColorItem = new UIMenuColorSelector("Color", "Color of corona and environmental lighting from this siren. You can any typical recognized color name (e.g. \"Indigo\"), or hex format as 0xAARRGGBB or 0xRRGGBB (e.g. \"0xFFFF00AA\").", Siren.Color, Settings.DefaultColors);
             Menu.AddMenuDataBinding(ColorItem, (x) => Siren.Color = x, () => Siren.Color);
             
             IntensityItem = new UIMenuListItemSelector<float>("Intensity", "Intensity of environmental lighting emitted by this light", Siren.Intensity, CommonSelectionItems.IntensityFloat);

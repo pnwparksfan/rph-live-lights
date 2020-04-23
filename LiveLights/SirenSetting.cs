@@ -14,6 +14,8 @@ using Rage;
 
 namespace LiveLights
 {
+    using Utils;
+
     [XmlRoot(ElementName = "CVehicleModelInfoVarGlobal", Namespace = "")]
     public class CarcolsFile
     {
@@ -165,10 +167,10 @@ namespace LiveLights
         [XmlElement("color")]
         public ValueItem<string> ColorString
         {
-            get => string.Format("0x{0:X8}", LightColor.ToArgb());
+            get => LightColor.ToFormattedHex();
             set
             {
-                LightColor = Color.FromArgb(Convert.ToInt32(value, 16));
+                LightColor = ColorTools.HexToColor(value);
             }
         }
 
