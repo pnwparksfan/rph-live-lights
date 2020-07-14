@@ -33,14 +33,17 @@ namespace LiveLights
             set { }
         }
 
-
+        // [XmlIgnore]
         [XmlArray("Sirens")]
         [XmlArrayItem("Item")]
         public List<SirenSetting> SirenSettings { get; set; } = new List<SirenSetting>();
+
     }
 
     // [XmlType(TypeName="Item")]
-    public class SirenSetting // : IList<SirenEntry>
+    [XmlInclude(typeof(XmlComment))]
+    [XmlInclude(typeof(SirenEntry))]
+    public class SirenSetting 
     {
         [XmlElement("id")]
         public ValueItem<uint> ID { get; set; } = 0;
@@ -110,6 +113,7 @@ namespace LiveLights
 
         [XmlArray("sirens")]
         [XmlArrayItem("Item")]
+        [XmlIgnore]
         public SirenEntry[] Sirens
         {
             get => sirenList.ToArray();
@@ -122,6 +126,33 @@ namespace LiveLights
                 }
             }
         }
+
+
+        // [XmlArray("sirens2")]
+        // [XmlArrayItem("Item")]
+        // [XmlAnyElement("sirens2")]
+        [XmlAnyElement()]
+        public XmlNode CommentedSirenSettings
+        {
+            set { }
+            get
+            {
+                var export = new XmlDocument();
+                var root = export.CreateElement("sirens");
+                export.AppendChild(root);
+
+                for (int i = 0; i < sirenList.Count; i++)
+                {
+                    root.AppendChild(export.ImportNode(sirenList[i].SirenIdComment, true));
+                    var element = export.ImportNode(Serializer.SerializeToXMLElement<SirenEntry>(sirenList[i]), true);
+                    root.AppendChild(element);
+                }
+
+                return root;
+            }
+        }
+
+
 
         [XmlIgnore]
         private List<SirenEntry> sirenList = new List<SirenEntry>();
@@ -140,11 +171,13 @@ namespace LiveLights
         }
     }
 
+    [XmlType(TypeName = "Item")]
     public class SirenEntry
     {
         [XmlIgnore]
         internal string SirenIdCommentText { get; set; }
-        
+
+        [XmlIgnore]
         [XmlAnyElement("SirenIdComment")]
         public XmlComment SirenIdComment
         {
