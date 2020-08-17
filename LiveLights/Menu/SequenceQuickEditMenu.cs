@@ -33,14 +33,21 @@ namespace LiveLights.Menu
             }
 
             Menu.AddItem(Parent.LeftHeadlightSequenceItem);
+            sirenSequenceItems.Add(Parent.LeftHeadlightSequenceItem);
             Menu.AddItem(Parent.RightHeadlightSequenceItem);
+            sirenSequenceItems.Add(Parent.RightHeadlightSequenceItem);
             Menu.AddItem(Parent.LeftTaillightSequenceItem);
+            sirenSequenceItems.Add(Parent.LeftTaillightSequenceItem);
             Menu.AddItem(Parent.RightTaillightSequenceItem);
+            sirenSequenceItems.Add(Parent.RightTaillightSequenceItem);
+
 
             buttons.Add(new InstructionalButton("V", "Paste sequence"));
             buttons.Add(new InstructionalButton("C", "Copy sequence"));
             buttons.Add(new InstructionalButton("dn", "Move siren down"));
             buttons.Add(new InstructionalButton("up", "Move siren up"));
+            buttons.Add(new InstructionalButton("R", "Invert sequence"));
+            buttons.Add(new InstructionalButton("E", "Extend sequence"));
             buttons.Add(new InstructionalButton(GameControl.FrontendRight, "Shift sequence"));
             buttons.Add(new InstructionalButton(GameControl.FrontendLeft, "Shift sequence"));
             buttons.Add(new InstructionalButton(GameControl.Duck, "Shift x4"));
@@ -89,6 +96,12 @@ namespace LiveLights.Menu
                 } else if(Game.IsKeyDown(Keys.PageUp))
                 {
                     shiftSelectedItem(-1);
+                } else if(Game.IsKeyDown(Keys.R))
+                {
+                    invertSelectedSequence();
+                } else if(Game.IsKeyDown(Keys.E))
+                {
+                    extendSelectedSequence();
                 }
 
                 if(!string.IsNullOrEmpty(copiedSequence))
@@ -119,6 +132,36 @@ namespace LiveLights.Menu
                 Menu.CurrentSelection = newIndex;
                 Common.PlaySound(Menu.AUDIO_LEFTRIGHT, Menu.AUDIO_LIBRARY);
             }
+        }
+
+        private void extendSelectedSequence()
+        {
+            var s = getSelectedSequence();
+            string seq = s.ItemValue;
+            char[] newSeq = new char[32];
+
+            int iOld = 0;
+            for (int iNew = 0; iNew < newSeq.Length; iNew++)
+            {
+                if(iNew > seq.Length - 1)
+                {
+                    newSeq[iNew] = seq[iOld % seq.Length];
+                    iOld++;
+                } else
+                {
+                    newSeq[iNew] = seq[iNew];
+                }
+            }
+
+            s.ItemValue = string.Join("", newSeq);
+        }
+
+        private void invertSelectedSequence()
+        {
+            var s = getSelectedSequence();
+            string seq = s.ItemValue;
+            seq = string.Join("", seq.Reverse().ToArray());
+            s.ItemValue = seq;
         }
 
         private void shiftSelectedSequence(int shift)
