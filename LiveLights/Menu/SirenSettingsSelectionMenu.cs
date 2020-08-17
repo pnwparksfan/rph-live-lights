@@ -98,10 +98,10 @@ namespace LiveLights.Menu
         {
             if(selectedSetting?.Item1?.Exists() == true)
             {
-                item.SetRightLabel(selectedSetting.Item1.Name + " →");
+                item.RightLabel = selectedSetting.Item1.Name + " →";
             } else
             {
-                item.SetRightLabel("~c~none~w~");
+                item.RightLabel = "~c~none~w~";
             }
         }
 
@@ -135,7 +135,7 @@ namespace LiveLights.Menu
             {
                 if(selectedSetting?.Item2 != null)
                 {
-                    selectedSetting.Item2.SetRightBadge(UIMenuItem.BadgeStyle.None);
+                    selectedSetting.Item2.RightBadge = UIMenuItem.BadgeStyle.None;
                     selectedSetting.Item2.BackColor = Color.Empty;
                 }
                 
@@ -152,7 +152,7 @@ namespace LiveLights.Menu
                         item = elsEntries[selectedEls];
                     }
                     selectedSetting = Tuple.Create(item.ELS, item);
-                    item.SetRightBadge(UIMenuItem.BadgeStyle.Tick);
+                    item.RightBadge = UIMenuItem.BadgeStyle.Tick;
                     item.BackColor = Color.DarkGray;
                 }
                 OnSirenSettingSelected?.Invoke(this, Menu, item, item?.ELS);
@@ -219,11 +219,11 @@ namespace LiveLights.Menu
                     
                     if(isCustom)
                     {
-                        menuEntry.SetLeftBadge(UIMenuItem.BadgeStyle.Car);
+                        menuEntry.LeftBadge = UIMenuItem.BadgeStyle.Car;
                         menuEntry.Description = "~g~Editable~w~ siren setting entry";
                     } else
                     {
-                        menuEntry.SetLeftBadge(UIMenuItem.BadgeStyle.Lock);
+                        menuEntry.LeftBadge = UIMenuItem.BadgeStyle.Lock;
                         menuEntry.Description = "~y~Built-in~w~ siren setting entry";
                         if(AlwaysReturnEditableSetting)
                         {

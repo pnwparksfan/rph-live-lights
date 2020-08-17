@@ -21,7 +21,7 @@ namespace LiveLights.Menu
             this.ELS = els;
             this.Parent = parent;
 
-            Menu = new UIMenuRefreshable("Edit Sequences", parent.Menu.Subtitle.Caption + " > Sequence Quick Edit");
+            Menu = new UIMenuRefreshable("Edit Sequences", parent.Menu.SubtitleText + " > Sequence Quick Edit");
 
             for (int i = 0; i < ELS.Lights.Length; i++)
             {

@@ -25,23 +25,23 @@ namespace LiveLights.Menu
             Menu = new UIMenuRefreshable("Edit Siren", $"~b~Siren Setting \"{els.Name}\" > {DisplayText}");
             
             // Set up flashiness sub-menu
-            FlashinessMenu = new UIMenuRefreshable(Menu.Title.Caption, Menu.Subtitle.Caption + " > Flashiness");
+            FlashinessMenu = new UIMenuRefreshable(Menu.TitleText, Menu.SubtitleText + " > Flashiness");
             FlashinessMenuItem = new UIMenuItem("Flashiness Settings", "Configure sequence, multiples, angle, and other settings for ~y~flashing~w~ light");
-            FlashinessMenuItem.SetRightLabel("→");
+            FlashinessMenuItem.RightLabel = "→";
             Menu.AddItem(FlashinessMenuItem);
             Menu.BindMenuToItem(FlashinessMenu, FlashinessMenuItem);
 
             // Set up rotation sub-menu
-            RotationMenu = new UIMenuRefreshable(Menu.Title.Caption, Menu.Subtitle.Caption + " > Rotation");
+            RotationMenu = new UIMenuRefreshable(Menu.TitleText, Menu.SubtitleText + " > Rotation");
             RotationMenuItem = new UIMenuItem("Rotation Settings", "Configure sequence, multiples, angle, and other settings for ~y~rotating~w~ light");
-            RotationMenuItem.SetRightLabel("→");
+            RotationMenuItem.RightLabel = "→";
             Menu.AddItem(RotationMenuItem);
             Menu.BindMenuToItem(RotationMenu, RotationMenuItem);
 
             // Set up corona sub-menu
-            CoronaMenu = new UIMenuRefreshable(Menu.Title.Caption, Menu.Subtitle.Caption + " > Corona");
+            CoronaMenu = new UIMenuRefreshable(Menu.TitleText, Menu.SubtitleText + " > Corona");
             CoronaMenuItem = new UIMenuItem("Corona Settings", "Configure size, intensity, and other corona settings");
-            CoronaMenuItem.SetRightLabel("→");
+            CoronaMenuItem.RightLabel = "→";
             Menu.AddItem(CoronaMenuItem);
             Menu.BindMenuToItem(CoronaMenu, CoronaMenuItem);
 

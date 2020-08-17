@@ -59,7 +59,7 @@ namespace LiveLights.Menu
                     label = string.Join(", ", sirens);
                 }
                 label += " →";
-                Menu.ParentItem.SetRightLabel(label);
+                Menu.ParentItem.RightLabel = label;
             }
         }
 

@@ -101,7 +101,7 @@ namespace RAGENativeUI.Elements
         {
             try
             {
-                this.MenuItem.SetRightLabel(DisplayMenu);
+                this.MenuItem.RightLabel = DisplayMenu;
             } catch (Exception) { }
         }
 
@@ -586,7 +586,7 @@ namespace RAGENativeUI.Elements
 
         public static void CopyMenuProperties(this UIMenu parentMenu, UIMenu newMenu, bool recursive = true)
         {
-            newMenu.SetMenuWidthOffset(parentMenu.WidthOffset);
+            newMenu.WidthOffset = parentMenu.WidthOffset;
             newMenu.ControlDisablingEnabled = parentMenu.ControlDisablingEnabled;
             newMenu.MouseControlsEnabled = parentMenu.MouseControlsEnabled;
             newMenu.MouseEdgeEnabled = parentMenu.MouseEdgeEnabled;

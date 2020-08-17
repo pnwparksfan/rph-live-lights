@@ -19,8 +19,8 @@ namespace LiveLights.Menu
         public CopyMenu(EmergencyLightingMenu parent)
         {
             this.ParentMenu = parent;
-            Menu = new UIMenu("Edit Siren", parent.Menu.Subtitle.Caption + " > Copy Siren Properties");
-            DestinationSirenSelectorMenu.Menu.Subtitle.Caption = "~b~Copy Siren Properties > Select Destination Sirens";
+            Menu = new UIMenu("Edit Siren", parent.Menu.SubtitleText + " > Copy Siren Properties");
+            DestinationSirenSelectorMenu.Menu.SubtitleText = "~b~Copy Siren Properties > Select Destination Sirens";
             TargetMenu = new SirenSettingsSelectionMenu(ParentELS);
 
             allSirenCopyCheckboxes.Add(SequencesCheckbox);
@@ -62,7 +62,7 @@ namespace LiveLights.Menu
             Menu.AddItem(SourceSirenSelector);
             Menu.AddItem(DestinationSirenMenuItem);
             Menu.BindMenuAndCopyProperties(DestinationSirenSelectorMenu.Menu, DestinationSirenMenuItem);
-            DestinationSirenMenuItem.SetRightLabel("None →");
+            DestinationSirenMenuItem.RightLabel = "None →";
             Menu.AddItem(CopyItem);
 
             CopyModeItem.OnListChanged += OnCopyModeChanged;
@@ -92,7 +92,7 @@ namespace LiveLights.Menu
             foreach (UIMenuCheckboxItem checkbox in checkboxes)
             {
                 checkbox.Enabled = !Checked;
-                checkbox.SetLeftBadge(Checked ? UIMenuItem.BadgeStyle.Lock : UIMenuItem.BadgeStyle.None);
+                checkbox.LeftBadge = Checked ? UIMenuItem.BadgeStyle.Lock : UIMenuItem.BadgeStyle.None;
             }
         }
 
