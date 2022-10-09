@@ -41,12 +41,12 @@
     <Reference Include="Octokit, Version=0.46.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Octokit.0.46.0\lib\net46\Octokit.dll</HintPath>
     </Reference>
-    <Reference Include="RAGENativeUI">
-      <HintPath>..\..\..\references\RAGENativeUI.dll</HintPath>
+    <Reference Include="RAGENativeUI, Version=1.9.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\RAGENativeUI.1.9.0\lib\net472\RAGENativeUI.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="RagePluginHookSDK">
-      <HintPath>..\..\..\references\RagePluginHookSDK.dll</HintPath>
+    <Reference Include="RagePluginHook, Version=0.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\RagePluginHook.1.86.1\lib\net472\RagePluginHook.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
