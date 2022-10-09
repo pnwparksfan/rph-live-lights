@@ -69,7 +69,7 @@ namespace LiveLights
                 light.RotationDelta = entry.Rotation.DeltaDeg;
                 light.RotationStart = entry.Rotation.StartDeg;
                 light.RotationSpeed = entry.Rotation.Speed;
-                light.RotationSequence = entry.Rotation.Sequence;
+                light.RotationSequenceRaw = entry.Rotation.Sequence.Value;
                 light.RotationMultiples = entry.Rotation.Multiples;
                 light.RotationDirection = entry.Rotation.Direction;
                 light.RotationSynchronizeToBpm = entry.Rotation.SyncToBPM;
@@ -78,7 +78,7 @@ namespace LiveLights
                 light.FlashinessDelta = entry.Flashiness.DeltaDeg;
                 light.FlashinessStart = entry.Flashiness.StartDeg;
                 light.FlashinessSpeed = entry.Flashiness.Speed;
-                light.FlashinessSequence = entry.Flashiness.Sequence;
+                light.FlashinessSequenceRaw = entry.Flashiness.Sequence.Value;
                 light.FlashinessMultiples = entry.Flashiness.Multiples;
                 light.FlashinessDirection = entry.Flashiness.Direction;
                 light.FlashinessSynchronizeToBpm = entry.Flashiness.SyncToBPM;
