@@ -24,26 +24,63 @@ namespace LiveLights.Menu
             }
         }
 
+        public static (string filename, string filepath) GetFilepath()
+        {
+            CreateExportFolder();
+            string filename = UserInput.GetUserInput("Type or paste an export filename (e.g. ~c~~h~carcols-police.meta~h~~w~) or absolute path (e.g. ~c~~h~C:\\mods\\police\\carcols.meta~h~~w~)", "Enter a filename", 1000);
+            if (!string.IsNullOrWhiteSpace(filename))
+            {
+                // If the user pasted (or manually typed) an absolute path or 
+                // a valid path relative to the GTA root folder, use that 
+                // location. Otherwise, use the export folder
+                string filepath = filename;
+                if (!Directory.Exists(Path.GetDirectoryName(filename)))
+                {
+                    filepath = Path.Combine(exportFolder, filename);
+                }
+
+                return (filename, filepath);
+            }
+
+            return (null, null);
+        }
+
         public static void OnImportCarcols(EmergencyLightingMenu menu)
         {
-            Game.DisplayNotification("~y~Export not implemented yet");
+            (string filename, string filepath) = GetFilepath();
+            
+            if (!File.Exists(filepath))
+            {
+                Game.DisplayNotification($"~y~Unable to import~w~ {filename}~y~: File does not exist.");
+            }
+
+            try
+            {
+                CarcolsFile carcols = Serializer.LoadItemFromXML<CarcolsFile>(filepath);
+                foreach (var setting in carcols.SirenSettings)
+                {
+                    Game.LogTrivial($"Importing {setting.Name} from {filename}");
+                    var els = new EmergencyLighting();
+                    setting.ApplySirenSettingsToEmergencyLighting(els);
+                    Game.LogTrivial($"\tImported as {els.Name}");
+                }
+                Game.DisplayNotification($"Imported ~b~{carcols.SirenSettings.Count}~w~ siren settings from ~b~{filename}");
+            } catch (Exception e)
+            {
+                Game.DisplayNotification($"~y~Error importing~w~ {filename}~y~: {e.Message}");
+            }
+
         }
 
         public static bool ExportCarcols(EmergencyLighting els, bool allowOverwrite = false)
         {
-            CreateExportFolder();
-            string filename = UserInput.GetUserInput("Type or paste an export filename (e.g. ~c~~h~carcols-police.meta~h~~w~) or absolute path (e.g. ~c~~h~C:\\mods\\police\\carcols.meta~h~~w~)", "Enter a filename", 1000);
-            if(!string.IsNullOrWhiteSpace(filename))
+            (string filename, string filepath) = GetFilepath();
+            if(!string.IsNullOrWhiteSpace(filepath))
             {
                 try
                 {
-                    // If the user pasted (or manually typed) an absolute path or 
-                    // a valid path relative to the GTA root folder, use that 
-                    // location. Otherwise, create file in the export folder
-                    string filepath = filename;
-                    if(!Directory.Exists(Path.GetDirectoryName(filename)))
+                    if(!Directory.Exists(Path.GetDirectoryName(filepath)))
                     {
-                        filepath = Path.Combine(exportFolder, filename);
                         Directory.CreateDirectory(Path.GetDirectoryName(filepath));
                     }
                     
