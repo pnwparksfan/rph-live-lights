@@ -135,7 +135,7 @@ namespace LiveLights.Menu
             {
                 if(selectedSetting?.Item2 != null)
                 {
-                    selectedSetting.Item2.RightBadge = UIMenuItem.BadgeStyle.None;
+                    selectedSetting.Item2.RightBadge = UIMenuItem.BadgeStyle.Blank;
                     selectedSetting.Item2.BackColor = Color.Empty;
                 }
                 
@@ -147,7 +147,7 @@ namespace LiveLights.Menu
                     EmergencyLighting selectedEls = item.ELS;
                     if(AlwaysReturnEditableSetting && !selectedEls.IsCustomSetting())
                     {
-                        selectedEls = selectedEls.Clone();
+                        selectedEls = selectedEls.CloneWithID();
                         RefreshSirenSettingList();
                         item = elsEntries[selectedEls];
                     }
@@ -210,7 +210,9 @@ namespace LiveLights.Menu
                 if(forceUpdateAll || !elsEntries.ContainsKey(els))
                 {
                     bool isCustom = els.IsCustomSetting();
-                    if(!elsEntries.TryGetValue(els, out SirenSettingMenuItem menuEntry))
+                    SirenSource src = els.GetSource();
+
+                    if (!elsEntries.TryGetValue(els, out SirenSettingMenuItem menuEntry))
                     {
                         menuEntry = new SirenSettingMenuItem(els);
                         elsEntries.Add(els, menuEntry);
@@ -221,10 +223,11 @@ namespace LiveLights.Menu
                     {
                         menuEntry.LeftBadge = UIMenuItem.BadgeStyle.Car;
                         menuEntry.Description = "~g~Editable~w~ siren setting entry";
+                        if (src != null) menuEntry.Description += $" {src.SourceDescription.ToLower()} from siren setting ID ~b~{src.SourceId}";
                     } else
                     {
                         menuEntry.LeftBadge = UIMenuItem.BadgeStyle.Lock;
-                        menuEntry.Description = "~y~Built-in~w~ siren setting entry";
+                        menuEntry.Description = $"~y~Built-in~w~ siren setting entry, siren setting ID ~b~{els.SirenSettingID()}";
                         if(AlwaysReturnEditableSetting)
                         {
                             menuEntry.Description += ". An ~g~editable~w~ copy will be created if you select this setting.";
@@ -245,6 +248,15 @@ namespace LiveLights.Menu
             public SirenSettingMenuItem(EmergencyLighting els) : base(els.Name)
             {
                 this.ELS = els;
+                this.RightBadge = BadgeStyle.Blank;
+                SirenSource src = els.GetSource();
+                if (els.IsCustomSetting() && src != null)
+                {
+                    this.RightLabel = $"~c~[{src.SourceId}*]";
+                } else if (src != null)
+                {
+                    this.RightLabel = $"~c~[{els.SirenSettingID()}]";
+                }
             }
         }
 

@@ -108,7 +108,7 @@ namespace RAGENativeUI.Elements
         protected virtual int MaxInputLength { get; } = 1000;
         protected virtual string DisplayMenu => ItemValue?.ToString() ?? "(empty)";
         protected virtual string DisplayInputBox => ItemValue.ToString();
-        protected virtual string DisplayInputPrompt => $"Enter a value for ~b~{this.MenuItem.Text}~w~ ~c~({typeof(T).Name}, max length {MaxInputLength})";
+        protected virtual string DisplayInputPrompt => $"Enter a value for \"{this.MenuItem.Text}\" ({typeof(T).Name}, max length {MaxInputLength})";
         public virtual string CustomInputPrompt { get; set; } = null;
 
         protected virtual void ActivatedHandler(UIMenu sender, UIMenuItem selectedItem)

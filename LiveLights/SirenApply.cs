@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 namespace LiveLights
 {
     using Rage;
+    using Utils;
 
     internal static class SirenApply
     {
@@ -165,7 +166,7 @@ namespace LiveLights
             EmergencyLighting els = v.EmergencyLightingOverride;
             if (!els.Exists())
             {
-                v.EmergencyLightingOverride = v.DefaultEmergencyLighting.Clone();
+                v.EmergencyLightingOverride = v.DefaultEmergencyLighting.CloneWithID();
                 els = v.EmergencyLightingOverride;
                 Game.LogTrivial("Cloned default ELS");
             }

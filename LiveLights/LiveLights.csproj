@@ -84,6 +84,7 @@
     <Compile Include="Utils\Marker.cs" />
     <Compile Include="Utils\MenuItems.cs" />
     <Compile Include="Utils\SirenExtensions.cs" />
+    <Compile Include="Utils\SirenSource.cs" />
     <Compile Include="Utils\TextureHash.cs" />
     <Compile Include="Utils\UserInput.cs" />
   </ItemGroup>

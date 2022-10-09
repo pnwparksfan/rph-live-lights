@@ -162,7 +162,8 @@ namespace LiveLights.Menu
         {
             if(Vehicle && Vehicle.EmergencyLighting.Exists())
             {
-                Vehicle.EmergencyLightingOverride = Vehicle.EmergencyLighting.Clone();
+                var clone = Vehicle.EmergencyLighting.CloneWithID();
+                Vehicle.EmergencyLightingOverride = clone;
                 SirenSettingMenu.RefreshSirenSettingList();
                 SirenSettingMenu.SelectedEmergencyLighting = Vehicle.EmergencyLighting;
                 ResetConfigMenu();

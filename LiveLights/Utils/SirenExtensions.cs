@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Reflection;
 
 namespace LiveLights.Utils
 {
@@ -31,10 +32,14 @@ namespace LiveLights.Utils
             }
         }
 
+        public static uint SirenSettingID(this EmergencyLighting els)
+        {
+            return (uint)typeof(EmergencyLighting).GetProperty("Id", BindingFlags.GetProperty | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(els);
+        }
+
         public static bool IsCustomSetting(this EmergencyLighting els)
         {
-            return EmergencyLighting.Get(false, true).Contains(els);
-            // return EmergencyLighting.Get(false, true).Any(l => l.Name == els.Name);
+            return els.SirenSettingID() == uint.MaxValue;
         }
 
         public static EmergencyLighting GetCustomOrClone(this EmergencyLighting els)
@@ -44,7 +49,7 @@ namespace LiveLights.Utils
                 return els;
             } else
             {
-                return els.Clone();
+                return els.CloneWithID();
             }
         }
 
@@ -52,7 +57,7 @@ namespace LiveLights.Utils
         {
             if (!vehicle.EmergencyLightingOverride.Exists())
             {
-                vehicle.EmergencyLightingOverride = vehicle.DefaultEmergencyLighting.Clone();
+                vehicle.EmergencyLightingOverride = vehicle.DefaultEmergencyLighting.CloneWithID();
             }
 
             return vehicle.EmergencyLightingOverride;

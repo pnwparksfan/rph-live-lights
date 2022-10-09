@@ -27,7 +27,9 @@ namespace LiveLights.Menu
         public static (string filename, string filepath) GetFilepath()
         {
             CreateExportFolder();
-            string filename = UserInput.GetUserInput("Type or paste an export filename (e.g. ~c~~h~carcols-police.meta~h~~w~) or absolute path (e.g. ~c~~h~C:\\mods\\police\\carcols.meta~h~~w~)", "Enter a filename", 1000);
+            Game.DisplaySubtitle(@"Type or paste an export filename (e.g. ~c~~h~carcols-police.meta~h~~w~) or absolute path (e.g. ~c~~h~C:\mods\police\carcols.meta~h~~w~)", 10000);
+            string filename = UserInput.GetUserInput("Export filename", "", 1000);
+            Game.DisplaySubtitle("", 1);
             if (!string.IsNullOrWhiteSpace(filename))
             {
                 // If the user pasted (or manually typed) an absolute path or 
@@ -60,8 +62,9 @@ namespace LiveLights.Menu
                 foreach (var setting in carcols.SirenSettings)
                 {
                     Game.LogTrivial($"Importing {setting.Name} from {filename}");
-                    var els = new EmergencyLighting();
+                    var els = new EmergencyLighting().GetSafeInstance();
                     setting.ApplySirenSettingsToEmergencyLighting(els);
+                    els.SetSource(setting.ID, EmergencyLightingSource.Imported);
                     Game.LogTrivial($"\tImported as {els.Name}");
                 }
                 Game.DisplayNotification($"Imported ~b~{carcols.SirenSettings.Count}~w~ siren settings from ~b~{filename}");
@@ -93,7 +96,7 @@ namespace LiveLights.Menu
                     CarcolsFile carcols = new CarcolsFile();
                     SirenSetting setting = els.ExportEmergencyLightingToSirenSettings();
 
-                    string sirenIdStr = UserInput.GetUserInput("Enter desired siren ID", "", 3);
+                    string sirenIdStr = UserInput.GetUserInput("Enter a siren ID to export", "", 3);
                     if (byte.TryParse(sirenIdStr, out byte sirenId))
                     {
                         setting.ID = sirenId;
