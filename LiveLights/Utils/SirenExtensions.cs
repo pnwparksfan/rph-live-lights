@@ -33,8 +33,8 @@ namespace LiveLights.Utils
 
         public static bool IsCustomSetting(this EmergencyLighting els)
         {
-            // return EmergencyLighting.Get(false, true).Contains(els);
-            return EmergencyLighting.Get(false, true).Any(l => l.Name == els.Name);
+            return EmergencyLighting.Get(false, true).Contains(els);
+            // return EmergencyLighting.Get(false, true).Any(l => l.Name == els.Name);
         }
 
         public static EmergencyLighting GetCustomOrClone(this EmergencyLighting els)

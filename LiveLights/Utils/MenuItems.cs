@@ -101,7 +101,7 @@ namespace RAGENativeUI.Elements
         {
             try
             {
-                this.MenuItem.SetRightLabel(DisplayMenu);
+                this.MenuItem.RightLabel = DisplayMenu;
             } catch (Exception) { }
         }
 
@@ -284,13 +284,13 @@ namespace RAGENativeUI.Elements
 
         public UIMenuMonoSpaceItem(string text, string description) : base(text, description)
         {
-            origLabelResText = base._labelText;
-            origMainResText = base._text;
+            origLabelTextStyle = base.RightLabelStyle;
+            origMainTextStyle = base.TextStyle;
             RightLabelMonospace = true;
         }
 
-        private ResText origLabelResText;
-        private ResText origMainResText;
+        private TextStyle origLabelTextStyle;
+        private TextStyle origMainTextStyle;
 
         public bool RightLabelMonospace
         {
@@ -298,12 +298,13 @@ namespace RAGENativeUI.Elements
             {
                 if(value)
                 {
-                    base._labelText.FontEnum = Common.EFont.Monospace;
-                    base._labelText.Scale = 0.45f;
+                    var style = RightLabelStyle;
+                    style.Font = TextFont.Monospace;
+                    style.Scale = 0.45f;
+                    RightLabelStyle = style;
                 } else
                 {
-                    base._labelText.FontEnum = origLabelResText.FontEnum;
-                    base._labelText.Scale = origLabelResText.Scale;
+                    base.RightLabelStyle = origLabelTextStyle;
                 }
             }
         }
@@ -314,12 +315,13 @@ namespace RAGENativeUI.Elements
             {
                 if (value)
                 {
-                    base._text.FontEnum = Common.EFont.Monospace;
+                    var style = TextStyle;
+                    style.Font = TextFont.Monospace;
+                    TextStyle = style;
                 }
                 else
                 {
-                    base._text.FontEnum = origMainResText.FontEnum;
-                    base._text.Scale = origMainResText.Scale;
+                    TextStyle = origMainTextStyle;
                 }
             }
         }
@@ -584,7 +586,7 @@ namespace RAGENativeUI.Elements
 
         public static void CopyMenuProperties(this UIMenu parentMenu, UIMenu newMenu, bool recursive = true)
         {
-            newMenu.SetMenuWidthOffset(parentMenu.WidthOffset);
+            newMenu.WidthOffset = parentMenu.WidthOffset;
             newMenu.ControlDisablingEnabled = parentMenu.ControlDisablingEnabled;
             newMenu.MouseControlsEnabled = parentMenu.MouseControlsEnabled;
             newMenu.MouseEdgeEnabled = parentMenu.MouseEdgeEnabled;

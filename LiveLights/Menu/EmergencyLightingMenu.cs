@@ -20,7 +20,7 @@ namespace LiveLights.Menu
             this.ELS = els;
 
             Menu = new UIMenuRefreshable("Emergency Lighting Settings", $"~b~Siren Setting \"{els.Name}\"");
-            Menu.SetMenuWidthOffset(250);
+            Menu.WidthOffset = 250;
             Menu.ControlDisablingEnabled = true;
             Menu.MouseControlsEnabled = false;
             Menu.AllowCameraMovement = true;
@@ -60,9 +60,9 @@ namespace LiveLights.Menu
 
             // Headlights
 
-            HeadlightsMenu = new UIMenuRefreshable(Menu.Title.Caption, "~b~Headlights");
+            HeadlightsMenu = new UIMenuRefreshable(Menu.TitleText, "~b~Headlights");
             HeadlightsMenuItem = new UIMenuItem("Headlights", "Modify headlight sequences and multipliers");
-            HeadlightsMenuItem.SetRightLabel("→");
+            HeadlightsMenuItem.RightLabel = "→";
             Menu.AddItem(HeadlightsMenuItem, 3);
             Menu.BindMenuAndCopyProperties(HeadlightsMenu, HeadlightsMenuItem);
 
@@ -80,9 +80,9 @@ namespace LiveLights.Menu
 
             // Taillights
 
-            TaillightsMenu = new UIMenuRefreshable(Menu.Title.Caption, "~b~Taillights");
+            TaillightsMenu = new UIMenuRefreshable(Menu.TitleText, "~b~Taillights");
             TaillightsMenuItem = new UIMenuItem("Taillights", "Modify Taillight sequences and multipliers");
-            TaillightsMenuItem.SetRightLabel("→");
+            TaillightsMenuItem.RightLabel = "→";
             Menu.AddItem(TaillightsMenuItem, 4);
             Menu.BindMenuAndCopyProperties(TaillightsMenu, TaillightsMenuItem);
 
@@ -101,7 +101,7 @@ namespace LiveLights.Menu
             // Sirens 
 
             SirensMenuItem = new UIMenuItem("Sirens", "Edit sequences and other settings for individual sirens");
-            SirensMenuItem.SetRightLabel("→");
+            SirensMenuItem.RightLabel = "→";
             Menu.AddItem(SirensMenuItem, 3);
             SirensMenuItem.Activated += onSirenSubmenuActivated;
             SirenMenus = new List<EmergencyLightMenu>();
@@ -134,14 +134,14 @@ namespace LiveLights.Menu
             Menu.BindMenuAndCopyProperties(SequenceQuickEdit.Menu, SequenceQuickEditItem);
             SequenceQuickEditItem.Activated += OnQuickEditMenuOpened;
             Menu.AddItem(SequenceQuickEditItem, 4);
-            SequenceQuickEditItem.SetRightLabel("→");
+            SequenceQuickEditItem.RightLabel = "→";
             
             RefreshItem = new UIMenuItem("Refresh Siren Setting Data", "Refreshes the menu with the siren setting data for the current vehicle. Use this if the data may have been changed outside the menu.");
             Menu.AddRefreshItem(RefreshItem);
 
             CopyMenu = new CopyMenu(this);
             CopyMenuItem = new UIMenuItem("Copy", "Copy properties to/from this siren setting");
-            CopyMenuItem.SetRightLabel("→");
+            CopyMenuItem.RightLabel = "→";
             Menu.BindMenuAndCopyProperties(CopyMenu.Menu, CopyMenuItem);
             Menu.AddItem(CopyMenuItem);
 

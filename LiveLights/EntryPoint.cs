@@ -27,10 +27,10 @@ namespace LiveLights
             // Older versions of RPH do not support the EmergencyLighting API properly
             FileVersionInfo rphVer = FileVersionInfo.GetVersionInfo("ragepluginhook.exe");
             Game.LogTrivial("Detected RPH " + rphVer.FileVersion);
-            if(rphVer.FileMinorPart < 78)
+            if(rphVer.FileMinorPart < 81)
             {
-                Game.LogTrivial("RPH 78+ is required to use LiveLights");
-                Game.DisplayNotification($"~y~Unable to load LiveLights~w~\nRagePluginHook version ~b~78~w~ or later is required, you are on version ~b~{rphVer.FileMinorPart}");
+                Game.LogTrivial("RPH 81+ is required to use this version of LiveLights");
+                Game.DisplayNotification($"~y~Unable to load LiveLights~w~\nRagePluginHook version ~b~81~w~ or later is required, you are on version ~b~{rphVer.FileMinorPart}");
                 return;
             }
 
@@ -47,7 +47,7 @@ namespace LiveLights
 
             if(Settings.CheckForUpdates)
             {
-                VersionCheck = new GithubVersionCheck("pnwparksfan", "rph-live-lights", 25796806);
+                VersionCheck = new GithubVersionCheck("pnwparksfan", "rph-live-lights", 29759134);
                 Game.LogTrivial($"Latest release on github: {VersionCheck.LatestRelease?.TagName}");
                 if (VersionCheck.IsUpdateAvailable())
                 {

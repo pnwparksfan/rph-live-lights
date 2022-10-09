@@ -19,14 +19,14 @@ namespace LiveLights.Menu
         {
             Menu = new UIMenuRefreshable("Siren Configuration", "~y~No vehicle selected");
             MenuController.Pool.AddAfterYield(Menu);
-            Menu.SetMenuWidthOffset(250);
+            Menu.WidthOffset = 250;
             Menu.ControlDisablingEnabled = true;
             Menu.MouseControlsEnabled = false;
             Menu.AllowCameraMovement = true;
 
             BannerItem = new UIMenuItem("LiveLights by PNWParksFan", $"LiveLights was created by ~g~PNWParksFan~w~ using the RPH emergency lighting SDK. If you found this plugin useful and made something cool with it, ~y~please mention it in your credits/readme~w~. If you'd like to say thanks, you can donate to support my various modding projects at ~b~parksmods.com/donate~w~ and get member-exclusive perks. Press Enter to learn more!");
-            BannerItem.SetRightLabel("v" + EntryPoint.CurrentFileVersion.ToString());
-            BannerItem.SetLeftBadge(UIMenuItem.BadgeStyle.Heart);
+            BannerItem.RightLabel = "v" + EntryPoint.CurrentFileVersion.ToString();
+            BannerItem.LeftBadge = UIMenuItem.BadgeStyle.Heart;
             BannerItem.BackColor = Color.Black;
             BannerItem.ForeColor = Color.LightSkyBlue;
             BannerItem.HighlightedBackColor = Color.LightSkyBlue;
@@ -36,8 +36,8 @@ namespace LiveLights.Menu
             if(EntryPoint.VersionCheck?.IsUpdateAvailable() == true)
             {
                 UpdateItem = new UIMenuItem("Update Available", $"Version ~y~{EntryPoint.VersionCheck.LatestRelease.TagName}~w~ is available for download. Press ~b~Enter~w~ to download ~y~{EntryPoint.VersionCheck.LatestRelease.Name}~w~.");
-                UpdateItem.SetRightLabel("~o~" + EntryPoint.VersionCheck.LatestRelease.TagName);
-                UpdateItem.SetLeftBadge(UIMenuItem.BadgeStyle.Alert);
+                UpdateItem.RightLabel = "~o~" + EntryPoint.VersionCheck.LatestRelease.TagName;
+                UpdateItem.LeftBadge = UIMenuItem.BadgeStyle.Alert;
                 UpdateItem.BackColor = Color.Black;
                 UpdateItem.ForeColor = Color.LightSkyBlue;
                 UpdateItem.HighlightedBackColor = Color.LightSkyBlue;
@@ -49,7 +49,7 @@ namespace LiveLights.Menu
             SirenSettingSelectorItem = SirenSettingMenu.CreateAndBindToSubmenuItem(Menu);
             SirenConfigMenu = null; // new EmergencyLightingMenu(null);
             SirenConfigItem = new UIMenuItem("Edit Emergency Lighting", defaultConfigMenuDesc);
-            SirenConfigItem.SetRightLabel("→");
+            SirenConfigItem.RightLabel = "→";
             Menu.AddItem(SirenConfigItem);
             // Menu.BindMenuToItem(SirenConfigMenu.Menu, SirenConfigItem);
             
@@ -98,7 +98,7 @@ namespace LiveLights.Menu
             {
                 string vehicleName = NativeFunction.Natives.GET_DISPLAY_NAME_FROM_VEHICLE_MODEL<string>(Vehicle.Model.Hash);
                 vehicleName = NativeFunction.Natives.x7B5280EBA9840C72<string>(vehicleName);
-                Menu.Subtitle.Caption = $"~b~Configure sirens for {vehicleName} ({Vehicle.Model.Name})";
+                Menu.SubtitleText = $"~b~Configure sirens for {vehicleName} ({Vehicle.Model.Name})";
                 // EmergencyLighting els = Vehicle.GetOrCreateOverrideEmergencyLighting();
                 SirenSettingMenu.SelectedEmergencyLighting = Vehicle.EmergencyLighting;
                 ResetConfigMenu();
@@ -106,8 +106,8 @@ namespace LiveLights.Menu
             } else
             {
                 SirenSettingMenu.SelectedEmergencyLighting = null;
-                Menu.Subtitle.Caption = "~y~No valid vehicle detected";
-                SirenSettingSelectorItem.SetRightLabel("");
+                Menu.SubtitleText = "~y~No valid vehicle detected";
+                SirenSettingSelectorItem.RightLabel = "";
             }
         }
 
@@ -136,19 +136,19 @@ namespace LiveLights.Menu
                     SirenConfigMenu = new EmergencyLightingMenu(els);
                     Menu.BindMenuToItem(SirenConfigMenu.Menu, SirenConfigItem);
                     SirenConfigItem.Enabled = true;
-                    SirenConfigItem.SetLeftBadge(UIMenuItem.BadgeStyle.None);
+                    SirenConfigItem.LeftBadge = UIMenuItem.BadgeStyle.None;
                     SirenConfigItem.Description = defaultConfigMenuDesc;
                 } else if(els.Exists())
                 {
                     SirenConfigMenu = null;
                     SirenConfigItem.Enabled = true;
-                    SirenConfigItem.SetLeftBadge(UIMenuItem.BadgeStyle.Alert);
+                    SirenConfigItem.LeftBadge = UIMenuItem.BadgeStyle.Alert;
                     SirenConfigItem.Activated += OnNonEditableConfigSelected;
                     SirenConfigItem.Description = defaultConfigMenuDesc + builtInConfigMenuDesc + new string(' ', 20);
                 } else
                 {
                     SirenConfigMenu = null;
-                    SirenConfigItem.SetLeftBadge(UIMenuItem.BadgeStyle.None);
+                    SirenConfigItem.LeftBadge = UIMenuItem.BadgeStyle.None;
                     SirenConfigItem.Enabled = false;
                     SirenConfigItem.Description = "No selected siren setting";
                 }
