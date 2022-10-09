@@ -40,7 +40,6 @@ namespace LiveLights
 
     }
 
-    // [XmlType(TypeName="Item")]
     [XmlInclude(typeof(XmlComment))]
     [XmlInclude(typeof(SirenEntry))]
     public class SirenSetting 
@@ -110,9 +109,6 @@ namespace LiveLights
         [XmlElement("useRealLights")]
         public ValueItem<bool> UseRealLights { get; set; } = true;
 
-
-        [XmlArray("sirens")]
-        [XmlArrayItem("Item")]
         [XmlIgnore]
         public SirenEntry[] Sirens
         {
@@ -127,10 +123,6 @@ namespace LiveLights
             }
         }
 
-
-        // [XmlArray("sirens2")]
-        // [XmlArrayItem("Item")]
-        // [XmlAnyElement("sirens2")]
         [XmlAnyElement()]
         public XmlNode CommentedSirenSettings
         {
@@ -151,8 +143,6 @@ namespace LiveLights
                 return root;
             }
         }
-
-
 
         [XmlIgnore]
         private List<SirenEntry> sirenList = new List<SirenEntry>();
