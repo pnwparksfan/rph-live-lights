@@ -30,6 +30,9 @@ namespace LiveLights.Menu
             NameItem = new UIMenuStringSelector("Name", ELS.Name, "Siren setting name as shown in carcols.meta");
             Menu.AddMenuDataBinding(NameItem, (x) => ELS.Name = x, () => ELS.Name);
 
+            IdItem = new UIMenuUIntSelector("Siren Setting ID", GetSourceID(), "Siren setting ID which will be exported to carcols.meta");
+            Menu.AddMenuDataBinding(IdItem, SetSourceID, GetSourceID);
+
             BpmItem = new UIMenuUIntSelector("BPM", ELS.SequencerBpm, "Beats per minute");
             Menu.AddMenuDataBinding(BpmItem, (x) => ELS.SequencerBpm = x, () => ELS.SequencerBpm);
 
@@ -103,7 +106,7 @@ namespace LiveLights.Menu
             SirensMenuItem = new UIMenuItem("Sirens", "Edit sequences and other settings for individual sirens");
             SirensMenuItem.RightLabel = "→";
             Menu.AddItem(SirensMenuItem, 3);
-            SirensMenuItem.Activated += onSirenSubmenuActivated;
+            SirensMenuItem.Activated += OnSirenSubmenuActivated;
             SirenMenus = new List<EmergencyLightMenu>();
 
             // Create each siren menu
@@ -179,7 +182,7 @@ namespace LiveLights.Menu
             }
         }
 
-        private void onSirenSubmenuActivated(UIMenu sender, UIMenuItem selectedItem)
+        private void OnSirenSubmenuActivated(UIMenu sender, UIMenuItem selectedItem)
         {
             sender.Visible = false;
             SirenSwitcherItem.SwitchMenuItem.CurrentMenu.Visible = true;
@@ -210,11 +213,21 @@ namespace LiveLights.Menu
             CopyMenu.ProcessShowSirens(v);
         }
 
+        private uint GetSourceID()
+        {
+            SirenSource source = ELS.GetSource();
+            if (source != null) return source.SourceId;
+            else return 0;
+        }
+
+        private void SetSourceID(uint id) => ELS.SetSource(id, EmergencyLightingSource.Manual);
+
         public EmergencyLighting ELS { get; }
 
         // Core lighting settings
         public UIMenuRefreshable Menu { get; }
         public UIMenuStringSelector NameItem { get; }
+        public UIMenuUIntSelector IdItem { get; }
         public UIMenuUIntSelector BpmItem { get; }
         public UIMenuListItemSelector<string> TextureHashItem { get; }
         public UIMenuListItemSelector<float> TimeMultiplierItem { get; }

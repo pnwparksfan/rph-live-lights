@@ -183,7 +183,24 @@ namespace LiveLights.Menu
         {
             IEnumerable<EmergencyLighting> elsToShow = EmergencyLighting.Get(IncludeBuiltInSettings, IncludeCustomSettings).Where(e => e.Exists());
 
-            // Remove any lighting entries which are no longer valid
+
+            // Add any new lighting entries
+            foreach (EmergencyLighting els in elsToShow)
+            {
+                if (forceUpdateAll || !elsEntries.ContainsKey(els))
+                {
+                    if (!elsEntries.TryGetValue(els, out SirenSettingMenuItem menuEntry))
+                    {
+                        menuEntry = new SirenSettingMenuItem(els);
+                        elsEntries.Add(els, menuEntry);
+                        Menu.AddItem(menuEntry);
+                    }
+
+                    Game.LogTrivialDebug("Added EmergencyLighting entry " + els.Name);
+                }
+            }
+
+            // Remove any lighting entries which are no longer valid and update labels for valid items
             foreach (EmergencyLighting els in elsEntries.Keys.ToArray())
             {
                 if(!els.IsValid() || !elsToShow.Contains(els))
@@ -200,41 +217,33 @@ namespace LiveLights.Menu
                     Game.LogTrivialDebug("Removed EmergencyLighting entry " + (els.IsValid() ? " of undesired type" : "for being invalid"));
                 } else
                 {
-                    elsEntries[els].Text = els.Name;
-                }
-            }
+                    var menu = elsEntries[els];
+                    menu.Text = els.Name;
 
-            // Add any new lighting entries
-            foreach (EmergencyLighting els in elsToShow)
-            {
-                if(forceUpdateAll || !elsEntries.ContainsKey(els))
-                {
                     bool isCustom = els.IsCustomSetting();
                     SirenSource src = els.GetSource();
 
-                    if (!elsEntries.TryGetValue(els, out SirenSettingMenuItem menuEntry))
+                    if (isCustom)
                     {
-                        menuEntry = new SirenSettingMenuItem(els);
-                        elsEntries.Add(els, menuEntry);
-                        Menu.AddItem(menuEntry);
-                    }
-                    
-                    if(isCustom)
-                    {
-                        menuEntry.LeftBadge = UIMenuItem.BadgeStyle.Car;
-                        menuEntry.Description = "~g~Editable~w~ siren setting entry";
-                        if (src != null) menuEntry.Description += $" {src.SourceDescription.ToLower()} from siren setting ID ~b~{src.SourceId}";
-                    } else
-                    {
-                        menuEntry.LeftBadge = UIMenuItem.BadgeStyle.Lock;
-                        menuEntry.Description = $"~y~Built-in~w~ siren setting entry, siren setting ID ~b~{els.SirenSettingID()}";
-                        if(AlwaysReturnEditableSetting)
+                        menu.LeftBadge = UIMenuItem.BadgeStyle.Car;
+                        menu.Description = "~g~Editable~w~ siren setting entry";
+                        if (src != null)
                         {
-                            menuEntry.Description += ". An ~g~editable~w~ copy will be created if you select this setting.";
+                            menu.RightLabel = $"~c~[{src.SourceId}*]";
+                            menu.Description += $" {src.SourceDescription.ToLower()} from siren setting ID ~b~{src.SourceId}";
                         }
                     }
-                    
-                    Game.LogTrivialDebug("Added EmergencyLighting entry " + els.Name);
+                    else
+                    {
+                        menu.LeftBadge = UIMenuItem.BadgeStyle.Lock;
+                        menu.Description = $"~y~Built-in~w~ siren setting entry, siren setting ID ~b~{els.SirenSettingID()}";
+                        menu.RightLabel = $"~c~[{els.SirenSettingID()}]";
+
+                        if (AlwaysReturnEditableSetting)
+                        {
+                            menu.Description += ". An ~g~editable~w~ copy will be created if you select this setting.";
+                        }
+                    }
                 }
             }
 
@@ -249,14 +258,6 @@ namespace LiveLights.Menu
             {
                 this.ELS = els;
                 this.RightBadge = BadgeStyle.Blank;
-                SirenSource src = els.GetSource();
-                if (els.IsCustomSetting() && src != null)
-                {
-                    this.RightLabel = $"~c~[{src.SourceId}*]";
-                } else if (src != null)
-                {
-                    this.RightLabel = $"~c~[{els.SirenSettingID()}]";
-                }
             }
         }
 
