@@ -285,7 +285,7 @@ namespace LiveLights
         public static implicit operator Sequencer(uint value) => new Sequencer(value);
         public static implicit operator Sequencer(string value) => new Sequencer(value);
         public static implicit operator uint(Sequencer item) => item.Value;
-        public static implicit operator string(Sequencer item) => Convert.ToString(item.Value, 2);
+        public static implicit operator string(Sequencer item) => Convert.ToString(item.Value, 2).PadLeft(32, '0');
 
         public Sequencer(uint value) : base(value) { }
         public Sequencer(string value) : base(Convert.ToUInt32(value, 2)) { }

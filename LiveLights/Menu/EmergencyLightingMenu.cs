@@ -145,12 +145,10 @@ namespace LiveLights.Menu
             Menu.BindMenuAndCopyProperties(CopyMenu.Menu, CopyMenuItem);
             Menu.AddItem(CopyMenuItem);
 
-            /*
             ImportCarcolsItem = new UIMenuItem("Import carcols.meta file", "Imports all siren settings in selected carcols.meta file");
             Menu.AddItem(ImportCarcolsItem);
             ImportCarcolsItem.Activated += OnImportExportClicked;
-            */
-
+            
             ExportCarcolsItem = new UIMenuItem("Export carcols.meta file", "Exports the siren setting currently being modified to a carcols.meta file");
             Menu.AddItem(ExportCarcolsItem);
             ExportCarcolsItem.Activated += OnImportExportClicked;
