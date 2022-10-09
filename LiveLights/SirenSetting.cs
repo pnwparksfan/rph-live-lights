@@ -109,7 +109,13 @@ namespace LiveLights
         [XmlElement("useRealLights")]
         public ValueItem<bool> UseRealLights { get; set; } = true;
 
-        [XmlIgnore]
+        // Sirens property should always be *deserialized* to read in the sirens array,
+        // but should never be *serialized* because this is written by the CommentedSirenSettings
+        // below with siren number comments inline
+        public bool ShouldSerializeSirens() => false;
+
+        [XmlArray("sirens")]
+        [XmlArrayItem("Item")]
         public SirenEntry[] Sirens
         {
             get => sirenList.ToArray();
