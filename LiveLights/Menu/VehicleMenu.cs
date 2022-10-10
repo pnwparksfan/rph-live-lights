@@ -59,6 +59,17 @@ namespace LiveLights.Menu
             SirenAudioOnItem = new UIMenuRefreshableCheckboxItem("Siren Audio Enabled", false, "Toggle siren audio on this vehicle");
             Menu.AddMenuDataBinding(SirenAudioOnItem, (x) => Vehicle.IsSirenSilent = !x, () => !Vehicle.IsSirenSilent);
 
+            ExportSelectorItem = new UIMenuItem("Export", "Export siren settings to carcols.meta files");
+            ExportSelectorItem.RightLabel = "→";
+            Menu.AddItem(ExportSelectorItem);
+            Menu.BindMenuAndCopyProperties(ImportExportMenu.ExportMenu, ExportSelectorItem);
+
+            ImportSelectorItem = new UIMenuItem("Import", "Import siren settings from carcols.meta files");
+            ImportSelectorItem.RightLabel = "→";
+            ImportSelectorItem.Activated += ImportExportMenu.OnImportActivated;
+            Menu.CopyMenuProperties(ImportExportMenu.ImportActiveSettingMenu.Menu);
+            Menu.AddItem(ImportSelectorItem);
+
             SirenSettingMenu.OnSirenSettingSelected += OnSirenSelectionChanged;
 
             Refresh();
@@ -111,7 +122,7 @@ namespace LiveLights.Menu
             }
         }
 
-        private static void OnSirenSelectionChanged(SirenSettingsSelectionMenu sender, UIMenu menu, SirenSettingsSelectionMenu.SirenSettingMenuItem item, EmergencyLighting setting)
+        private static void OnSirenSelectionChanged(SirenSettingsSelectionMenu sender, UIMenu menu, UIMenuItem item, EmergencyLighting setting)
         {
             // EmergencyLighting els = setting.GetCustomOrClone();
             if (Vehicle)
@@ -176,6 +187,8 @@ namespace LiveLights.Menu
         public static UIMenuItem UpdateItem { get; }
         public static SirenSettingsSelectionMenu SirenSettingMenu { get; }
         public static UIMenuItem SirenSettingSelectorItem { get; }
+        public static UIMenuItem ExportSelectorItem { get; }
+        public static UIMenuItem ImportSelectorItem { get; }
         public static EmergencyLightingMenu SirenConfigMenu { get; private set; }
         public static UIMenuItem SirenConfigItem { get; }
         public static UIMenuRefreshableCheckboxItem EmergencyLightsOnItem { get; }

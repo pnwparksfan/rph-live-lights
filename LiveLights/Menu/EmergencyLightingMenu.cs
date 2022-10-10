@@ -147,14 +147,10 @@ namespace LiveLights.Menu
             CopyMenuItem.RightLabel = "→";
             Menu.BindMenuAndCopyProperties(CopyMenu.Menu, CopyMenuItem);
             Menu.AddItem(CopyMenuItem);
-
-            ImportCarcolsItem = new UIMenuItem("Import carcols.meta file", "Imports all siren settings in selected carcols.meta file");
-            Menu.AddItem(ImportCarcolsItem);
-            ImportCarcolsItem.Activated += OnImportExportClicked;
             
-            ExportCarcolsItem = new UIMenuItem("Export carcols.meta file", "Exports the siren setting currently being modified to a carcols.meta file");
+            ExportCarcolsItem = new UIMenuItem("Export carcols.meta file", "Exports the single siren setting currently being modified to a carcols.meta file. To export multiple settings into a single file, use the bulk export tool from the main menu.");
             Menu.AddItem(ExportCarcolsItem);
-            ExportCarcolsItem.Activated += OnImportExportClicked;
+            ExportCarcolsItem.Activated += OnExportClicked;
 
             ExportAllowOverwriteItem = new UIMenuCheckboxItem("Allow overwrite on export", Settings.DefaultOverwrite, "Allow exported carcols.meta files to overwrite existing files with the same name");
             Menu.AddItem(ExportAllowOverwriteItem);
@@ -171,14 +167,11 @@ namespace LiveLights.Menu
             SequenceQuickEdit.Menu.RefreshIndex();
         }
 
-        private void OnImportExportClicked(UIMenu sender, UIMenuItem selectedItem)
+        private void OnExportClicked(UIMenu sender, UIMenuItem selectedItem)
         {
-            if(selectedItem == ImportCarcolsItem)
+            if(selectedItem == ExportCarcolsItem)
             {
-                ImportExportMenu.OnImportCarcols(this);
-            } else if(selectedItem == ExportCarcolsItem)
-            {
-                ImportExportMenu.ExportCarcols(this.ELS, ExportAllowOverwriteItem.Checked);
+                ImportExportMenu.ExportCarcols(ExportAllowOverwriteItem.Checked, this.ELS);
             }
         }
 
@@ -272,6 +265,5 @@ namespace LiveLights.Menu
         // Import/export
         public UIMenuItem ExportCarcolsItem { get; }
         public UIMenuCheckboxItem ExportAllowOverwriteItem { get; }
-        public UIMenuItem ImportCarcolsItem { get; }
     }
 }
