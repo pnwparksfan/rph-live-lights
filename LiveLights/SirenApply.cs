@@ -32,13 +32,13 @@ namespace LiveLights
             els.TextureHash = setting.TextureHash;
             els.SequencerBpm = setting.SequencerBPM;
             els.UseRealLights = setting.UseRealLights;
-            els.LeftHeadLightSequence = setting.LeftHeadLightSequencer;
+            els.LeftHeadLightSequenceRaw = setting.LeftHeadLightSequencer;
             els.LeftHeadLightMultiples = setting.LeftHeadLightMultiples;
-            els.RightHeadLightSequence = setting.RightHeadLightSequencer;
+            els.RightHeadLightSequenceRaw = setting.RightHeadLightSequencer;
             els.RightHeadLightMultiples = setting.RightHeadLightMultiples;
-            els.LeftTailLightSequence = setting.LeftTailLightSequencer;
+            els.LeftTailLightSequenceRaw = setting.LeftTailLightSequencer;
             els.LeftTailLightMultiples = setting.LeftTailLightMultiples;
-            els.RightTailLightSequence = setting.RightTailLightSequencer;
+            els.RightTailLightSequenceRaw = setting.RightTailLightSequencer;
             els.RightTailLightMultiples = setting.RightTailLightMultiples;
 
             for (int i = 0; i < setting.Sirens.Length; i++)
@@ -68,7 +68,7 @@ namespace LiveLights
                 light.RotationDelta = entry.Rotation.DeltaDeg;
                 light.RotationStart = entry.Rotation.StartDeg;
                 light.RotationSpeed = entry.Rotation.Speed;
-                light.RotationSequenceRaw = entry.Rotation.Sequence.Value;
+                light.RotationSequenceRaw = entry.Rotation.Sequence;
                 light.RotationMultiples = entry.Rotation.Multiples;
                 light.RotationDirection = entry.Rotation.Direction;
                 light.RotationSynchronizeToBpm = entry.Rotation.SyncToBPM;
@@ -77,7 +77,7 @@ namespace LiveLights
                 light.FlashinessDelta = entry.Flashiness.DeltaDeg;
                 light.FlashinessStart = entry.Flashiness.StartDeg;
                 light.FlashinessSpeed = entry.Flashiness.Speed;
-                light.FlashinessSequenceRaw = entry.Flashiness.Sequence.Value;
+                light.FlashinessSequenceRaw = entry.Flashiness.Sequence;
                 light.FlashinessMultiples = entry.Flashiness.Multiples;
                 light.FlashinessDirection = entry.Flashiness.Direction;
                 light.FlashinessSynchronizeToBpm = entry.Flashiness.SyncToBPM;
@@ -96,13 +96,13 @@ namespace LiveLights
             setting.TextureHash = els.TextureHash;
             setting.SequencerBPM = els.SequencerBpm;
             setting.UseRealLights = els.UseRealLights;
-            setting.LeftHeadLightSequencer = els.LeftHeadLightSequence;
+            setting.LeftHeadLightSequencer = els.LeftHeadLightSequenceRaw;
             setting.LeftHeadLightMultiples = els.LeftHeadLightMultiples;
-            setting.RightHeadLightSequencer = els.RightHeadLightSequence;
+            setting.RightHeadLightSequencer = els.RightHeadLightSequenceRaw;
             setting.RightHeadLightMultiples = els.RightHeadLightMultiples;
-            setting.LeftTailLightSequencer = els.LeftTailLightSequence;
+            setting.LeftTailLightSequencer = els.LeftTailLightSequenceRaw;
             setting.LeftTailLightMultiples = els.LeftTailLightMultiples;
-            setting.RightTailLightSequencer = els.RightTailLightSequence;
+            setting.RightTailLightSequencer = els.RightTailLightSequenceRaw;
             setting.RightTailLightMultiples = els.RightTailLightMultiples;
 
             for (int i = 0; i < els.Lights.Length; i++)
@@ -132,7 +132,7 @@ namespace LiveLights
                 entry.Rotation.DeltaDeg = light.RotationDelta;
                 entry.Rotation.StartDeg = light.RotationStart;
                 entry.Rotation.Speed = light.RotationSpeed;
-                entry.Rotation.Sequence = light.RotationSequence;
+                entry.Rotation.Sequence = light.RotationSequenceRaw;
                 entry.Rotation.Multiples = light.RotationMultiples;
                 entry.Rotation.Direction = light.RotationDirection;
                 entry.Rotation.SyncToBPM = light.RotationSynchronizeToBpm;
@@ -141,7 +141,7 @@ namespace LiveLights
                 entry.Flashiness.DeltaDeg = light.FlashinessDelta;
                 entry.Flashiness.StartDeg = light.FlashinessStart;
                 entry.Flashiness.Speed = light.FlashinessSpeed;
-                entry.Flashiness.Sequence = light.FlashinessSequence;
+                entry.Flashiness.Sequence = light.FlashinessSequenceRaw;
                 entry.Flashiness.Multiples = light.FlashinessMultiples;
                 entry.Flashiness.Direction = light.FlashinessDirection;
                 entry.Flashiness.SyncToBPM = light.FlashinessSynchronizeToBpm;
