@@ -28,6 +28,7 @@ namespace LiveLights.Menu
                 EmergencyLight siren = ELS.Lights[i];
                 string sirenId = $"Siren {i + 1}";
                 UIMenuSequenceItemSelector item = new UIMenuSequenceItemSelector($"{sirenId} Sequence", siren.FlashinessSequence, $"Edit 32-bit sequence for {sirenId}");
+                item.MenuItem.RightBadge = UIMenuItem.BadgeStyle.Blank;
                 Menu.AddMenuDataBinding(item, (x) => siren.FlashinessSequence = x, () => siren.FlashinessSequence);
                 sirenSequenceItems.Add(item);
             }

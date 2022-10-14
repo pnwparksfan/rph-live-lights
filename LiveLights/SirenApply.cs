@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.Linq.Expressions;
+using System.Drawing;
 
 namespace LiveLights
 {
@@ -13,7 +14,7 @@ namespace LiveLights
 
     internal static class SirenApply
     {
-        public static void ApplySirenSettingsToEmergencyLighting(this SirenSetting setting, EmergencyLighting els)
+        public static void ApplySirenSettingsToEmergencyLighting(this SirenSetting setting, EmergencyLighting els, bool clearExcessSirens = true)
         {
             string name = setting.Name;
             for (int iName = 1; EmergencyLighting.GetByName(name).Exists(); iName++)
@@ -41,50 +42,91 @@ namespace LiveLights
             els.RightTailLightSequenceRaw = setting.RightTailLightSequencer;
             els.RightTailLightMultiples = setting.RightTailLightMultiples;
 
-            for (int i = 0; i < setting.Sirens.Length; i++)
+            for (int i = 0; i < els.Lights.Length; i++)
             {
-                SirenEntry entry = setting.Sirens[i];
                 EmergencyLight light = els.Lights[i];
 
-                // Main light settings
-                light.Color = entry.LightColor;
-                light.Intensity = entry.Intensity;
-                light.LightGroup = entry.LightGroup;
-                light.Rotate = entry.Rotate;
-                light.Scale = entry.Scale;
-                light.ScaleFactor = entry.ScaleFactor;
-                light.Flash = entry.Flash;
-                light.SpotLight = entry.SpotLight;
-                light.CastShadows = entry.CastShadows;
-                light.Light = entry.Light;
+                if (i < setting.Sirens.Length)
+                {
+                    SirenEntry entry = setting.Sirens[i];    
 
-                // Corona settings
-                light.CoronaIntensity = entry.Corona.CoronaIntensity;
-                light.CoronaSize = entry.Corona.CoronaSize;
-                light.CoronaPull = entry.Corona.CoronaPull;
-                light.CoronaFaceCamera = entry.Corona.CoronaFaceCamera;
+                    // Main light settings
+                    light.Color = entry.LightColor;
+                    light.Intensity = entry.Intensity;
+                    light.LightGroup = entry.LightGroup;
+                    light.Rotate = entry.Rotate;
+                    light.Scale = entry.Scale;
+                    light.ScaleFactor = entry.ScaleFactor;
+                    light.Flash = entry.Flash;
+                    light.SpotLight = entry.SpotLight;
+                    light.CastShadows = entry.CastShadows;
+                    light.Light = entry.Light;
 
-                // Rotation settings
-                light.RotationDelta = entry.Rotation.DeltaDeg;
-                light.RotationStart = entry.Rotation.StartDeg;
-                light.RotationSpeed = entry.Rotation.Speed;
-                light.RotationSequenceRaw = entry.Rotation.Sequence;
-                light.RotationMultiples = entry.Rotation.Multiples;
-                light.RotationDirection = entry.Rotation.Direction;
-                light.RotationSynchronizeToBpm = entry.Rotation.SyncToBPM;
+                    // Corona settings
+                    light.CoronaIntensity = entry.Corona.CoronaIntensity;
+                    light.CoronaSize = entry.Corona.CoronaSize;
+                    light.CoronaPull = entry.Corona.CoronaPull;
+                    light.CoronaFaceCamera = entry.Corona.CoronaFaceCamera;
 
-                // Flash settings
-                light.FlashinessDelta = entry.Flashiness.DeltaDeg;
-                light.FlashinessStart = entry.Flashiness.StartDeg;
-                light.FlashinessSpeed = entry.Flashiness.Speed;
-                light.FlashinessSequenceRaw = entry.Flashiness.Sequence;
-                light.FlashinessMultiples = entry.Flashiness.Multiples;
-                light.FlashinessDirection = entry.Flashiness.Direction;
-                light.FlashinessSynchronizeToBpm = entry.Flashiness.SyncToBPM;
+                    // Rotation settings
+                    light.RotationDelta = entry.Rotation.DeltaDeg;
+                    light.RotationStart = entry.Rotation.StartDeg;
+                    light.RotationSpeed = entry.Rotation.Speed;
+                    light.RotationSequenceRaw = entry.Rotation.Sequence;
+                    light.RotationMultiples = entry.Rotation.Multiples;
+                    light.RotationDirection = entry.Rotation.Direction;
+                    light.RotationSynchronizeToBpm = entry.Rotation.SyncToBPM;
+
+                    // Flash settings
+                    light.FlashinessDelta = entry.Flashiness.DeltaDeg;
+                    light.FlashinessStart = entry.Flashiness.StartDeg;
+                    light.FlashinessSpeed = entry.Flashiness.Speed;
+                    light.FlashinessSequenceRaw = entry.Flashiness.Sequence;
+                    light.FlashinessMultiples = entry.Flashiness.Multiples;
+                    light.FlashinessDirection = entry.Flashiness.Direction;
+                    light.FlashinessSynchronizeToBpm = entry.Flashiness.SyncToBPM;
+                } else if (clearExcessSirens)
+                {
+                    // Main light settings
+                    light.Color = Color.Black;
+                    light.Intensity = 0;
+                    light.LightGroup = 0;
+                    light.Rotate = false;
+                    light.Scale = false;
+                    light.ScaleFactor = 0;
+                    light.Flash = false;
+                    light.SpotLight = false;
+                    light.CastShadows = false;
+                    light.Light = false;
+
+                    // Corona settings
+                    light.CoronaIntensity = 0;
+                    light.CoronaSize = 0;
+                    light.CoronaPull = 0;
+                    light.CoronaFaceCamera = false;
+
+                    // Rotation settings
+                    light.RotationDelta = 0;
+                    light.RotationStart = 0;
+                    light.RotationSpeed = 0;
+                    light.RotationSequenceRaw = 0;
+                    light.RotationMultiples = 0;
+                    light.RotationDirection = false;
+                    light.RotationSynchronizeToBpm = false;
+
+                    // Flash settings
+                    light.FlashinessDelta = 0;
+                    light.FlashinessStart = 0;
+                    light.FlashinessSpeed = 0;
+                    light.FlashinessSequenceRaw = 0;
+                    light.FlashinessMultiples = 0;
+                    light.FlashinessDirection = false;
+                    light.FlashinessSynchronizeToBpm = false;
+                }
             }
         }
 
-        public static void ExportEmergencyLightingToSirenSettings(this EmergencyLighting els, ref SirenSetting setting)
+        public static void ExportEmergencyLightingToSirenSettings(this EmergencyLighting els, ref SirenSetting setting, int? maxToExport = null)
         {
             setting.Name = els.Name;
             setting.TimeMultiplier = els.TimeMultiplier;
@@ -105,8 +147,14 @@ namespace LiveLights
             setting.RightTailLightSequencer = els.RightTailLightSequenceRaw;
             setting.RightTailLightMultiples = els.RightTailLightMultiples;
 
-            for (int i = 0; i < els.Lights.Length; i++)
+            // if a max is defined, export up to the max or the total available lights
+            // if a max is not defined, export all available lights
+            maxToExport = Math.Min(maxToExport ?? els.Lights.Length, els.Lights.Length);
+
+            for (int i = 0; i < maxToExport; i++)
             {
+                if (maxToExport.HasValue && i >= maxToExport.Value) break;
+
                 SirenEntry entry = new SirenEntry();
                 EmergencyLight light = els.Lights[i];
 

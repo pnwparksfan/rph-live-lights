@@ -21,7 +21,7 @@ namespace LiveLights.Utils
         public static void ShowSirenMarker(this Vehicle vehicle, int siren, Vector3 scale, MarkerStyle style = MarkerStyle.MarkerTypeUpsideDownCone, float verticalOffset = 0.6f)
         {
             string boneName = $"siren{siren}";
-            if (vehicle && vehicle.HasBone(boneName) && vehicle.EmergencyLighting.Exists())
+            if (vehicle && vehicle.HasBone(boneName) && vehicle.EmergencyLighting.Exists() && siren <= vehicle.EmergencyLighting.Lights.Length)
             {
                 EmergencyLight light = vehicle.EmergencyLighting.Lights[siren - 1];
                 Vector3 bonePosition = vehicle.GetBonePosition(boneName);
@@ -31,6 +31,8 @@ namespace LiveLights.Utils
                 // Debug.DrawLine(bonePosition, bonePosition + direction * 0.3f, light.Color);
             }
         }
+
+        public static bool HasSiren(this Vehicle vehicle, int sirenNum) => vehicle.HasBone($"siren{sirenNum}");
 
         public static uint SirenSettingID(this EmergencyLighting els)
         {

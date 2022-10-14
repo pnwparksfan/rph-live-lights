@@ -30,7 +30,7 @@ namespace LiveLights.Menu
                 VehicleMenu.Menu.Visible = !VehicleMenu.Menu.Visible;
             }
 
-            VehicleMenu.SirenConfigMenu?.ShowSirenPositions(VehicleMenu.Vehicle, true);
+            VehicleMenu.SirenConfigMenu?.ShowSirenInfo(VehicleMenu.Vehicle);
             VehicleMenu.SirenConfigMenu?.SequenceQuickEdit?.Process();
 
 

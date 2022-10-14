@@ -18,7 +18,7 @@ namespace LiveLights.Menu
         {
             Menu.AddItem(SelectAllItem);
 
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < Settings.MaxSirens; i++)
             {
                 string sirenId = $"Siren {i + 1}";
                 UIMenuCheckboxItem checkbox = new UIMenuCheckboxItem(sirenId, false, desc.Replace("{siren}", sirenId));
@@ -51,7 +51,7 @@ namespace LiveLights.Menu
                 if(sirens.Length == 0)
                 {
                     label = "None selected";
-                } else if (sirens.Length == 20)
+                } else if (sirens.Length == Settings.MaxSirens)
                 {
                     label = "All";
                 } else
@@ -66,7 +66,7 @@ namespace LiveLights.Menu
         public UIMenu Menu { get; } = new UIMenu("Select Siren IDs", "~b~");
         public UIMenuCheckboxItem SelectAllItem { get; } = new UIMenuCheckboxItem("Select All", false, "Select or deselect all siren IDs");
         // 0-indexed array
-        private UIMenuCheckboxItem[] checkboxes = new UIMenuCheckboxItem[20];
+        private UIMenuCheckboxItem[] checkboxes = new UIMenuCheckboxItem[Settings.MaxSirens];
         public IEnumerable<UIMenuCheckboxItem> Checkboxes => checkboxes;
 
         internal int GetHighlightedSirenId()
