@@ -15,13 +15,11 @@ namespace LiveLights
     {
         public static void ApplySirenSettingsToEmergencyLighting(this SirenSetting setting, EmergencyLighting els)
         {
-            int iName = 1;
             string name = setting.Name;
-            do
+            for (int iName = 1; EmergencyLighting.GetByName(name).Exists(); iName++)
             {
                 name = $"{setting.Name} ({iName})";
-                iName++;
-            } while (EmergencyLighting.GetByName(name).Exists());
+            }
             
 
             els.Name = name;

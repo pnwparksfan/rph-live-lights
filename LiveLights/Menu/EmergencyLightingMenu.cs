@@ -24,6 +24,7 @@ namespace LiveLights.Menu
             Menu.ControlDisablingEnabled = true;
             Menu.MouseControlsEnabled = false;
             Menu.AllowCameraMovement = true;
+            Menu.MaxItemsOnScreen = 15;
 
             // Main siren settings
 
@@ -152,9 +153,6 @@ namespace LiveLights.Menu
             Menu.AddItem(ExportCarcolsItem);
             ExportCarcolsItem.Activated += OnExportClicked;
 
-            ExportAllowOverwriteItem = new UIMenuCheckboxItem("Allow overwrite on export", Settings.DefaultOverwrite, "Allow exported carcols.meta files to overwrite existing files with the same name");
-            Menu.AddItem(ExportAllowOverwriteItem);
-
             MenuController.Pool.AddAfterYield(Menu, HeadlightsMenu, TaillightsMenu, SequenceQuickEdit.Menu, CopyMenu.Menu);
 
             Menu.RefreshIndex();
@@ -171,7 +169,9 @@ namespace LiveLights.Menu
         {
             if(selectedItem == ExportCarcolsItem)
             {
-                ImportExportMenu.ExportCarcols(ExportAllowOverwriteItem.Checked, this.ELS);
+                ImportExportMenu.ExportSelectSettingsMenu.SelectItems(ELS);
+                Menu.Visible = false;
+                ImportExportMenu.ExportMenu.Visible = true;
             }
         }
 
@@ -264,6 +264,5 @@ namespace LiveLights.Menu
 
         // Import/export
         public UIMenuItem ExportCarcolsItem { get; }
-        public UIMenuCheckboxItem ExportAllowOverwriteItem { get; }
     }
 }

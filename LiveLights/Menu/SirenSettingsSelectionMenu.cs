@@ -340,6 +340,19 @@ namespace LiveLights.Menu
 
         public EmergencyLighting[] SelectedItems => elsEntries.Where(e => e.Value.Checked).Select(e => e.Key).ToArray();
 
+        public void SelectItems(bool clearOthers, params EmergencyLighting[] items)
+        {
+            foreach (var entry in elsEntries)
+            {
+                entry.Value.Checked = items.Contains(entry.Key) || (entry.Value.Checked && !clearOthers);
+            }
+            UpdateBoundMenuLabel(Menu.ParentItem);
+        }
+
+        public void SelectItems(bool clearOthers, IEnumerable<EmergencyLighting> items) => SelectItems(clearOthers, items.ToArray());
+        public void SelectItems(IEnumerable<EmergencyLighting> items) => SelectItems(true, items);
+        public void SelectItems(params EmergencyLighting[] items) => SelectItems(true, items);
+
         public SirenSettingsSelectionMenuMulti(bool showAcceptButton = false, bool builtIn = true, bool custom = true, bool returnEditable = true, IEnumerable<EmergencyLighting> customList = null, IEnumerable<EmergencyLighting> initialSelected = null) : base(builtIn, custom, returnEditable, customList)
         {
             this.ShowAcceptButton = showAcceptButton;
@@ -349,10 +362,7 @@ namespace LiveLights.Menu
 
             if (initialSelected != null)
             {
-                foreach (var item in elsEntries)
-                {
-                    item.Value.Checked = initialSelected.Contains(item.Key);
-                }
+                SelectItems(initialSelected);
             }
         }
 
@@ -360,11 +370,16 @@ namespace LiveLights.Menu
 
         public override void UpdateBoundMenuLabel(UIMenuItem item)
         {
+            if (item == null) return;
+
             int numSelected = SelectedItems.Length;
 
             if (numSelected == 0)
             {
                 item.RightLabel = "~c~None selected~s~ →";
+            } else if (numSelected == 1)
+            {
+                item.RightLabel = SelectedItems[0].Name;
             }
             else
             {

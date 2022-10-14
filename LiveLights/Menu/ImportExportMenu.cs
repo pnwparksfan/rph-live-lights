@@ -21,7 +21,7 @@ namespace LiveLights.Menu
             ExportAllowOverwriteItem = new UIMenuCheckboxItem("Allow overwrite on export", Settings.DefaultOverwrite, "Allow exported carcols.meta files to overwrite existing files with the same name");
             ExportSelectSettingsMenu = new SirenSettingsSelectionMenuMulti(returnEditable: false);
             ExportSelectSettingsMenu.CreateAndBindToSubmenuItem(ExportMenu, "Select settings to export", "Select one or more siren settings to be exported in a single file");
-            ExportItem = new UIMenuItem("Export carcols.meta file", "Exports the siren setting currently being modified to a carcols.meta file");
+            ExportItem = new UIMenuItem("Export carcols.meta file", "Exports the selected siren settings to a carcols.meta file");
             ExportMenu.AddItems(ExportAllowOverwriteItem, ExportItem);
             ExportItem.Activated += OnExportActivated;
 

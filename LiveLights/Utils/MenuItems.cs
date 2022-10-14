@@ -591,6 +591,7 @@ namespace RAGENativeUI.Elements
             newMenu.MouseControlsEnabled = parentMenu.MouseControlsEnabled;
             newMenu.MouseEdgeEnabled = parentMenu.MouseEdgeEnabled;
             newMenu.AllowCameraMovement = parentMenu.AllowCameraMovement;
+            newMenu.MaxItemsOnScreen = parentMenu.MaxItemsOnScreen;
 
             if(recursive)
             {
