@@ -13,7 +13,7 @@ namespace LiveLights.Utils
     using Rage;
     using Rage.Native;
 
-    internal class UserInput
+    internal static class UserInput
     {
         public static string GetUserInput(string windowTitle, string defaultText, int maxLength, bool canCopy = true, bool canPaste = true)
         {
