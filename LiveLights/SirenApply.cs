@@ -198,10 +198,10 @@ namespace LiveLights
             }
         }
 
-        public static SirenSetting ExportEmergencyLightingToSirenSettings(this EmergencyLighting els)
+        public static SirenSetting ExportEmergencyLightingToSirenSettings(this EmergencyLighting els, int? maxToExport = null)
         {
             SirenSetting s = new SirenSetting();
-            els.ExportEmergencyLightingToSirenSettings(ref s);
+            els.ExportEmergencyLightingToSirenSettings(ref s, maxToExport);
             return s;
         }
 

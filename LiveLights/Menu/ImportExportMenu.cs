@@ -18,6 +18,14 @@ namespace LiveLights.Menu
         static ImportExportMenu()
         {
             ExportMenu = new UIMenu("Export Siren Settings", "");
+            
+            if (Settings.MaxSirens > 20)
+            {
+                MaxExportSirensItem = new UIMenuListItemSelector<int>("Export # siren items", $"Choose the number of siren items to be exported to the carcols.meta file. If you are only using sirens 1-20, export 20. If you are using SSLA to enable >20 sirens, export up to {Settings.MaxSirens}.", Settings.MaxSirens, 20, Settings.MaxSirens);
+                MaxExportSirensItem.MenuUpdateBinding = (x) => { if (x < 20 || x > Settings.MaxSirens) throw new Exception($"Must export between 20 and {Settings.MaxSirens} sirens"); };
+                ExportMenu.AddItem(MaxExportSirensItem);
+            }
+
             ExportAllowOverwriteItem = new UIMenuCheckboxItem("Allow overwrite on export", Settings.DefaultOverwrite, "Allow exported carcols.meta files to overwrite existing files with the same name");
             ExportSelectSettingsMenu = new SirenSettingsSelectionMenuMulti(returnEditable: false);
             ExportSelectSettingsMenu.CreateAndBindToSubmenuItem(ExportMenu, "Select settings to export", "Select one or more siren settings to be exported in a single file");
@@ -55,6 +63,7 @@ namespace LiveLights.Menu
         }
 
         public static UIMenu ExportMenu { get; }
+        public static UIMenuListItemSelector<int> MaxExportSirensItem { get; }
         public static UIMenuCheckboxItem ExportAllowOverwriteItem { get; }
         public static SirenSettingsSelectionMenuMulti ExportSelectSettingsMenu { get; }
         public static UIMenuItem ExportItem { get; }
@@ -169,7 +178,7 @@ namespace LiveLights.Menu
                     foreach (var els in settings)
                     {
                         Game.LogTrivial($"  Serializing \"{els.Name}\"");
-                        SirenSetting setting = els.ExportEmergencyLightingToSirenSettings();
+                        SirenSetting setting = els.ExportEmergencyLightingToSirenSettings(MaxExportSirensItem?.ItemValue);
                         var src = els.GetSource();
                         if (src != null) setting.ID = src.SourceId;
                         else setting.ID = 0;

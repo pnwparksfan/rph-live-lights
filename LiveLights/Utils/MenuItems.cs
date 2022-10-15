@@ -641,6 +641,7 @@ namespace RAGENativeUI.Elements
             {
                 System.Diagnostics.Process.Start(url);
                 item.Parent.Visible = false;
+                GameFiber.Yield();
                 NativeFunction.Natives.SET_FRONTEND_ACTIVE(true);
             }
         }
