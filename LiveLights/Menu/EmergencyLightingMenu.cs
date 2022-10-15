@@ -143,7 +143,12 @@ namespace LiveLights.Menu
             SequenceQuickEditItem.Activated += OnQuickEditMenuOpened;
             Menu.AddItem(SequenceQuickEditItem, 4);
             SequenceQuickEditItem.RightLabel = "→";
-            
+
+            SequenceImportItem = new UIMenuItem("Quick Sequence Import", "Import multiple sequences from the clipboard (one per line) to quickly apply them to multiple sirens. ~y~CAUTION!~s~ Immediately overwrites all siren sequences when selected!");
+            Menu.AddItem(SequenceImportItem, 5);
+            SequenceImportItem.RightLabel = "→";
+            SequenceImportItem.Activated += OnSequenceQuickImport;
+
             RefreshItem = new UIMenuItem("Refresh Siren Setting Data", "Refreshes the menu with the siren setting data for the current vehicle. Use this if the data may have been changed outside the menu.");
             Menu.AddRefreshItem(RefreshItem);
 
@@ -160,6 +165,31 @@ namespace LiveLights.Menu
             MenuController.Pool.AddAfterYield(Menu, HeadlightsMenu, TaillightsMenu, SequenceQuickEdit.Menu, CopyMenu.Menu);
 
             Menu.RefreshIndex();
+        }
+
+        private void OnSequenceQuickImport(UIMenu sender, UIMenuItem selectedItem)
+        {
+            string clipboard = Game.GetClipboardText();
+            if (string.IsNullOrWhiteSpace(clipboard))
+            {
+                Game.DisplayNotification("~y~Clipboard is empty");
+            } else
+            {
+                int siren = 0;
+                foreach (string line in clipboard.Trim().Split('\n'))
+                {
+                    string clean = string.Concat(line.Trim().Where(c => c == '1' || c == '0').Take(32));
+                    if (clean.Length == 32)
+                    {
+                        SirenMenus[siren].FlashSequenceItem.ItemValue = clean;
+                        siren++;
+                    }
+
+                    if (siren >= SirenMenus.Length) break;
+                }
+
+                Game.DisplayNotification($"Imported sequences for ~b~{siren}~s~ sirens");
+            }
         }
 
         private void OnQuickEditMenuOpened(UIMenu sender, UIMenuItem selectedItem)
@@ -298,6 +328,9 @@ namespace LiveLights.Menu
         // Quick edit menu
         public UIMenuItem SequenceQuickEditItem { get; }
         public SequenceQuickEditMenu SequenceQuickEdit { get; }
+
+        // Import
+        public UIMenuItem SequenceImportItem { get; }
 
         // Copy menu
         public CopyMenu CopyMenu { get; }
