@@ -58,6 +58,6 @@ namespace LiveLights
         }
 
         // will be replaced with RPH static property
-        internal const int MaxSirens = 32;
+        internal static int MaxSirens = new EmergencyLighting().Lights.Length;
     }
 }
