@@ -115,7 +115,7 @@ namespace LiveLights.Menu
             SirensMenuItem.Activated += OnSirenSubmenuActivated;
             
             // Create each siren menu
-            for (int i = 0; i < Settings.MaxSirens; i++)
+            for (int i = 0; i < EmergencyLighting.MaxLights; i++)
             {
                 EmergencyLightMenu sirenMenu = new EmergencyLightMenu(ELS, i);
                 sirenMenu.Menu.ParentItem = SirensMenuItem;
@@ -323,7 +323,7 @@ namespace LiveLights.Menu
         // Sirens menu
         public UIMenuItem SirensMenuItem { get; }
         public UIMenuSwitchSelectable SirenSwitcherItem { get; }
-        public EmergencyLightMenu[] SirenMenus { get; } = new EmergencyLightMenu[Settings.MaxSirens];
+        public EmergencyLightMenu[] SirenMenus { get; } = new EmergencyLightMenu[EmergencyLighting.MaxLights];
 
         // Quick edit menu
         public UIMenuItem SequenceQuickEditItem { get; }

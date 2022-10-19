@@ -19,10 +19,10 @@ namespace LiveLights.Menu
         {
             ExportMenu = new UIMenu("Export Siren Settings", "");
             
-            if (Settings.MaxSirens > 20)
+            if (EmergencyLighting.MaxLights > 20)
             {
-                MaxExportSirensItem = new UIMenuListItemSelector<int>("Export # siren items", $"Choose the number of siren items to be exported to the carcols.meta file. If you are only using sirens 1-20, export 20. If you are using SSLA to enable >20 sirens, export up to {Settings.MaxSirens}.", Settings.MaxSirens, 20, Settings.MaxSirens);
-                MaxExportSirensItem.MenuUpdateBinding = (x) => { if (x < 20 || x > Settings.MaxSirens) throw new Exception($"Must export between 20 and {Settings.MaxSirens} sirens"); };
+                MaxExportSirensItem = new UIMenuListItemSelector<int>("Export # siren items", $"Choose the number of siren items to be exported to the carcols.meta file. If you are only using sirens 1-20, export 20. If you are using SSLA to enable >20 sirens, export up to {EmergencyLighting.MaxLights}.", EmergencyLighting.MaxLights, 20, EmergencyLighting.MaxLights);
+                MaxExportSirensItem.MenuUpdateBinding = (x) => { if (x < 20 || x > EmergencyLighting.MaxLights) throw new Exception($"Must export between 20 and {EmergencyLighting.MaxLights} sirens"); };
                 ExportMenu.AddItem(MaxExportSirensItem);
             }
 
@@ -120,7 +120,7 @@ namespace LiveLights.Menu
                 foreach (var setting in carcols.SirenSettings)
                 {
                     Game.LogTrivial($"Importing {setting.Name} from {filename}");
-                    var els = new EmergencyLighting().GetSafeInstance();
+                    var els = new EmergencyLighting();
                     setting.ApplySirenSettingsToEmergencyLighting(els);
                     els.SetSource(setting.ID, EmergencyLightingSource.Imported);
                     newItems.Add(els);

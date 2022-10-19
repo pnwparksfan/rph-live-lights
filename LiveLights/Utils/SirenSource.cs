@@ -80,16 +80,10 @@ namespace LiveLights.Utils
 
     internal static class SirenSourceExtensions
     {
-
-        // this abomination is required because the first instance returned has a different hashcode from 
-        // any subsequent instances returned by Get[ByName], Vehicle.EmergencyLighting, etc. 
-        // hopefully will be fixed soon
-        public static EmergencyLighting GetSafeInstance(this EmergencyLighting els) => EmergencyLighting.GetByName(els.Name);
-
         public static EmergencyLighting CloneWithID(this EmergencyLighting source)
         {
             uint srcId = source.SirenSettingID();
-            var clone = source.Clone().GetSafeInstance();
+            var clone = source.Clone();
             SirenSource.SetSource(clone, srcId, EmergencyLightingSource.Cloned);
             return clone;
         }

@@ -70,8 +70,8 @@ namespace LiveLights.Menu
                 } else
                 {
                     SSLAStatusItem.Text = "SSLA Installed";
-                    SSLAStatusItem.Description = $"~b~Siren Setting Limit Adjuster~w~ is installed and supports up to ~b~{Settings.MaxSirens}~w~ sirens per vehicle. Press ~b~ENTER~w~ to check for SSLA updates.";
-                    SSLAStatusItem.RightLabel = $"{Settings.MaxSirens} sirens supported";
+                    SSLAStatusItem.Description = $"~b~Siren Setting Limit Adjuster~w~ is installed and supports up to ~b~{EmergencyLighting.MaxLights}~w~ sirens per vehicle. Press ~b~ENTER~w~ to check for SSLA updates.";
+                    SSLAStatusItem.RightLabel = $"{EmergencyLighting.MaxLights} sirens supported";
                     SSLAStatusItem.LeftBadge = UIMenuItem.BadgeStyle.Tick;
                     SSLAStatusItem.LeftBadgeInfo.Color = Color.Green;
                 }
