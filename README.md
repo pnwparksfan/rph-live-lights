@@ -5,7 +5,9 @@ This is a RagePluginHook plugin for single-player GTA V.
 It enables users to view and modify all siren setting 
 parameters live in game and import/export carcols.meta files.
 
-You must have RagePluginHook version 78 or later.
+You must have [RagePluginHook](http://ragepluginhook.net/) version 98 or later. 
+You can download RPH [bundled with LSPDFR](https://www.lcpdfr.com/downloads/gta5mods/g17media/7792-lspd-first-response/)
+or from the [RPH Discord server](https://discord.gg/0v9TP1BOmfwZms7y).
 
 This plugin is primarily intended as a tool for vehicle developers 
 to create and modify siren settings. Users are welcome to use it to 
@@ -21,7 +23,7 @@ development projects and get member-exclusive benefits.
 
 [Download the latest version from the releases tab](https://github.com/pnwparksfan/rph-live-lights/releases)
 
-[![Latest Version](https://img.shields.io/github/release/pnwparksfan/rph-live-lights?include_prereleases)](https://github.com/pnwparksfan/rph-live-lights/releases)  
+[![Latest Version](https://img.shields.io/github/release/pnwparksfan/rph-live-lights)](https://github.com/pnwparksfan/rph-live-lights/releases)  
 [![Download Count](https://img.shields.io/github/downloads/pnwparksfan/rph-live-lights/total)](https://github.com/pnwparksfan/rph-live-lights/releases)    
 
 If you encounter any bugs, please [submit an issue](https://github.com/pnwparksfan/rph-live-lights/issues) or contact me on Discord if we share a mutual server.
@@ -57,22 +59,25 @@ If you encounter any bugs, please [submit an issue](https://github.com/pnwparksf
 
 &nbsp;
 
-# Siren Setting ID limit and registry
+# Siren Setting ID limit
 
-As of GTA V build 1868, there is a hard-coded limit of 255 siren setting IDs 
-in the game. Siren setting IDs over 255 can be entered in carcols.meta, but 
-will overflow and be converted to a number between 0-255. You can calculate 
-the "real" siren ID from an ID over 255 using the modulo operator 
-(`MOD(id, 256)` or `id % 256`) in any programming language or spreadsheet 
-software. For example, `MOD(1355, 256) = 75`, so if your siren setting is 
-saved as ID 1355, it will actually be interpreted by the game as 75, and will 
-conflict with any other siren IDs which are also interpreted as 75 
-(331, 587, 1099...). All carcols.meta entries should use an ID between 0-255.
+GTA V has a hard-coded limit of 255 siren setting IDs in the game. 
+Siren setting IDs over 255 can be entered in carcols.meta, but 
+will overflow and be converted to a number between 0-255, which may 
+conflict with other mods. 
 
-To avoid conflicts between mods, I have started a public tracker/registry of 
-siren IDs. Feel free to list your own mods in this tracker. If you already 
-use your own tracker or are in a modding group which uses a shared tracker, 
-you can PM me and I can set up the public tracker to include info from 
-your tracker. 
+## SirenSetting Limit Adjuster
 
-## [GTA V Siren Setting ID Registry](https://docs.google.com/spreadsheets/d/1MG2BDdboYbfAGGIG3HluLg34Ne3K7kN4FXUtTc4ebtw/edit?usp=sharing)
+It is strongly recommended to install the [SirenSetting Limit Adjuster](https://www.lcpdfr.com/downloads/gta5mods/scripts/28560-sirensetting-limit-adjuster/) 
+(SSLA). This raises the siren setting ID limit to 65535, and increases the per-vehicle siren 
+limit from 20 sirens to 32 sirens. LiveLights automatically detects if SSLA is installed and 
+how many sirens are supported by your game. If SSLA is installed, you can choose to export 
+carcols.meta files with only 20 sirens, or up to 32 sirens. Select this in the export menu.
+
+
+# Credits 
+
+Special thanks to...
+ - LMS and MulleDK: for implementing and maintaining support for the EmergencyLighting SDK in RagePluginHook. 
+ - alexguirre: for siren settings research and RageNativeUI
+ - cpast: for creating the SirenSetting Limit Adjuster
