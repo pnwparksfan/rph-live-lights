@@ -33,14 +33,16 @@ namespace LiveLights
             set { }
         }
 
-
+        // [XmlIgnore]
         [XmlArray("Sirens")]
         [XmlArrayItem("Item")]
         public List<SirenSetting> SirenSettings { get; set; } = new List<SirenSetting>();
+
     }
 
-    // [XmlType(TypeName="Item")]
-    public class SirenSetting // : IList<SirenEntry>
+    [XmlInclude(typeof(XmlComment))]
+    [XmlInclude(typeof(SirenEntry))]
+    public class SirenSetting 
     {
         [XmlElement("id")]
         public ValueItem<uint> ID { get; set; } = 0;
@@ -107,6 +109,10 @@ namespace LiveLights
         [XmlElement("useRealLights")]
         public ValueItem<bool> UseRealLights { get; set; } = true;
 
+        // Sirens property should always be *deserialized* to read in the sirens array,
+        // but should never be *serialized* because this is written by the CommentedSirenSettings
+        // below with siren number comments inline
+        public bool ShouldSerializeSirens() => false;
 
         [XmlArray("sirens")]
         [XmlArrayItem("Item")]
@@ -123,28 +129,44 @@ namespace LiveLights
             }
         }
 
+        [XmlAnyElement()]
+        public XmlNode CommentedSirenSettings
+        {
+            set { }
+            get
+            {
+                var export = new XmlDocument();
+                var root = export.CreateElement("sirens");
+                export.AppendChild(root);
+
+                for (int i = 0; i < sirenList.Count; i++)
+                {
+                    root.AppendChild(export.ImportNode(sirenList[i].SirenIdComment, true));
+                    var element = export.ImportNode(Serializer.SerializeToXMLElement<SirenEntry>(sirenList[i]), true);
+                    root.AppendChild(element);
+                }
+
+                return root;
+            }
+        }
+
         [XmlIgnore]
         private List<SirenEntry> sirenList = new List<SirenEntry>();
 
         public void AddSiren(SirenEntry item)
         {
-            if (sirenList.Count < 20)
-            {
-                item.SirenIdCommentText = "Siren " + (sirenList.Count + 1);
-                sirenList.Add(item);
-            }
-            else
-            {
-                throw new IndexOutOfRangeException("A SirenSetting cannot contain more than 20 sirens");
-            }
+            item.SirenIdCommentText = "Siren " + (sirenList.Count + 1);
+            sirenList.Add(item);
         }
     }
 
+    [XmlType(TypeName = "Item")]
     public class SirenEntry
     {
         [XmlIgnore]
         internal string SirenIdCommentText { get; set; }
-        
+
+        [XmlIgnore]
         [XmlAnyElement("SirenIdComment")]
         public XmlComment SirenIdComment
         {
@@ -262,7 +284,7 @@ namespace LiveLights
         public static implicit operator Sequencer(uint value) => new Sequencer(value);
         public static implicit operator Sequencer(string value) => new Sequencer(value);
         public static implicit operator uint(Sequencer item) => item.Value;
-        public static implicit operator string(Sequencer item) => Convert.ToString(item.Value, 2);
+        public static implicit operator string(Sequencer item) => Convert.ToString(item.Value, 2).PadLeft(32, '0');
 
         public Sequencer(uint value) : base(value) { }
         public Sequencer(string value) : base(Convert.ToUInt32(value, 2)) { }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 
 namespace LiveLights.Menu
@@ -24,11 +25,15 @@ namespace LiveLights.Menu
             Menu.ControlDisablingEnabled = true;
             Menu.MouseControlsEnabled = false;
             Menu.AllowCameraMovement = true;
+            Menu.MaxItemsOnScreen = 15;
 
             // Main siren settings
 
             NameItem = new UIMenuStringSelector("Name", ELS.Name, "Siren setting name as shown in carcols.meta");
             Menu.AddMenuDataBinding(NameItem, (x) => ELS.Name = x, () => ELS.Name);
+
+            IdItem = new UIMenuUIntSelector("Siren Setting ID", GetSourceID(), "Siren setting ID which will be exported to carcols.meta");
+            Menu.AddMenuDataBinding(IdItem, SetSourceID, GetSourceID);
 
             BpmItem = new UIMenuUIntSelector("BPM", ELS.SequencerBpm, "Beats per minute");
             Menu.AddMenuDataBinding(BpmItem, (x) => ELS.SequencerBpm = x, () => ELS.SequencerBpm);
@@ -70,12 +75,14 @@ namespace LiveLights.Menu
             HeadlightsMenu.AddMenuDataBinding(LeftHeadlightMultiplesItem, (x) => ELS.LeftHeadLightMultiples = x, () => ELS.LeftHeadLightMultiples);
 
             LeftHeadlightSequenceItem = new UIMenuSequenceItemSelector("Front Left Sequence", ELS.LeftHeadLightSequence, "Left headlight flash pattern sequence");
+            LeftHeadlightSequenceItem.MenuItem.RightBadge = UIMenuItem.BadgeStyle.Blank;
             HeadlightsMenu.AddMenuDataBinding(LeftHeadlightSequenceItem, (x) => ELS.LeftHeadLightSequence = x, () => ELS.LeftHeadLightSequence);
 
             RightHeadlightMultiplesItem = new UIMenuListItemSelector<byte>("Front Right Multiples", "Right headlight multiples per flash", ELS.RightHeadLightMultiples, CommonSelectionItems.MultiplesBytes);
             HeadlightsMenu.AddMenuDataBinding(RightHeadlightMultiplesItem, (x) => ELS.RightHeadLightMultiples = x, () => ELS.RightHeadLightMultiples);
 
             RightHeadlightSequenceItem = new UIMenuSequenceItemSelector("Front Right Sequence", ELS.RightHeadLightSequence, "Right headlight flash pattern sequence");
+            RightHeadlightSequenceItem.MenuItem.RightBadge = UIMenuItem.BadgeStyle.Blank;
             HeadlightsMenu.AddMenuDataBinding(RightHeadlightSequenceItem, (x) => ELS.RightHeadLightSequence = x, () => ELS.RightHeadLightSequence);
 
             // Taillights
@@ -90,12 +97,14 @@ namespace LiveLights.Menu
             TaillightsMenu.AddMenuDataBinding(LeftTaillightMultiplesItem, (x) => ELS.LeftTailLightMultiples = x, () => ELS.LeftTailLightMultiples);
 
             LeftTaillightSequenceItem = new UIMenuSequenceItemSelector("Left Rear Sequence", ELS.LeftTailLightSequence, "Left Taillight flash pattern sequence");
+            LeftTaillightSequenceItem.MenuItem.RightBadge = UIMenuItem.BadgeStyle.Blank;
             TaillightsMenu.AddMenuDataBinding(LeftTaillightSequenceItem, (x) => ELS.LeftTailLightSequence = x, () => ELS.LeftTailLightSequence);
 
             RightTaillightMultiplesItem = new UIMenuListItemSelector<byte>("Right Rear Multiples", "Right Taillight multiples per flash", ELS.RightTailLightMultiples, CommonSelectionItems.MultiplesBytes);
             TaillightsMenu.AddMenuDataBinding(RightTaillightMultiplesItem, (x) => ELS.RightTailLightMultiples = x, () => ELS.RightTailLightMultiples);
 
             RightTaillightSequenceItem = new UIMenuSequenceItemSelector("Right Rear Sequence", ELS.RightTailLightSequence, "Right Taillight flash pattern sequence");
+            RightTaillightSequenceItem.MenuItem.RightBadge = UIMenuItem.BadgeStyle.Blank;
             TaillightsMenu.AddMenuDataBinding(RightTaillightSequenceItem, (x) => ELS.RightTailLightSequence = x, () => ELS.RightTailLightSequence);
 
             // Sirens 
@@ -103,11 +112,10 @@ namespace LiveLights.Menu
             SirensMenuItem = new UIMenuItem("Sirens", "Edit sequences and other settings for individual sirens");
             SirensMenuItem.RightLabel = "→";
             Menu.AddItem(SirensMenuItem, 3);
-            SirensMenuItem.Activated += onSirenSubmenuActivated;
-            SirenMenus = new List<EmergencyLightMenu>();
-
+            SirensMenuItem.Activated += OnSirenSubmenuActivated;
+            
             // Create each siren menu
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < EmergencyLighting.MaxLights; i++)
             {
                 EmergencyLightMenu sirenMenu = new EmergencyLightMenu(ELS, i);
                 sirenMenu.Menu.ParentItem = SirensMenuItem;
@@ -115,7 +123,7 @@ namespace LiveLights.Menu
                 Menu.AddSubMenuBinding(sirenMenu.Menu);
                 Menu.CopyMenuProperties(sirenMenu.Menu, true);
                 MenuController.Pool.AddMenuAndSubMenusToPool(sirenMenu.Menu, true);
-                SirenMenus.Add(sirenMenu);
+                SirenMenus[i] = sirenMenu;
             }
 
             // Create switcher and add to menus
@@ -135,7 +143,12 @@ namespace LiveLights.Menu
             SequenceQuickEditItem.Activated += OnQuickEditMenuOpened;
             Menu.AddItem(SequenceQuickEditItem, 4);
             SequenceQuickEditItem.RightLabel = "→";
-            
+
+            SequenceImportItem = new UIMenuItem("Quick Sequence Import", "Import multiple sequences from the clipboard (one per line) to quickly apply them to multiple sirens. ~y~CAUTION!~s~ Immediately overwrites all siren sequences when selected!");
+            Menu.AddItem(SequenceImportItem, 5);
+            SequenceImportItem.RightLabel = "→";
+            SequenceImportItem.Activated += OnSequenceQuickImport;
+
             RefreshItem = new UIMenuItem("Refresh Siren Setting Data", "Refreshes the menu with the siren setting data for the current vehicle. Use this if the data may have been changed outside the menu.");
             Menu.AddRefreshItem(RefreshItem);
 
@@ -144,23 +157,39 @@ namespace LiveLights.Menu
             CopyMenuItem.RightLabel = "→";
             Menu.BindMenuAndCopyProperties(CopyMenu.Menu, CopyMenuItem);
             Menu.AddItem(CopyMenuItem);
-
-            /*
-            ImportCarcolsItem = new UIMenuItem("Import carcols.meta file", "Imports all siren settings in selected carcols.meta file");
-            Menu.AddItem(ImportCarcolsItem);
-            ImportCarcolsItem.Activated += OnImportExportClicked;
-            */
-
-            ExportCarcolsItem = new UIMenuItem("Export carcols.meta file", "Exports the siren setting currently being modified to a carcols.meta file");
+            
+            ExportCarcolsItem = new UIMenuItem("Export carcols.meta file", "Exports the single siren setting currently being modified to a carcols.meta file. To export multiple settings into a single file, use the bulk export tool from the main menu.");
             Menu.AddItem(ExportCarcolsItem);
-            ExportCarcolsItem.Activated += OnImportExportClicked;
-
-            ExportAllowOverwriteItem = new UIMenuCheckboxItem("Allow overwrite on export", Settings.DefaultOverwrite, "Allow exported carcols.meta files to overwrite existing files with the same name");
-            Menu.AddItem(ExportAllowOverwriteItem);
+            ExportCarcolsItem.Activated += OnExportClicked;
 
             MenuController.Pool.AddAfterYield(Menu, HeadlightsMenu, TaillightsMenu, SequenceQuickEdit.Menu, CopyMenu.Menu);
 
             Menu.RefreshIndex();
+        }
+
+        private void OnSequenceQuickImport(UIMenu sender, UIMenuItem selectedItem)
+        {
+            string clipboard = Game.GetClipboardText();
+            if (string.IsNullOrWhiteSpace(clipboard))
+            {
+                Game.DisplayNotification("~y~Clipboard is empty");
+            } else
+            {
+                int siren = 0;
+                foreach (string line in clipboard.Trim().Split('\n'))
+                {
+                    string clean = string.Concat(line.Trim().Where(c => c == '1' || c == '0').Take(32));
+                    if (clean.Length == 32)
+                    {
+                        SirenMenus[siren].FlashSequenceItem.ItemValue = clean;
+                        siren++;
+                    }
+
+                    if (siren >= SirenMenus.Length) break;
+                }
+
+                Game.DisplayNotification($"Imported sequences for ~b~{siren}~s~ sirens");
+            }
         }
 
         private void OnQuickEditMenuOpened(UIMenu sender, UIMenuItem selectedItem)
@@ -170,53 +199,100 @@ namespace LiveLights.Menu
             SequenceQuickEdit.Menu.RefreshIndex();
         }
 
-        private void OnImportExportClicked(UIMenu sender, UIMenuItem selectedItem)
+        private void OnExportClicked(UIMenu sender, UIMenuItem selectedItem)
         {
-            if(selectedItem == ImportCarcolsItem)
+            if(selectedItem == ExportCarcolsItem)
             {
-                ImportExportMenu.OnImportCarcols(this);
-            } else if(selectedItem == ExportCarcolsItem)
-            {
-                ImportExportMenu.ExportCarcols(this.ELS, ExportAllowOverwriteItem.Checked);
+                ImportExportMenu.ExportSelectSettingsMenu.SelectItems(ELS);
+                Menu.Visible = false;
+                ImportExportMenu.ExportMenu.Visible = true;
             }
         }
 
-        private void onSirenSubmenuActivated(UIMenu sender, UIMenuItem selectedItem)
+        private void OnSirenSubmenuActivated(UIMenu sender, UIMenuItem selectedItem)
         {
             sender.Visible = false;
             SirenSwitcherItem.SwitchMenuItem.CurrentMenu.Visible = true;
         }
 
-        public void ShowSirenPositions(Vehicle v, bool selectedOnly)
+        public void ShowSirenInfo(Vehicle v)
         {
-            if (!v) return;
+            int currentSirenId = SirenSwitcherItem.ItemValue;
+            var switcher = SirenSwitcherItem.MenuItem;
+            switcher.Description = "Select the siren to edit. Press ~b~ENTER~w~ to type a siren ID.\n";
 
-            foreach (EmergencyLightMenu sirenMenu in SirenSubMenus)
-            {
-                if (!selectedOnly || sirenMenu.Menu.Visible || sirenMenu.Menu.Children.Values.Any(c => c.Visible))
+            if (v)
+            {   
+                switcher.Description += $"The current vehicle ({v.Model.Name}) ";
+                if (v.HasSiren(currentSirenId))
                 {
-                    v.ShowSirenMarker(sirenMenu.SirenID);
+                    switcher.Description += $"~g~has~w~ Siren {currentSirenId}";
+                    switcher.RightBadge = UIMenuItem.BadgeStyle.Tick;
+                    switcher.RightBadgeInfo.Color = Color.Green;
                 }
+                else
+                {
+                    switcher.Description += $"~r~does not have~s~ Siren {currentSirenId}, but other vehicle models using this siren setting might";
+                    switcher.RightBadge = UIMenuItem.BadgeStyle.Alert;
+                    switcher.RightBadgeInfo.Color = Color.Yellow;
+                }
+            } else
+            {
+                switcher.Description += "~c~No vehicle is currently selected";
+                switcher.RightBadge = UIMenuItem.BadgeStyle.Alert;
+                switcher.RightBadgeInfo.Color = Color.DarkGray;
             }
 
-            for (int i = 0; i < SequenceQuickEdit.SirenSequenceItems.Length; i++)
+            var currentMenu = SirenMenus[currentSirenId - 1];
+            if (v && currentMenu.Menu.Visible || currentMenu.Menu.Children.Values.Any(c => c.Visible))
             {
-                int sirenId = i + 1;
-                UIMenuStringSelector item = SequenceQuickEdit.SirenSequenceItems[i];
-                if(SequenceQuickEdit.Menu.Visible && item.MenuItem.Selected)
-                {
-                    v.ShowSirenMarker(i+1);
-                }
+                v.ShowSirenMarker(currentSirenId);
             }
 
-            CopyMenu.ProcessShowSirens(v);
+            if (SequenceQuickEdit.Menu.Visible)
+            {
+                for (int i = 0; i < SequenceQuickEdit.SirenSequenceItems.Length - 4; i++)
+                {
+                    int sirenId = i + 1;
+                    var item = SequenceQuickEdit.SirenSequenceItems[i];
+                    if (v)
+                    {
+                        if (item.MenuItem.Selected) v.ShowSirenMarker(i + 1);
+
+                        if (v.HasSiren(sirenId))
+                        {
+                            item.MenuItem.RightBadge = UIMenuItem.BadgeStyle.Car;
+                            item.MenuItem.RightBadgeInfo.Color = Color.DarkGray;
+                        } else
+                        {
+                            item.MenuItem.RightBadge = UIMenuItem.BadgeStyle.Alert;
+                            item.MenuItem.RightBadgeInfo.Color = Color.DarkGray;
+                        }
+                    } else
+                    {
+                        item.MenuItem.RightBadge = UIMenuItem.BadgeStyle.Blank;
+                    }
+                }
+            }
+            
+            if (CopyMenu.Menu.Visible) CopyMenu.ProcessShowSirens(v);
         }
+
+        private uint GetSourceID()
+        {
+            SirenSource source = ELS.GetSource();
+            if (source != null) return source.SourceId;
+            else return 0;
+        }
+
+        private void SetSourceID(uint id) => ELS.SetSource(id, EmergencyLightingSource.Manual);
 
         public EmergencyLighting ELS { get; }
 
         // Core lighting settings
         public UIMenuRefreshable Menu { get; }
         public UIMenuStringSelector NameItem { get; }
+        public UIMenuUIntSelector IdItem { get; }
         public UIMenuUIntSelector BpmItem { get; }
         public UIMenuListItemSelector<string> TextureHashItem { get; }
         public UIMenuListItemSelector<float> TimeMultiplierItem { get; }
@@ -247,12 +323,14 @@ namespace LiveLights.Menu
         // Sirens menu
         public UIMenuItem SirensMenuItem { get; }
         public UIMenuSwitchSelectable SirenSwitcherItem { get; }
-        private List<EmergencyLightMenu> SirenMenus { get; }
-        public EmergencyLightMenu[] SirenSubMenus => SirenMenus.ToArray();
+        public EmergencyLightMenu[] SirenMenus { get; } = new EmergencyLightMenu[EmergencyLighting.MaxLights];
 
         // Quick edit menu
         public UIMenuItem SequenceQuickEditItem { get; }
         public SequenceQuickEditMenu SequenceQuickEdit { get; }
+
+        // Import
+        public UIMenuItem SequenceImportItem { get; }
 
         // Copy menu
         public CopyMenu CopyMenu { get; }
@@ -260,7 +338,5 @@ namespace LiveLights.Menu
 
         // Import/export
         public UIMenuItem ExportCarcolsItem { get; }
-        public UIMenuCheckboxItem ExportAllowOverwriteItem { get; }
-        public UIMenuItem ImportCarcolsItem { get; }
     }
 }

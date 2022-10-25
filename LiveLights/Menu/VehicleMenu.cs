@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.IO;
+using System.Diagnostics;
 
 namespace LiveLights.Menu
 {
@@ -23,10 +25,12 @@ namespace LiveLights.Menu
             Menu.ControlDisablingEnabled = true;
             Menu.MouseControlsEnabled = false;
             Menu.AllowCameraMovement = true;
+            Menu.MaxItemsOnScreen = 15;
 
             BannerItem = new UIMenuItem("LiveLights by PNWParksFan", $"LiveLights was created by ~g~PNWParksFan~w~ using the RPH emergency lighting SDK. If you found this plugin useful and made something cool with it, ~y~please mention it in your credits/readme~w~. If you'd like to say thanks, you can donate to support my various modding projects at ~b~parksmods.com/donate~w~ and get member-exclusive perks. Press Enter to learn more!");
             BannerItem.RightLabel = "v" + EntryPoint.CurrentFileVersion.ToString();
             BannerItem.LeftBadge = UIMenuItem.BadgeStyle.Heart;
+            BannerItem.LeftBadgeInfo.Color = Color.LightSkyBlue;
             BannerItem.BackColor = Color.Black;
             BannerItem.ForeColor = Color.LightSkyBlue;
             BannerItem.HighlightedBackColor = Color.LightSkyBlue;
@@ -35,7 +39,7 @@ namespace LiveLights.Menu
 
             if(EntryPoint.VersionCheck?.IsUpdateAvailable() == true)
             {
-                UpdateItem = new UIMenuItem("Update Available", $"Version ~y~{EntryPoint.VersionCheck.LatestRelease.TagName}~w~ is available for download. Press ~b~Enter~w~ to download ~y~{EntryPoint.VersionCheck.LatestRelease.Name}~w~.");
+                UpdateItem = new UIMenuItem("LiveLights Update Available", $"Version ~y~{EntryPoint.VersionCheck.LatestRelease.TagName}~w~ is available for download. Press ~b~Enter~w~ to download ~y~{EntryPoint.VersionCheck.LatestRelease.Name}~w~.");
                 UpdateItem.RightLabel = "~o~" + EntryPoint.VersionCheck.LatestRelease.TagName;
                 UpdateItem.LeftBadge = UIMenuItem.BadgeStyle.Alert;
                 UpdateItem.BackColor = Color.Black;
@@ -44,6 +48,37 @@ namespace LiveLights.Menu
                 Menu.AddItem(UpdateItem);
                 UpdateItem.Activated += OnUpdateClicked;
             }
+
+            SSLAStatusItem = new UIMenuItem("Siren Setting Limit Adjuster", "Download and install the latest version of ~b~Siren Setting Limit Adjuster~w~ to enable >20 sirens on vehicles and unlimited siren setting IDs. Press ~b~ENTER~w~ to download.");
+            SSLAStatusItem.BackColor = Color.Black;
+            SSLAStatusItem.ForeColor = Color.LightSkyBlue;
+            SSLAStatusItem.HighlightedBackColor = Color.LightSkyBlue;
+            string sslaFilename = "SirenSetting_Limit_Adjuster.asi";
+            if (!File.Exists(sslaFilename))
+            {
+                SSLAStatusItem.Text += " not installed";
+                SSLAStatusItem.LeftBadge = UIMenuItem.BadgeStyle.Alert;
+                SSLAStatusItem.LeftBadgeInfo.Color = Color.Yellow;
+            } else
+            {
+                FileVersionInfo sslaVersion = FileVersionInfo.GetVersionInfo(sslaFilename);
+                if (sslaVersion.FileMajorPart < 2)
+                {
+                    SSLAStatusItem.Text = "Update " + SSLAStatusItem.Text;
+                    SSLAStatusItem.LeftBadge = UIMenuItem.BadgeStyle.Alert;
+                    SSLAStatusItem.LeftBadgeInfo.Color = Color.Yellow;
+                } else
+                {
+                    SSLAStatusItem.Text = "SSLA Installed";
+                    SSLAStatusItem.Description = $"~b~Siren Setting Limit Adjuster~w~ is installed and supports up to ~b~{EmergencyLighting.MaxLights}~w~ sirens per vehicle. Press ~b~ENTER~w~ to check for SSLA updates.";
+                    SSLAStatusItem.RightLabel = $"{EmergencyLighting.MaxLights} sirens supported";
+                    SSLAStatusItem.LeftBadge = UIMenuItem.BadgeStyle.Tick;
+                    SSLAStatusItem.LeftBadgeInfo.Color = Color.Green;
+                }
+            }
+            SSLAStatusItem.Activated += OnSSLAClicked;
+            Menu.AddItem(SSLAStatusItem);
+            
             
             SirenSettingMenu = new SirenSettingsSelectionMenu(null, true, true, true, false);
             SirenSettingSelectorItem = SirenSettingMenu.CreateAndBindToSubmenuItem(Menu);
@@ -59,6 +94,17 @@ namespace LiveLights.Menu
             SirenAudioOnItem = new UIMenuRefreshableCheckboxItem("Siren Audio Enabled", false, "Toggle siren audio on this vehicle");
             Menu.AddMenuDataBinding(SirenAudioOnItem, (x) => Vehicle.IsSirenSilent = !x, () => !Vehicle.IsSirenSilent);
 
+            ExportSelectorItem = new UIMenuItem("Export", "Export siren settings to carcols.meta files");
+            ExportSelectorItem.RightLabel = "→";
+            Menu.AddItem(ExportSelectorItem);
+            Menu.BindMenuAndCopyProperties(ImportExportMenu.ExportMenu, ExportSelectorItem);
+
+            ImportSelectorItem = new UIMenuItem("Import", "Import siren settings from carcols.meta files");
+            ImportSelectorItem.RightLabel = "→";
+            ImportSelectorItem.Activated += ImportExportMenu.OnImportActivated;
+            Menu.CopyMenuProperties(ImportExportMenu.ImportActiveSettingMenu.Menu);
+            Menu.AddItem(ImportSelectorItem);
+
             SirenSettingMenu.OnSirenSettingSelected += OnSirenSelectionChanged;
 
             Refresh();
@@ -66,11 +112,16 @@ namespace LiveLights.Menu
             
             if(UpdateItem != null)
             {
-                Menu.CurrentSelection = 2;
+                Menu.CurrentSelection = 3;
             } else
             {
-                Menu.CurrentSelection = 1;
+                Menu.CurrentSelection = 2;
             }
+        }
+
+        private static void OnSSLAClicked(UIMenu sender, UIMenuItem selectedItem)
+        {
+            selectedItem.OpenUrl("https://www.gta5-mods.com/scripts/sirensetting-limit-adjuster");
         }
 
         private static void OnBannerClicked(UIMenu sender, UIMenuItem selectedItem)
@@ -88,7 +139,7 @@ namespace LiveLights.Menu
             bool validVehicle = Vehicle.Exists();
             foreach (UIMenuItem menuItem in Menu.MenuItems)
             {
-                if(menuItem != UpdateItem && menuItem != BannerItem)
+                if(menuItem != UpdateItem && menuItem != BannerItem && menuItem != SSLAStatusItem)
                 {
                     menuItem.Enabled = validVehicle;
                 }
@@ -111,7 +162,7 @@ namespace LiveLights.Menu
             }
         }
 
-        private static void OnSirenSelectionChanged(SirenSettingsSelectionMenu sender, UIMenu menu, SirenSettingsSelectionMenu.SirenSettingMenuItem item, EmergencyLighting setting)
+        private static void OnSirenSelectionChanged(SirenSettingsSelectionMenu sender, UIMenu menu, UIMenuItem item, EmergencyLighting setting)
         {
             // EmergencyLighting els = setting.GetCustomOrClone();
             if (Vehicle)
@@ -162,7 +213,8 @@ namespace LiveLights.Menu
         {
             if(Vehicle && Vehicle.EmergencyLighting.Exists())
             {
-                Vehicle.EmergencyLightingOverride = Vehicle.EmergencyLighting.Clone();
+                var clone = Vehicle.EmergencyLighting.CloneWithID();
+                Vehicle.EmergencyLightingOverride = clone;
                 SirenSettingMenu.RefreshSirenSettingList();
                 SirenSettingMenu.SelectedEmergencyLighting = Vehicle.EmergencyLighting;
                 ResetConfigMenu();
@@ -172,13 +224,16 @@ namespace LiveLights.Menu
         public static Vehicle Vehicle => Game.LocalPlayer.Character.LastVehicle;
 
         public static UIMenuRefreshable Menu { get; }
+        public static UIMenuItem BannerItem { get; }
         public static UIMenuItem UpdateItem { get; }
+        public static UIMenuItem SSLAStatusItem { get; }
         public static SirenSettingsSelectionMenu SirenSettingMenu { get; }
         public static UIMenuItem SirenSettingSelectorItem { get; }
+        public static UIMenuItem ExportSelectorItem { get; }
+        public static UIMenuItem ImportSelectorItem { get; }
         public static EmergencyLightingMenu SirenConfigMenu { get; private set; }
         public static UIMenuItem SirenConfigItem { get; }
         public static UIMenuRefreshableCheckboxItem EmergencyLightsOnItem { get; }
         public static UIMenuRefreshableCheckboxItem SirenAudioOnItem { get; }
-        public static UIMenuItem BannerItem { get; }
     }
 }

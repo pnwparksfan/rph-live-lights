@@ -158,5 +158,18 @@ namespace LiveLights
 
             return File.Exists(path);
         }
+
+        public static XmlElement SerializeToXMLElement<T>(T obj)
+        {
+            XmlDocument doc = new XmlDocument();
+            using(XmlWriter writer = doc.CreateNavigator().AppendChild())
+            {
+                var xns = new XmlSerializerNamespaces();
+                xns.Add(string.Empty, string.Empty);
+                _getOrCreateSerializer<T>().Serialize(writer, obj, xns);
+            }
+
+            return doc.DocumentElement;
+        }
     }
 }
