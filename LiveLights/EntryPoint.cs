@@ -21,16 +21,17 @@ namespace LiveLights
     {
         public static GithubVersionCheck VersionCheck;
         public static Version CurrentFileVersion;
+        public static int MinRPHBuild = 98;
 
         private static void Main()
         {
             // Older versions of RPH do not support the EmergencyLighting API properly
             FileVersionInfo rphVer = FileVersionInfo.GetVersionInfo("ragepluginhook.exe");
             Game.LogTrivial("Detected RPH " + rphVer.FileVersion);
-            if(rphVer.FileMinorPart < 98)
+            if(rphVer.FileMinorPart < MinRPHBuild)
             {
-                Game.LogTrivial("RPH 1.98+ is required to use this version of LiveLights");
-                Game.DisplayNotification($"~y~Unable to load LiveLights~w~\nRagePluginHook version ~b~81~w~ or later is required, you are on version ~b~{rphVer.FileMinorPart}");
+                Game.LogTrivial($"RPH 1.{MinRPHBuild}+ is required to use this version of LiveLights");
+                Game.DisplayNotification($"~y~Unable to load LiveLights~w~\nRagePluginHook version ~b~{MinRPHBuild}~w~ or later is required, you are on version ~b~{rphVer.FileMinorPart}");
                 return;
             }
 

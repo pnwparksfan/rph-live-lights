@@ -80,11 +80,11 @@ namespace LiveLights.Menu
             }
         }
 
-        public static (string filename, string filepath) GetFilepath()
+        public static (string filename, string filepath) GetFilepath(string action)
         {
             CreateExportFolder();
-            Game.DisplaySubtitle(@"Type or paste an export filename (e.g. ~c~~h~carcols-police.meta~h~~w~) or absolute path (e.g. ~c~~h~C:\mods\police\carcols.meta~h~~w~)", 10000);
-            string filename = UserInput.GetUserInput("Export filename", "", 1000);
+            Game.DisplaySubtitle($@"Type or paste an {action.ToLower()} filename (e.g. ~c~~h~carcols-police.meta~h~~w~) or absolute path (e.g. ~c~~h~C:\mods\police\carcols.meta~h~~w~)", 10000);
+            string filename = UserInput.GetUserInput($"{action} filename", "", 1000);
             Game.DisplaySubtitle("", 1);
             if (!string.IsNullOrWhiteSpace(filename))
             {
@@ -105,7 +105,7 @@ namespace LiveLights.Menu
 
         private static void ImportCarcols()
         {
-            (string filename, string filepath) = GetFilepath();
+            (string filename, string filepath) = GetFilepath("import");
             
             if (!File.Exists(filepath))
             {
@@ -157,7 +157,7 @@ namespace LiveLights.Menu
                 return false;
             }
 
-            (string filename, string filepath) = GetFilepath();
+            (string filename, string filepath) = GetFilepath("export");
             if(!string.IsNullOrWhiteSpace(filepath))
             {
                 try
