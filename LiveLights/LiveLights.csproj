@@ -81,6 +81,7 @@
     <Compile Include="Utils\ColorTools.cs" />
     <Compile Include="Utils\GithubVersionCheck.cs" />
     <Compile Include="Utils\KeyChecker.cs" />
+    <Compile Include="Utils\LCPDFRVersionCheck.cs" />
     <Compile Include="Utils\Marker.cs" />
     <Compile Include="Utils\MenuItems.cs" />
     <Compile Include="Utils\SirenExtensions.cs" />

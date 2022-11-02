@@ -37,10 +37,10 @@ namespace LiveLights.Menu
             BannerItem.Activated += OnBannerClicked;
             Menu.AddItem(BannerItem);
 
-            if(EntryPoint.VersionCheck?.IsUpdateAvailable() == true)
+            if(EntryPoint.LiveLightsVersionCheck?.UpdateAvailable == true)
             {
-                UpdateItem = new UIMenuItem("LiveLights Update Available", $"Version ~y~{EntryPoint.VersionCheck.LatestRelease.TagName}~w~ is available for download. Press ~b~Enter~w~ to download ~y~{EntryPoint.VersionCheck.LatestRelease.Name}~w~.");
-                UpdateItem.RightLabel = "~o~" + EntryPoint.VersionCheck.LatestRelease.TagName;
+                UpdateItem = new UIMenuItem("LiveLights Update Available", $"Version ~y~{EntryPoint.LiveLightsVersionCheck.LatestRelease.TagName}~w~ is available for download. Press ~b~Enter~w~ to download ~y~{EntryPoint.LiveLightsVersionCheck.LatestRelease.Name}~w~.");
+                UpdateItem.RightLabel = "~o~" + EntryPoint.LiveLightsVersionCheck.LatestRelease.TagName;
                 UpdateItem.LeftBadge = UIMenuItem.BadgeStyle.Alert;
                 UpdateItem.BackColor = Color.Black;
                 UpdateItem.ForeColor = Color.LightSkyBlue;
@@ -53,27 +53,34 @@ namespace LiveLights.Menu
             SSLAStatusItem.BackColor = Color.Black;
             SSLAStatusItem.ForeColor = Color.LightSkyBlue;
             SSLAStatusItem.HighlightedBackColor = Color.LightSkyBlue;
-            string sslaFilename = "SirenSetting_Limit_Adjuster.asi";
-            if (!File.Exists(sslaFilename))
+            SSLAStatusItem.LeftBadge = UIMenuItem.BadgeStyle.Alert;
+            SSLAStatusItem.LeftBadgeInfo.Color = Color.Yellow;
+            
+            if (EntryPoint.InstalledSSLAVersion == null)
             {
                 SSLAStatusItem.Text += " not installed";
-                SSLAStatusItem.LeftBadge = UIMenuItem.BadgeStyle.Alert;
-                SSLAStatusItem.LeftBadgeInfo.Color = Color.Yellow;
             } else
             {
-                FileVersionInfo sslaVersion = FileVersionInfo.GetVersionInfo(sslaFilename);
-                if (sslaVersion.FileMajorPart < 2)
+                if (EntryPoint.InstalledSSLAVersion.Major < 2)
                 {
                     SSLAStatusItem.Text = "Update " + SSLAStatusItem.Text;
-                    SSLAStatusItem.LeftBadge = UIMenuItem.BadgeStyle.Alert;
-                    SSLAStatusItem.LeftBadgeInfo.Color = Color.Yellow;
                 } else
                 {
-                    SSLAStatusItem.Text = "SSLA Installed";
-                    SSLAStatusItem.Description = $"~b~Siren Setting Limit Adjuster~w~ is installed and supports up to ~b~{EmergencyLighting.MaxLights}~w~ sirens per vehicle. Press ~b~ENTER~w~ to check for SSLA updates.";
+                    SSLAStatusItem.Description = $"~b~Siren Setting Limit Adjuster~w~ v{EntryPoint.InstalledSSLAVersion} is installed and supports up to ~b~{EmergencyLighting.MaxLights}~s~ sirens per vehicle. ";
                     SSLAStatusItem.RightLabel = $"{EmergencyLighting.MaxLights} sirens supported";
-                    SSLAStatusItem.LeftBadge = UIMenuItem.BadgeStyle.Tick;
-                    SSLAStatusItem.LeftBadgeInfo.Color = Color.Green;
+
+                    if (EntryPoint.SSLAVersionCheck?.UpdateAvailable == true)
+                    {
+                        SSLAStatusItem.Text = "Update SSLA";
+                        SSLAStatusItem.Description += $"~y~An update (v{EntryPoint.SSLAVersionCheck.LatestVersion}) for SSLA is available.~s~ ";
+                    } else
+                    {
+                        SSLAStatusItem.Text = "SSLA Installed";
+                        SSLAStatusItem.LeftBadge = UIMenuItem.BadgeStyle.Tick;
+                        SSLAStatusItem.LeftBadgeInfo.Color = Color.Green;
+                    }
+
+                    SSLAStatusItem.Description += "Press ~b~ENTER~s~ to visit the SSLA download page.";
                 }
             }
             SSLAStatusItem.Activated += OnSSLAClicked;
@@ -121,7 +128,7 @@ namespace LiveLights.Menu
 
         private static void OnSSLAClicked(UIMenu sender, UIMenuItem selectedItem)
         {
-            selectedItem.OpenUrl("https://www.gta5-mods.com/scripts/sirensetting-limit-adjuster");
+            selectedItem.OpenUrl("https://www.lcpdfr.com/downloads/gta5mods/scripts/28560-sirensetting-limit-adjuster/");
         }
 
         private static void OnBannerClicked(UIMenu sender, UIMenuItem selectedItem)
@@ -131,7 +138,7 @@ namespace LiveLights.Menu
 
         private static void OnUpdateClicked(UIMenu sender, UIMenuItem selectedItem)
         {
-            selectedItem.OpenUrl(EntryPoint.VersionCheck.LatestRelease.HtmlUrl);
+            selectedItem.OpenUrl(EntryPoint.LiveLightsVersionCheck.LatestRelease.HtmlUrl);
         }
 
         public static void Refresh()

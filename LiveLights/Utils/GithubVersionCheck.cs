@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace LiveLights.Utils
 {
@@ -13,7 +15,6 @@ namespace LiveLights.Utils
         public GitHubClient Client { get; } 
         public string Owner { get; }
         public string Project { get; }
-        public int BuildReleaseId { get; }
         public Release LatestRelease { get; }
         
         private Release[] allReleases = null;
@@ -37,20 +38,20 @@ namespace LiveLights.Utils
             }
         }
 
-        public Release BuildRelease
+        public Version CurrentVersion { get; }
+        public Version LatestVersion { get; }
+        public bool UpdateAvailable { get; }
+
+        public GithubVersionCheck(string owner, string project) : this(owner, project, Assembly.GetExecutingAssembly().GetName().Version)
         {
-            get
-            {
-                return AllReleases.FirstOrDefault(r => r.Id == BuildReleaseId);
-            }
+
         }
 
-        public GithubVersionCheck(string owner, string project, int buildReleaseId)
+        public GithubVersionCheck(string owner, string project, Version currentVersion)
         {
             this.Client = new GitHubClient(new ProductHeaderValue("simple-version-check"));
             this.Owner = owner;
             this.Project = project;
-            this.BuildReleaseId = buildReleaseId;
             try
             {
                 LatestRelease = Task.Run(async () => await Client.Repository.Release.GetLatest(Owner, Project)).Result;
@@ -66,16 +67,32 @@ namespace LiveLights.Utils
                     Rage.Game.LogTrivial("Retrieved full release list");
                 }
             }
+
+            CurrentVersion = currentVersion;
+            LatestVersion = GetGithubVersion(LatestRelease);
+
+            UpdateAvailable = (CurrentVersion != null && LatestVersion != null && LatestVersion > CurrentVersion);
         }
 
-        public bool IsUpdateAvailable()
+        private Version GetGithubVersion(Release release)
         {
-            if (LatestRelease?.Id == BuildReleaseId || BuildRelease == null)
+            if (release != null)
             {
-                return false;
+                var match = new Regex(@"\d+\.\d+(?:\.\d+)*").Match(release.TagName);
+                if (match.Success)
+                {
+                    return new Version(match.Value);
+                }
+                else
+                {
+                    Rage.Game.LogTrivial($"Unable to parse GitHub version from tag {LatestRelease.TagName}");
+                }
+            } else
+            {
+                Rage.Game.LogTrivial("Unable to retrieve version from GitHub");
             }
 
-            return true;
+            return null;
         }
     }
 }
