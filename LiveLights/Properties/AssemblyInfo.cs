@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("LiveLights")]
-[assembly: AssemblyCopyright("Copyright © PNWParksFan & Contributors 2020")]
+[assembly: AssemblyCopyright("Copyright © PNWParksFan & Contributors 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
