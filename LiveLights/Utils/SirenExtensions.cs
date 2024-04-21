@@ -36,7 +36,7 @@ namespace LiveLights.Utils
 
         public static uint SirenSettingID(this EmergencyLighting els)
         {
-            return (uint)typeof(EmergencyLighting).GetProperty("Id", BindingFlags.GetProperty | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(els);
+            return (uint)typeof(EmergencyLighting).GetProperty("Id", BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance).GetValue(els);
         }
 
         public static bool IsCustomSetting(this EmergencyLighting els)
