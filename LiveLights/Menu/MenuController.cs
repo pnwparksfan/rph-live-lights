@@ -27,7 +27,13 @@ namespace LiveLights.Menu
                 {
                     VehicleMenu.Refresh();
                 }
-                VehicleMenu.Menu.Visible = !VehicleMenu.Menu.Visible;
+                if (Pool.IsAnyMenuOpen())
+                {
+                    Pool.CloseAllMenus();
+                } else
+                {
+                    VehicleMenu.Menu.Visible = true;
+                }
             }
 
             VehicleMenu.SirenConfigMenu?.ShowSirenInfo(VehicleMenu.Vehicle);

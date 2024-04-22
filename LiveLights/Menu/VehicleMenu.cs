@@ -89,11 +89,10 @@ namespace LiveLights.Menu
             
             SirenSettingMenu = new SirenSettingsSelectionMenu(null, true, true, true, false);
             SirenSettingSelectorItem = SirenSettingMenu.CreateAndBindToSubmenuItem(Menu);
-            SirenConfigMenu = null; // new EmergencyLightingMenu(null);
+            SirenConfigMenu = null; 
             SirenConfigItem = new UIMenuItem("Edit Emergency Lighting", defaultConfigMenuDesc);
             SirenConfigItem.RightLabel = "→";
             Menu.AddItem(SirenConfigItem);
-            // Menu.BindMenuToItem(SirenConfigMenu.Menu, SirenConfigItem);
             
             EmergencyLightsOnItem = new UIMenuRefreshableCheckboxItem("Emergency Lights Enabled", false, "Toggle flashing lights on this vehicle");
             Menu.AddMenuDataBinding(EmergencyLightsOnItem, (x) => Vehicle.IsSirenOn = x, () => Vehicle.IsSirenOn);
@@ -105,6 +104,7 @@ namespace LiveLights.Menu
             ExportSelectorItem.RightLabel = "→";
             Menu.AddItem(ExportSelectorItem);
             Menu.BindMenuAndCopyProperties(ImportExportMenu.ExportMenu, ExportSelectorItem);
+            ExportSelectorItem.Activated += OnExportClicked;
 
             ImportSelectorItem = new UIMenuItem("Import", "Import siren settings from carcols.meta files");
             ImportSelectorItem.RightLabel = "→";
@@ -123,6 +123,14 @@ namespace LiveLights.Menu
             } else
             {
                 Menu.CurrentSelection = 2;
+            }
+        }
+
+        private static void OnExportClicked(UIMenu sender, UIMenuItem selectedItem)
+        {
+            if (selectedItem == ExportSelectorItem && ImportExportMenu.ExportSelectSettingsMenu.SelectedItems.Length <= 1 && SirenSettingMenu.SelectedEmergencyLighting != null)
+            {
+                ImportExportMenu.ExportSelectSettingsMenu.SelectItems(SirenSettingMenu.SelectedEmergencyLighting);
             }
         }
 
@@ -157,7 +165,6 @@ namespace LiveLights.Menu
                 string vehicleName = NativeFunction.Natives.GET_DISPLAY_NAME_FROM_VEHICLE_MODEL<string>(Vehicle.Model.Hash);
                 vehicleName = NativeFunction.Natives.x7B5280EBA9840C72<string>(vehicleName);
                 Menu.SubtitleText = $"~b~Configure sirens for {vehicleName} ({Vehicle.Model.Name})";
-                // EmergencyLighting els = Vehicle.GetOrCreateOverrideEmergencyLighting();
                 SirenSettingMenu.SelectedEmergencyLighting = Vehicle.EmergencyLighting;
                 ResetConfigMenu();
                 Menu.RefreshData(false);
@@ -171,7 +178,6 @@ namespace LiveLights.Menu
 
         private static void OnSirenSelectionChanged(SirenSettingsSelectionMenu sender, UIMenu menu, UIMenuItem item, EmergencyLighting setting)
         {
-            // EmergencyLighting els = setting.GetCustomOrClone();
             if (Vehicle)
             {
                 Vehicle.EmergencyLightingOverride = setting;

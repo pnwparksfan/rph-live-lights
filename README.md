@@ -43,7 +43,7 @@ If you encounter any bugs, please [submit an issue](https://github.com/pnwparksf
  - Open the LiveLights menu (`-` key on the main keyboard by default)
  - The menu will show the default siren setting name for the current vehicle. You can switch to a different siren setting from the menu if you want.
  - Any siren setting defined in any carcols.ymt/carcols.meta file is not editable in game. You can only edit cloned copies which are created temporarily in memory. Clicking into the Edit Siren Settings menu will automatically create an editable clone of the currently selected siren setting. Once an editable clone has been created, any changes you make to it will only apply to that cloned setting; they will not affect the original version. You can set any individual vehicle to use the cloned copy by selecting it through the menu, but any newly spawned vehicle will use its default, unedited siren setting when spawned. 
- - Any changes you make in the Edit Siren Settings menu will immediately be applied to all spawned vehicles which have been set to use that clonsed siren setting.
+ - Any changes you make in the Edit Siren Settings menu will immediately be applied to all spawned vehicles which have been set to use that cloned siren setting.
    - Within the main menu you can change all settings which apply to the overall siren setting entry (e.g. BPM, falloff settings, etc.)
    - There are submenus to edit settings for each individual siren (1-20). The siren submenus siren-specific settings, and have further submenus for corona, flashiness, and rotation settings. 
    - There are separate submenus for headlight and taillight settings. 

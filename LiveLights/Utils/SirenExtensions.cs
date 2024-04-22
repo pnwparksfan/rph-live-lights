@@ -34,14 +34,9 @@ namespace LiveLights.Utils
 
         public static bool HasSiren(this Vehicle vehicle, int sirenNum) => vehicle.HasBone($"siren{sirenNum}");
 
-        public static uint SirenSettingID(this EmergencyLighting els)
-        {
-            return (uint)typeof(EmergencyLighting).GetProperty("Id", BindingFlags.GetProperty | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(els);
-        }
-
         public static bool IsCustomSetting(this EmergencyLighting els)
         {
-            return els.SirenSettingID() == uint.MaxValue;
+            return els.Id == uint.MaxValue;
         }
 
         public static EmergencyLighting GetCustomOrClone(this EmergencyLighting els)

@@ -24,7 +24,7 @@ namespace LiveLights
         public static LCPDFRVersionCheck SSLAVersionCheck;
         public static GithubVersionCheck LiveLightsVersionCheck;
         public static Version CurrentFileVersion;
-        public static int MinRPHBuild = 98;
+        public static int MinRPHBuild = 109;
         public static Version MinRNUIVersion = new Version(1, 9);
 
         private static void Main()

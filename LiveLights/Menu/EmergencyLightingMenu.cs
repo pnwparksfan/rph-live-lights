@@ -158,7 +158,7 @@ namespace LiveLights.Menu
             Menu.BindMenuAndCopyProperties(CopyMenu.Menu, CopyMenuItem);
             Menu.AddItem(CopyMenuItem);
             
-            ExportCarcolsItem = new UIMenuItem("Export carcols.meta file", "Exports the single siren setting currently being modified to a carcols.meta file. To export multiple settings into a single file, use the bulk export tool from the main menu.");
+            ExportCarcolsItem = new UIMenuItem("Export carcols.meta file", "Exports the siren setting currently being modified to a carcols.meta file.");
             Menu.AddItem(ExportCarcolsItem);
             ExportCarcolsItem.Activated += OnExportClicked;
 

@@ -71,7 +71,7 @@ namespace LiveLights.Utils
             }
             else if (!els.IsCustomSetting())
             {
-                return new SirenSource(els.SirenSettingID(), EmergencyLightingSource.BuiltIn);
+                return new SirenSource(els.Id, EmergencyLightingSource.BuiltIn);
             }
 
             return null;
@@ -82,7 +82,7 @@ namespace LiveLights.Utils
     {
         public static EmergencyLighting CloneWithID(this EmergencyLighting source)
         {
-            uint srcId = source.SirenSettingID();
+            uint srcId = source.Id;
             var clone = source.Clone();
             SirenSource.SetSource(clone, srcId, EmergencyLightingSource.Cloned);
             return clone;

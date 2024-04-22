@@ -186,9 +186,9 @@ namespace LiveLights.Menu
                     else
                     {
                         item.LeftBadge = UIMenuItem.BadgeStyle.Lock;
-                        item.Description = $"~y~Built-in~w~ siren setting entry, siren setting ID ~b~{els.SirenSettingID()}~s~";
+                        item.Description = $"~y~Built-in~w~ siren setting entry, siren setting ID ~b~{els.Id}~s~";
                         
-                        if (!isCheckbox) item.RightLabel = $"~c~[{els.SirenSettingID()}]";
+                        if (!isCheckbox) item.RightLabel = $"~c~[{els.Id}]";
 
                         if (AlwaysReturnEditableSetting)
                         {
