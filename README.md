@@ -34,6 +34,9 @@ If you encounter any bugs, please [submit an issue](https://github.com/pnwparksf
 
 &nbsp;
 
+## Requirement
+[RageNativeUI](https://github.com/alexguirre/RAGENativeUI/releases) (v1.9.3 or newer, if you are on GTA V v3407 or newer)
+
 ## Quick feature overview and user guide
 
  - Configure carcols.meta and carvariations.meta for your vehicle(s) and load your initial carcols settings
